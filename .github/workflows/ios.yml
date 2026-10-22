@@ -1,0 +1,69 @@
+name: iPhone app
+
+# Builds the iPhone app from the web game. Without App Store Connect secrets it only checks
+# that the app compiles. With them (ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8, APPLE_TEAM_ID)
+# it signs the build and uploads it to TestFlight.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, 'claude/**']
+    paths: [index.html, sw.js, manifest.webmanifest, 'fonts/**', 'icons/**', 'lib/**', 'app/**', .github/workflows/ios.yml]
+
+concurrency:
+  group: ios-app
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: macos-latest
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Make the iPhone project
+        working-directory: app
+        run: |
+          npm ci
+          npm run web
+          npx cap add ios
+          npm run assets -- --ios
+          npx cap sync ios
+      - name: Set version
+        working-directory: app/ios/App
+        run: |
+          NAME=$(node -p "require('../../package.json').version")
+          CODE=$((100 + ${{ github.run_number }}))
+          sed -i '' "s/MARKETING_VERSION = [^;]*;/MARKETING_VERSION = $NAME;/g; s/CURRENT_PROJECT_VERSION = [^;]*;/CURRENT_PROJECT_VERSION = $CODE;/g" App.xcodeproj/project.pbxproj
+          /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" App/Info.plist || true
+          echo "VERSION_LABEL=$NAME ($CODE)" >> "$GITHUB_ENV"
+      - name: Check it compiles (simulator, unsigned)
+        if: env.ASC_KEY_ID == ''
+        working-directory: app/ios/App
+        run: xcodebuild -project App.xcodeproj -scheme App -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build | tail -20
+      - name: Sign and upload to TestFlight
+        if: env.ASC_KEY_ID != ''
+        working-directory: app/ios/App
+        run: |
+          KEY="$RUNNER_TEMP/AuthKey_$ASC_KEY_ID.p8"
+          printf '%s' "$ASC_KEY_P8" > "$KEY"
+          AUTH=(-allowProvisioningUpdates -authenticationKeyPath "$KEY" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID")
+          xcodebuild -project App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" DEVELOPMENT_TEAM="$APPLE_TEAM_ID" CODE_SIGN_STYLE=Automatic "${AUTH[@]}" archive | tail -20
+          cat > "$RUNNER_TEMP/export.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$APPLE_TEAM_ID</string>
+            <key>signingStyle</key><string>automatic</string>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/App.xcarchive" -exportOptionsPlist "$RUNNER_TEMP/export.plist" \
+            -exportPath "$RUNNER_TEMP/export" "${AUTH[@]}"
+          echo "Uploaded $VERSION_LABEL to TestFlight."

@@ -1,0 +1,8 @@
+{
+  "appId": "com.birco.arcade.drive",
+  "appName": "Road Rampage",
+  "webDir": "www",
+  "backgroundColor": "#140f0c",
+  "android": { "allowMixedContent": false },
+  "ios": { "contentInset": "never" }
+}
