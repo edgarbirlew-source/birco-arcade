@@ -15,6 +15,10 @@ concurrency:
   group: android-app
   cancel-in-progress: false
 
+defaults:
+  run:
+    shell: bash  # fail on errors inside pipes
+
 jobs:
   build:
     runs-on: ubuntu-latest

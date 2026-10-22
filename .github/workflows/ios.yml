@@ -13,6 +13,10 @@ concurrency:
   group: ios-app
   cancel-in-progress: false
 
+defaults:
+  run:
+    shell: bash  # fail on errors inside pipes
+
 jobs:
   build:
     runs-on: macos-latest
