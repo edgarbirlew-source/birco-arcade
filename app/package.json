@@ -1,0 +1,19 @@
+{
+  "name": "birco-arcade-app",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Android and iPhone app shell for the BIRCO Arcade web game (Capacitor).",
+  "scripts": {
+    "web": "node copy-web.mjs",
+    "assets": "capacitor-assets generate --iconBackgroundColor '#140f0c' --iconBackgroundColorDark '#140f0c' --splashBackgroundColor '#140f0c' --splashBackgroundColorDark '#140f0c'"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/core": "8.5.3",
+    "@capacitor/ios": "8.5.3"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "3.0.5",
+    "@capacitor/cli": "8.5.3"
+  }
+}
