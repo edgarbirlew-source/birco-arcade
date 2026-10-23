@@ -91,31 +91,41 @@ canvas#cv{display:block;width:100%;height:100%}
 .buy:disabled{background:var(--line);color:var(--muted);cursor:default}
 .how{list-style:none;padding:0;margin:0;color:var(--muted);font-size:13px;display:grid;gap:4px;text-align:left}
 .how b{color:var(--ink)}
-.ctrl{display:flex;gap:8px;height:84px}
+.ctrl{display:flex;gap:8px}
 .pad{flex:1;min-width:0;position:relative;background:var(--panel);border:1px solid var(--line);border-radius:12px;touch-action:none}
 .pad .track{position:absolute;left:16px;right:16px;top:50%;height:6px;margin-top:-3px;border-radius:3px;background:var(--line)}
 .pad .knob{position:absolute;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px rgba(63,208,201,.2)}
 .pad .tag{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-size:10px;letter-spacing:.16em;color:var(--muted)}
-.btn{position:relative;overflow:hidden;width:72px;border:0;border-radius:12px;font-family:var(--display);font-size:14px;color:var(--bg);cursor:pointer;touch-action:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-.btn span,.btn small{position:relative}
-.btn small{font:700 11px var(--body)}
-.btn.bomb{background:var(--amber);box-shadow:inset 0 -5px 0 rgba(0,0,0,.25)}
-.btn.flame{background:#6b3a14;color:var(--ink)}
-.btn.flame .fuel{position:absolute;left:0;right:0;bottom:0;height:100%;background:var(--orange)}
-.btn.fire{background:var(--red);color:var(--ink);box-shadow:inset 0 -5px 0 rgba(0,0,0,.3)}
-.btn.on{filter:brightness(1.25);transform:translateY(2px)}
+/* Weapon buttons: round, glossy arcade buttons with cartoon icons, in a 2x2 group (DEPLOY BOMB / FLAME FIRE) */
+.btns{display:grid;grid-template-columns:repeat(2,var(--bs,52px));grid-auto-rows:var(--bs,52px);gap:6px;align-content:center}
+.btn{--c:#888;--d:#444;position:relative;width:100%;height:100%;padding:0;border:3px solid var(--d);border-radius:50%;cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;color:#fff;font-family:var(--display);font-size:calc(var(--bs,52px)*.17);line-height:1;
+  background:radial-gradient(circle at 35% 28%,rgba(255,255,255,.55) 0,rgba(255,255,255,0) 42%),radial-gradient(circle at 50% 60%,var(--c) 55%,var(--d) 100%);
+  box-shadow:0 5px 0 var(--d),0 8px 12px rgba(0,0,0,.55),inset 0 -4px 6px rgba(0,0,0,.25);transition:transform .05s,box-shadow .05s}
+.btn svg{position:relative;width:52%;height:52%;flex:none;filter:drop-shadow(0 2px 0 rgba(0,0,0,.35));pointer-events:none}
+.btn span{position:relative;margin-top:1px;text-shadow:0 2px 0 rgba(0,0,0,.45);letter-spacing:.02em;pointer-events:none}
+.btn .ct{position:absolute;top:-4px;right:-4px;min-width:22px;height:22px;padding:0 4px;box-sizing:border-box;border-radius:11px;background:#fff7e6;color:#2a1a0e;border:2px solid var(--d);font:700 12px/18px var(--body);text-align:center;pointer-events:none}
+.btn.fire{--c:#ff4a3d;--d:#8e1a12}
+.btn.bomb{--c:#ffb02e;--d:#8a5200}
+.btn.drone{--c:#3fb7e8;--d:#14557a}
+.btn.flame{--c:#5a2c10;--d:#7a2e06;overflow:hidden}
+.btn.flame .fuel{position:absolute;left:0;right:0;bottom:0;height:100%;background:linear-gradient(#ffd23e,#ff7a1a 45%,#e8420f);transition:height .1s}
+.btn.flame::after{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 28%,rgba(255,255,255,.5) 0,rgba(255,255,255,0) 42%);pointer-events:none}
+.btn.on{transform:translateY(4px);box-shadow:0 1px 0 var(--d),0 2px 4px rgba(0,0,0,.5),inset 0 -2px 4px rgba(0,0,0,.25);filter:brightness(1.18)}
+.btn.dim{filter:grayscale(.85) brightness(.7)}
 button:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
-/* Arena joystick: up = forward, down = reverse, left/right = turn */
-.joy{display:none;position:absolute;left:50%;top:46%;width:min(104px,calc(100% - 16px));aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#2c221a 0%,#1a1410 70%);border:2px solid var(--line)}
+/* Arena joystick: push toward where you want to go on screen; it re-centers wherever your thumb lands */
+.joy{display:none;position:absolute;left:50%;top:46%;width:min(118px,calc(100% - 12px));aspect-ratio:1;pointer-events:none;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#2c221a 0%,#1a1410 70%);border:2px solid var(--line)}
 .joyKnob{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px rgba(63,208,201,.2),0 4px 8px rgba(0,0,0,.4)}
 .ja{position:absolute;font-size:10px;color:var(--muted);line-height:1}
 .ja.up{top:5px;left:50%;transform:translateX(-50%)}.ja.dn{bottom:5px;left:50%;transform:translateX(-50%)}.ja.lf{left:6px;top:50%;transform:translateY(-50%)}.ja.rt{right:6px;top:50%;transform:translateY(-50%)}
 body.arena .joy{display:block}
 body.arena .pad .track,body.arena #knob{display:none}
-body.arena .ctrl{height:128px}
+body.arena .ctrl{height:136px}
+body.arena .btns{--bs:62px}
+.ctrl{height:110px}
 /* Phones: lift the controls off the bottom edge so there's room to grip the phone */
 .app{padding-bottom:calc(8px + clamp(28px, 11vh, 110px))}
-.btns{display:flex;gap:8px}
 /* Wide screens (unfolded foldables, tablets): steering on the left edge, buttons on the right, at thumb height */
 @media (min-width:700px){
   .app{max-width:none;display:grid;grid-template-columns:190px minmax(0,1fr) 190px;grid-template-rows:auto minmax(0,1fr);grid-template-areas:"hud hud hud" "pad stage btns";column-gap:14px;row-gap:8px;padding-bottom:8px}
@@ -124,8 +134,8 @@ body.arena .ctrl{height:128px}
   .ctrl{display:contents}
   .pad{grid-area:pad;align-self:end;height:130px;margin-bottom:22vh}
   body.arena .pad{height:150px}
-  .btns{grid-area:btns;align-self:end;flex-direction:column;margin-bottom:14vh}
-  .btns .btn{width:100%;height:78px}
+  .btns,body.arena .btns{--bs:86px;grid-area:btns;align-self:end;justify-content:center;gap:12px;margin-bottom:14vh}
+  body.arena .joy{width:min(140px,calc(100% - 12px))}
 }
 .join{display:flex;gap:6px;margin-top:8px}
 .join input{flex:1;min-width:0;width:100%;box-sizing:border-box;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--ink);font:20px var(--display);letter-spacing:.3em;text-align:center;text-transform:uppercase;padding:8px 6px;user-select:text;-webkit-user-select:text}
@@ -137,14 +147,14 @@ body.arena .ctrl{height:128px}
 .plist li i{width:14px;height:14px;border-radius:4px;flex:none}
 .plist li span{margin-left:auto;color:var(--muted);font-size:12px;font-weight:500}
 .go:disabled{background:var(--line);color:var(--muted);box-shadow:none}
-@media (max-width:400px){.btn{width:60px;font-size:12px}.hb{min-width:40px;padding:5px 4px}.cash{font-size:15px}}
+@media (max-width:370px){.btns{--bs:48px}body.arena .btns{--bs:56px}}
+@media (max-width:400px){.hb{min-width:40px;padding:5px 4px}.cash{font-size:15px}}
 </style>
 
 <div class="app">
   <div class="hud">
     <div><span class="lbl">CASH</span><span class="cash" id="cash">$0</span></div>
     <div class="hp"><span class="lbl">ARMOR</span><div class="bar"><i id="hpf"></i></div></div>
-    <button class="hb" id="droneBtn" aria-label="Launch a drone">DRONE<b id="dn">1</b></button>
     <button class="hb" id="viewBtn" aria-label="Change camera">VIEW<b id="vn">TOP</b></button>
     <button class="hb" id="mute" aria-label="Toggle sound">SND<b id="sn">ON</b></button>
   </div>
@@ -185,8 +195,8 @@ body.arena .ctrl{height:128px}
             <ul class="how">
               <li><b>Street run:</b> drive the road, blast the bad guys ahead, dodge <b>air strikes</b> (red target circles) and obstacles. Hit the goal, then cross the finish line</li>
               <li><b>VS Arena:</b> free-drive a City, Town, Demolition Derby or Harbor. Hunt your rivals before they hunt you. Last one standing wins</li>
-              <li>Street: <b>drag</b> the road or slider to steer. Arena: use the <b>joystick</b> (up = forward, down = reverse, sides = turn) or drag on the screen toward where you want to go</li>
-              <li><b>FIRE</b> guns · <b>FLAME</b> torches up close · <b>BOMB</b> lobs a blast · <b>DRONE</b> sends a helper</li>
+              <li>Street: <b>drag</b> the road or slider to steer. Arena: push the <b>joystick</b> toward where you want to go (it starts wherever your thumb lands), or drag on the screen. Stuck on a wall? Keep pushing and you back out</li>
+              <li><b>FIRE</b> guns · <b>FLAME</b> torches up close · <b>BOMB</b> lobs a blast · <b>DEPLOY</b> sends a drone helper</li>
               <li>Pickups: 💣 bombs · 🔧 repair · 🛡️ shield · ⛽ fuel · 🛸 drone · ⚡ boost · ✈️ pads give you jet wings</li>
               <li>Keys: arrows steer (arena: ↑ gas, ↓ reverse), Space fire, F flame, B bomb, E drone, V view</li>
             </ul>
@@ -216,9 +226,10 @@ body.arena .ctrl{height:128px}
   <div class="ctrl">
     <div class="pad" id="pad"><div class="track"></div><div class="knob" id="knob"></div><div class="joy" id="joyBase"><span class="ja up">▲</span><span class="ja dn">▼</span><span class="ja lf">◀</span><span class="ja rt">▶</span><div class="joyKnob" id="joyKnob"></div></div><span class="tag" id="padTag">STEER</span></div>
     <div class="btns">
-      <button class="btn bomb" id="bombBtn"><span id="bl">BOMB</span><small id="bn">5</small></button>
-      <button class="btn flame" id="flameBtn"><i class="fuel" id="fuelf"></i><span>FLAME</span></button>
-      <button class="btn fire" id="fireBtn"><span>FIRE</span></button>
+      <button class="btn drone" id="droneBtn" aria-label="Deploy a drone"><svg viewBox="0 0 48 48"><g stroke="#10324a" stroke-width="3" stroke-linecap="round"><path d="M12 12l24 24M36 12L12 36" stroke="#fff" stroke-width="5"/></g><g fill="#fff" stroke="#10324a" stroke-width="2.5"><ellipse cx="11" cy="11" rx="9" ry="4"/><ellipse cx="37" cy="11" rx="9" ry="4"/><ellipse cx="11" cy="37" rx="9" ry="4"/><ellipse cx="37" cy="37" rx="9" ry="4"/><rect x="16" y="17" width="16" height="14" rx="5"/></g><circle cx="24" cy="24" r="3" fill="#3fb7e8"/></svg><span>DEPLOY</span><small class="ct" id="dn">1</small></button>
+      <button class="btn bomb" id="bombBtn" aria-label="Throw a bomb"><svg viewBox="0 0 48 48"><path d="M31 13c3-6 8-6 10-3" fill="none" stroke="#5a3200" stroke-width="3" stroke-linecap="round"/><path d="M42 5l1.5 3.5L47 9l-3 2 1 3.5-3-2-3 2 1-3.5-3-2 3.5-.5z" fill="#fff36b" stroke="#a35a00" stroke-width="1.2"/><rect x="25" y="12" width="9" height="7" rx="2" transform="rotate(35 29 15)" fill="#3a3a44" stroke="#111" stroke-width="2"/><circle cx="21" cy="29" r="15" fill="#3a3a44" stroke="#111" stroke-width="2.5"/><circle cx="15" cy="23" r="4" fill="#fff" opacity=".55"/></svg><span id="bl">BOMB</span><small class="ct" id="bn">5</small></button>
+      <button class="btn flame" id="flameBtn" aria-label="Flamethrower"><i class="fuel" id="fuelf"></i><svg viewBox="0 0 48 48"><path d="M24 3c3 9 14 14 14 27a14 14 0 0 1-28 0c0-7 4-11 6-15 1 5 3 7 5 8-1-8 1-14 3-20z" fill="#fff3c4" stroke="#7a2e06" stroke-width="2.5" stroke-linejoin="round"/><path d="M24 22c2 5 7 8 7 13a7 7 0 0 1-14 0c0-4 3-6 4-9 1 2 2 3 3 3 0-3-1-5 0-7z" fill="#ff7a1a"/></svg><span>FLAME</span></button>
+      <button class="btn fire" id="fireBtn" aria-label="Fire guns"><svg viewBox="0 0 48 48"><g fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"><circle cx="24" cy="24" r="14"/><path d="M24 3v10M24 35v10M3 24h10M35 24h10"/></g><circle cx="24" cy="24" r="4.5" fill="#fff"/></svg><span>FIRE</span></button>
     </div>
   </div>
 </div>
@@ -670,7 +681,7 @@ function driveCar(c,turn,thr,dt){
   const maxV=(3.4+.3*eng)*(.72+.28*Math.min(1.6,V.steer))*(c.me&&S.boost>0?1.7:1);
   const target=thr>=0?maxV*thr:maxV*.55*thr;
   c.v+=(target-c.v)*Math.min(1,.06*dt);
-  c.a+=turn*.05*V.steer*(.45+.55*Math.min(1,Math.abs(c.v)/3))*(c.v<0?-1:1)*dt;
+  const tb=c.me?.62:.45;c.a+=turn*.05*V.steer*(tb+(1-tb)*Math.min(1,Math.abs(c.v)/3))*(c.v<0?-1:1)*dt;
   c.x+=Math.sin(c.a)*c.v*dt;c.y-=Math.cos(c.a)*c.v*dt;
   c.flash=Math.max(0,c.flash-dt);c.inv=Math.max(0,c.inv-dt);
   if(!V.air){for(const q of A.rects){const nx=clamp(c.x,q.x,q.x+q.w),ny=clamp(c.y,q.y,q.y+q.h),dx=c.x-nx,dy=c.y-ny,d=Math.hypot(dx,dy);
@@ -718,10 +729,19 @@ function updateArena(dt){
   S.fx=S.fx.filter(f=>f.life>0);
   const me=S.me,play=S.mode==='play'&&S.vsT<40;
   if(play&&!me.dead){
-    let turn=0,thr=0;const js=S.js||{x:0,y:0};
-    if(Math.abs(js.x)>.12||Math.abs(js.y)>.12){turn=clamp(js.x*1.25,-1,1);thr=clamp(-js.y*1.15,-1,1);}
+    // Point-to-go: the stick (or a drag on the screen) shows where to head on screen; the car turns smoothly toward it.
+    // In Behind/Windshield views pulling straight down reverses. Pushing into a wall backs out on its own.
+    let turn=0,thr=0,aim=null;const js=S.js||{x:0,y:0},jl=Math.min(1,Math.hypot(js.x,js.y));
+    if(jl>.2)aim={ang:Math.atan2(js.x,-js.y),k:(jl-.2)/.8};
+    else if(joy&&joy.len>16)aim={ang:joy.ang,k:Math.min(1,(joy.len-16)/70)};
+    if(aim){
+      if(SAVE.view!=='top'&&Math.abs(aim.ang)>2.6){thr=-.75;turn=clamp(-Math.sin(aim.ang)*2,-1,1);}
+      else{const d=angDiff(aim.ang-S.cam.r,me.a);turn=clamp(d*2.2,-1,1);thr=(.5+.5*aim.k)*(Math.abs(d)>1.7?.6:1);}
+      if(thr>0&&Math.abs(me.v)<.45)S.stk=(S.stk||0)+dt;else S.stk=Math.max(0,(S.stk||0)-dt*2);
+      if(S.stk>26){S.stk=0;S.rev=34;}
+      if(S.rev>0){S.rev-=dt;thr=-.8;turn=-turn;}
+    }else{S.stk=0;S.rev=0;}
     if(keys.ArrowLeft||keys.a)turn=-1;if(keys.ArrowRight||keys.d)turn=1;if(keys.ArrowUp||keys.w)thr=1;if(keys.ArrowDown||keys.s)thr=-.5;
-    if(joy&&joy.len>16){turn=clamp(angDiff(joy.ang-S.cam.r,me.a)*2.4,-1,1);thr=Math.min(1,.4+joy.len/90);}
     driveCar(me,turn,thr,dt);
   }else if(!me.dead)driveCar(me,0,0,dt);
   for(const c of S.cars){if(c.me||c.dead)continue;if(c.rem)netCarStep(c,dt);else if(play)botThink(c,dt);else driveCar(c,0,0,dt);
@@ -1151,7 +1171,7 @@ function setGoText(){$('go').textContent=SAVE.mode==='online'?'MAKE A ROOM':SAVE
 function renderMode(){
   for(const b of $('modeSeg').children)b.classList.toggle('on',b.dataset.m===SAVE.mode);
   $('arenaSeg').hidden=SAVE.mode!=='arena';$('joinRow').hidden=SAVE.mode!=='online';for(const b of $('arenaSeg').children)b.classList.toggle('on',b.dataset.a===SAVE.arena);
-  $('modeNote').textContent=SAVE.mode==='online'?'Battle friends on their own phones. Make a room and share the 4-letter code, or type a friend\'s code and tap JOIN. Private rooms only.':SAVE.mode==='arena'?'Free-drive '+ARENAS[SAVE.arena].name.toLowerCase()+' battle, round '+(SAVE.alv||1)+'. Joystick: up drives forward, down reverses, sides turn. Last one standing wins.'
+  $('modeNote').textContent=SAVE.mode==='online'?'Battle friends on their own phones. Make a room and share the 4-letter code, or type a friend\'s code and tap JOIN. Private rooms only.':SAVE.mode==='arena'?'Free-drive '+ARENAS[SAVE.arena].name.toLowerCase()+' battle, round '+(SAVE.alv||1)+'. Push the joystick toward where you want to go. Last one standing wins.'
     :'Drive the '+(curWorld()==='sea'?'shipping lane':'highway')+', blast what is ahead, dodge air strikes and obstacles. Level '+SAVE.level+'.';
   setGoText();
 }
@@ -1878,7 +1898,6 @@ $('go').onclick=()=>{
 };
 function cycleView(){const o=['top','chase','cockpit'];SAVE.view=o[(o.indexOf(SAVE.view)+1)%3];save();hud();renderView();}
 $('viewBtn').onclick=cycleView;
-$('droneBtn').onclick=launchDrone;
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const k=e.key.length===1?e.key.toLowerCase():e.key;keys[k]=true;
   if(!e.repeat){if(k==='b')throwBomb();if(k==='e')launchDrone();if(k==='v')cycleView();}
   if([' ','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(k))e.preventDefault();if(k==='Enter'&&!$('ov').hidden&&!$('mainCard').hidden&&e.target.id!=='joinCode')$('go').click();});
@@ -1890,14 +1909,19 @@ function hold(el,on,off){
 }
 hold($('fireBtn'),()=>{firing=true;$('fireBtn').classList.add('on');},()=>{firing=false;$('fireBtn').classList.remove('on');});
 hold($('flameBtn'),()=>{flaming=true;$('flameBtn').classList.add('on');},()=>{flaming=false;$('flameBtn').classList.remove('on');});
+hold($('droneBtn'),()=>{launchDrone();$('droneBtn').classList.add('on');},()=>$('droneBtn').classList.remove('on'));
 hold($('bombBtn'),()=>{throwBomb();$('bombBtn').classList.add('on');},()=>$('bombBtn').classList.remove('on'));
 
-let padDown=false;
+let padDown=false,joyO={x:0,y:0};
+// Floating joystick: the base jumps to wherever the thumb lands inside the steering area
+function joyStart(e){const p=$('pad').getBoundingClientRect(),jb=$('joyBase'),R0=jb.offsetWidth/2;
+  const x=clamp(e.clientX-p.left,Math.min(R0,p.width/2),Math.max(p.width-R0,p.width/2)),y=clamp(e.clientY-p.top,Math.min(R0,p.height/2),Math.max(p.height-R0,p.height/2));
+  jb.style.left=x+'px';jb.style.top=y+'px';joyO={x:p.left+x,y:p.top+y};}
 function padMove(e){
-  if(S.kind==='arena'){const b=$('joyBase').getBoundingClientRect(),R0=b.width/2;let dx=(e.clientX-(b.left+R0))/R0,dy=(e.clientY-(b.top+R0))/R0;const l=Math.hypot(dx,dy);if(l>1){dx/=l;dy/=l;}
-    S.js={x:dx,y:dy};$('joyKnob').style.transform='translate('+(dx*R0*.62)+'px,'+(dy*R0*.62)+'px)';return;}
+  if(S.kind==='arena'){const R0=$('joyBase').offsetWidth/2;let dx=(e.clientX-joyO.x)/R0,dy=(e.clientY-joyO.y)/R0;const l=Math.hypot(dx,dy);if(l>1){dx/=l;dy/=l;}
+    S.js={x:dx,y:dy};$('joyKnob').style.transform='translate('+(dx*R0*.7)+'px,'+(dy*R0*.7)+'px)';return;}
   const r=$('pad').getBoundingClientRect(),{rl,rw}=road();const f=clamp((e.clientX-r.left-16)/(r.width-32),0,1);S.p.tx=rl+20+f*(rw-40);}
-hold($('pad'),e=>{padDown=true;padMove(e);},()=>{padDown=false;S.js={x:0,y:0};$('joyKnob').style.transform='';});
+hold($('pad'),e=>{padDown=true;if(S.kind==='arena')joyStart(e);padMove(e);},()=>{padDown=false;S.js={x:0,y:0};$('joyKnob').style.transform='';$('joyBase').style.left=$('joyBase').style.top='';});
 $('pad').addEventListener('pointermove',e=>{if(padDown)padMove(e);});
 
 let drag=null,joy=null;
