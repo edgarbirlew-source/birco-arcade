@@ -188,6 +188,7 @@ body.arena .btns{--bs:62px}
           </div>
           <div class="panel">
             <div class="gh">GARAGE <span id="gcash">$0</span></div>
+            <p class="note">Upgrading your <b id="gveh">STREET RACER</b>. Each vehicle keeps its own upgrades.</p>
             <div id="rows"></div>
           </div>
           <div class="panel" id="howPanel">
@@ -196,7 +197,7 @@ body.arena .btns{--bs:62px}
               <li><b>Street run:</b> drive the road, blast the bad guys ahead, dodge <b>air strikes</b> (red target circles) and obstacles. Hit the goal, then cross the finish line</li>
               <li><b>VS Arena:</b> free-drive a City, Town, Demolition Derby or Harbor. Hunt your rivals before they hunt you. Last one standing wins</li>
               <li>Street: <b>drag</b> the road or slider to steer. Arena: push the <b>joystick</b> toward where you want to go (it starts wherever your thumb lands), or drag on the screen. Stuck on a wall? Keep pushing and you back out</li>
-              <li><b>FIRE</b> guns · <b>FLAME</b> torches up close · <b>BOMB</b> lobs a blast · <b>DEPLOY</b> sends a drone helper</li>
+              <li><b>FIRE</b> guns · <b>FLAME</b> torches up close · <b>BOMB</b> lobs a blast · <b>DEPLOY</b> sends a drone: near rivals it fights beside you, far away it flies off as a flying bomb, with nobody around it adds gun power</li>
               <li>Pickups: 💣 bombs · 🔧 repair · 🛡️ shield · ⛽ fuel · 🛸 drone · ⚡ boost · ✈️ pads give you jet wings</li>
               <li>Keys: arrows steer (arena: ↑ gas, ↓ reverse), Space fire, F flame, B bomb, E drone, V view</li>
             </ul>
@@ -247,35 +248,40 @@ const keys={};
 const VEH={
   racer:{name:'Street Racer',world:'land',cost:0,w:34,h:58,armor:1,steer:1,col:'#2a8fd6',gun:'twin',eye:24,cab:'car',desc:'Balanced all-rounder'},
   moto:{name:'Motorcycle',world:'land',cost:0,w:18,h:42,armor:.6,steer:1.6,col:'#e04a3a',gun:'single',eye:28,cab:'moto',desc:'Quickest steering, small target, light armor'},
-  muscle:{name:'Muscle Car',world:'land',cost:300,w:36,h:62,armor:1.3,steer:1.05,col:'#e2b023',gun:'twin',ram:.6,eye:24,cab:'car',desc:'Tough body, ramming hurts less'},
-  mack:{name:'Mack Truck',world:'land',cost:700,w:44,h:88,armor:1.9,steer:.7,col:'#b8402f',gun:'twin',ram:.25,eye:46,cab:'truck',desc:'Plows through cars, huge armor, slow to turn'},
-  tank:{name:'Battle Tank',world:'land',cost:1200,w:46,h:70,armor:2.3,steer:.6,col:'#5f6b3a',gun:'cannon',ram:.35,eye:32,cab:'tank',desc:'Explosive cannon shells, heaviest armor'},
-  heli:{name:'Gunship',world:'both',cost:1600,w:30,h:62,armor:.9,steer:1.3,col:'#3b4652',gun:'twin',air:true,eye:66,cab:'heli',desc:'Always flying: cars and boats pass under you'},
+  muscle:{name:'Muscle Car',world:'land',cost:450,w:36,h:62,armor:1.3,steer:1.05,col:'#e2b023',gun:'twin',ram:.6,eye:24,cab:'car',desc:'Tough body, ramming hurts less'},
+  mack:{name:'Mack Truck',world:'land',cost:1100,w:44,h:88,armor:1.9,steer:.7,col:'#b8402f',gun:'twin',ram:.25,eye:46,cab:'truck',desc:'Plows through cars, huge armor, slow to turn'},
+  tank:{name:'Battle Tank',world:'land',cost:1800,w:46,h:70,armor:2.3,steer:.6,col:'#5f6b3a',gun:'cannon',ram:.35,eye:32,cab:'tank',desc:'Explosive cannon shells, heaviest armor'},
+  heli:{name:'Gunship',world:'both',cost:2400,w:30,h:62,armor:.9,steer:1.3,col:'#3b4652',gun:'twin',air:true,eye:66,cab:'heli',desc:'Always flying: cars and boats pass under you'},
   jetski:{name:'Jet Ski',world:'sea',cost:0,w:18,h:40,armor:.6,steer:1.6,col:'#ffb02e',gun:'single',eye:22,cab:'moto',desc:'Quickest steering, light armor'},
   speedboat:{name:'Speedboat',world:'sea',cost:0,w:32,h:62,armor:1,steer:1.1,col:'#f2ece0',gun:'twin',eye:24,cab:'boat',desc:'Balanced all-rounder'},
-  patrol:{name:'Patrol Boat',world:'sea',cost:400,w:38,h:70,armor:1.4,steer:.95,col:'#2f6db0',gun:'twin',ram:.5,eye:30,cab:'boat',desc:'Armored cabin, ramming hurts less'},
-  gunboat:{name:'Gunboat',world:'sea',cost:900,w:44,h:84,armor:2,steer:.7,col:'#6c7780',gun:'cannon',ram:.3,eye:38,cab:'boat',desc:'Cannon turrets, heavy armor'},
-  sub:{name:'Submarine',world:'sea',cost:1300,w:28,h:76,armor:1.2,steer:.85,col:'#2b2f36',gun:'twin',sub:true,eye:12,cab:'sub',desc:'Dives when not firing. Bombs become torpedoes'},
+  patrol:{name:'Patrol Boat',world:'sea',cost:600,w:38,h:70,armor:1.4,steer:.95,col:'#2f6db0',gun:'twin',ram:.5,eye:30,cab:'boat',desc:'Armored cabin, ramming hurts less'},
+  gunboat:{name:'Gunboat',world:'sea',cost:1400,w:44,h:84,armor:2,steer:.7,col:'#6c7780',gun:'cannon',ram:.3,eye:38,cab:'boat',desc:'Cannon turrets, heavy armor'},
+  sub:{name:'Submarine',world:'sea',cost:2000,w:28,h:76,armor:1.2,steer:.85,col:'#2b2f36',gun:'twin',sub:true,eye:12,cab:'sub',desc:'Dives when not firing. Bombs become torpedoes'},
 };
 const LAND=['racer','moto','muscle','mack','tank','heli'],SEA=['speedboat','jetski','patrol','gunboat','sub','heli'];
 const worldOf=L=>(Math.floor((L-1)/4)%2)?'sea':'land';
 const curWorld=()=>SAVE.world||worldOf(SAVE.level);
 
 /* ---------- saved progress ---------- */
-const freshSave=()=>({level:1,cash:0,up:{armor:0,guns:0,engine:0,bombs:0,flame:0,drone:0},owned:['racer','moto','speedboat','jetski'],sel:{land:'racer',sea:'speedboat'},view:'top',mode:'street',arena:'city',alv:1});
+const blankUp=()=>({armor:0,guns:0,engine:0,bombs:0,flame:0,drone:0});
+// Upgrades belong to each vehicle: ups[vehicleKey] = {armor,guns,...}
+const freshSave=()=>({level:1,cash:0,ups:{},owned:['racer','moto','speedboat','jetski'],sel:{land:'racer',sea:'speedboat'},view:'top',mode:'street',arena:'city',alv:1});
 let SAVE=freshSave();
 try{
   let s=JSON.parse(localStorage.getItem('rr-save3')||'null');
   if(!s){const o=JSON.parse(localStorage.getItem('rr-save2')||'null');if(o&&o.up)s={level:o.level,cash:o.cash,up:{armor:o.up.body||0,guns:o.up.guns||0,engine:o.up.engine||0,bombs:o.up.bombs||0,flame:o.up.flame||0}};}
-  if(s){SAVE.level=s.level||1;SAVE.cash=s.cash||0;Object.assign(SAVE.up,s.up||{});
+  if(s){SAVE.level=s.level||1;SAVE.cash=s.cash||0;if(s.ups&&typeof s.ups==='object')for(const k in s.ups)if(VEH[k])SAVE.ups[k]=Object.assign(blankUp(),s.ups[k]);
     if(Array.isArray(s.owned))SAVE.owned=[...new Set([...SAVE.owned,...s.owned.filter(k=>VEH[k])])];
     if(s.sel)Object.assign(SAVE.sel,s.sel);if(['top','chase','cockpit'].includes(s.view))SAVE.view=s.view;if(s.world==='land'||s.world==='sea')SAVE.world=s.world;if(s.mode==='arena'||s.mode==='online')SAVE.mode=s.mode;if(['city','town','derby','harbor'].includes(s.arena))SAVE.arena=s.arena;if(s.alv>0)SAVE.alv=s.alv;}
+  // older saves had one shared set of upgrades: give it to the land and sea rides in use so nobody loses progress
+  if(s&&!s.ups&&s.up&&Object.values(s.up).some(v=>v>0))for(const w of ['land','sea']){const k=SAVE.sel[w];if(VEH[k])SAVE.ups[k]=Object.assign(blankUp(),s.up);}
 }catch(e){}
 function save(){try{localStorage.setItem('rr-save3',JSON.stringify(SAVE))}catch(e){}}
-const U=()=>SAVE.up;
+let UVK='racer'; // vehicle whose upgrades apply in the current run
+const U=k=>{k=k||UVK;return SAVE.ups[k]||(SAVE.ups[k]=blankUp());};
 function vehKey(world){const k=SAVE.sel[world];const V=VEH[k];if(V&&SAVE.owned.includes(k)&&(V.world===world||V.world==='both'))return k;return world==='sea'?'speedboat':'racer';}
 const UP={
-  armor:{name:'Armor plating',base:150,max:4,desc:l=>'+'+(30*l)+' armor on every vehicle'},
+  armor:{name:'Armor plating',base:150,max:4,desc:l=>'+'+(30*l)+' armor'},
   guns:{name:'Guns',base:120,max:4,desc:l=>['Stock guns','Faster fire','Extra barrel','Rapid fire','Spread shot'][l]},
   engine:{name:'Engine',base:100,max:4,desc:l=>'Steering speed '+(l+1)+' of 5'},
   bombs:{name:'Bombs',base:100,max:4,desc:l=>'Start with '+(5+l)+' · bigger blast'},
@@ -302,7 +308,7 @@ $('mute').onclick=()=>{muted=!muted;$('sn').textContent=muted?'OFF':'ON';$('mute
 let S,camXs=0;
 function startLevel(mode){
   document.body.classList.remove('arena');$('padTag').textContent='STEER';
-  const L=SAVE.level,world=curWorld(),vk=vehKey(world),V=VEH[vk];
+  const L=SAVE.level,world=curWorld(),vk=vehKey(world),V=VEH[vk];UVK=vk;
   S={kind:'street',mode,L,world,vk,V,t:0,dist:0,len:levelLen(L),goal:levelGoal(L),total:levelGoal(L),spawned:0,bossOut:true,clearT:0,vsT:0,hz:[],strikes:[],hzT:500,strikeT:420,spin:0,slow:0,kills:0,earned:0,speed:6,hp:0,
     bombs:5+U().bombs,fuel:fuelMax(),drones:1+U().drone,dr:[],
     p:{x:W/2,tx:W/2,cool:0,inv:0},bul:[],ebul:[],bm:[],en:[],fx:[],props:[],picks:[],decals:[],pads:[],
@@ -360,7 +366,7 @@ function kill(e,counts=true){
   if(!counts)return;
   S.kills++;
   if(!S.goalHit&&S.kills>=S.goal){S.goalHit=true;S.banner={txt:'GOAL REACHED',sub:'Now cross the finish line',t:140};tone(400,1200,.4,'triangle',.1);}
-  const c={car:20,gun:10,truck:60,boss:300}[e.type];SAVE.cash+=c;S.earned+=c;
+  const c={car:10,gun:5,truck:30,boss:150}[e.type];SAVE.cash+=c;S.earned+=c;
   S.fx.push({txt:'+$'+c,x:e.x,y:e.y,life:45,max:45});
   if(e.boss){S.clearT=80;S.banner={txt:'BOSS DOWN',sub:'Level clear!',t:100};for(let i=0;i<3;i++)setTimeout(()=>{if(S.mode==='play')blast(e.x+rand(-30,30),e.y+rand(-40,40),40,true);},150*(i+1));return;}
   if(e.type!=='gun'&&Math.random()<(e.type==='truck'?.9:.25)){const r=Math.random();S.picks.push({x:e.x,y:e.y,k:r<.22?'B':r<.44?'+':r<.6?'S':r<.75?'F':r<.88?'D':'K'});}
@@ -386,10 +392,14 @@ function throwBomb(){
   if(S.V.sub){S.bm.push({torp:1,x:S.p.x,y:py-S.V.h/2,vy:-9,life:75});tone(500,180,.35,'sine',.09);}
   else{S.bm.push({x:S.p.x,y0:py-30,y1:Math.max(60,py-230),t:0,dur:34,y:py-30,z:0});tone(300,120,.25,'triangle',.08);}
 }
+// A drone near rivals helps you fight; far from them it flies off as a flying bomb; with nobody around it rides along as extra gun power
+function droneMode(x,y,foes,near){let bd=1e9;for(const f of foes)bd=Math.min(bd,Math.hypot(f.x-x,f.y-y));return bd<=near?'h':foes.length?'b':'g';}
 function launchDrone(){
   if(!S||S.mode!=='play'||S.drones<=0||S.dr.filter(d=>!d.o||d.o===S.me).length>=2||(S.me&&S.me.dead))return;
-  S.drones--;S.dr.push({t:600+120*U().drone,a:rand(0,6.28),cool:20,x:S.kind==='arena'?S.me.x:S.p.x,y:S.kind==='arena'?S.me.y:H-70,o:S.me,lv:U().drone});
-  if(S.online)netSend({t:'d',id:S.me.id,lv:U().drone});
+  const ar=S.kind==='arena',x=ar?S.me.x:S.p.x,y=ar?S.me.y:H-70,m=droneMode(x,y,ar?S.cars.filter(c=>!c.me&&!c.dead):S.en.filter(e=>!e.dead&&e.y>-10&&e.y<H-20),ar?380:260);
+  S.drones--;S.dr.push({t:600+120*U().drone,a:rand(0,6.28),cool:20,x,y,o:S.me,lv:U().drone,m});
+  if(S.online)netSend({t:'d',id:S.me.id,lv:U().drone,m});
+  S.fx.push({txt:m==='b'?'🛸 FLYING BOMB':m==='g'?'🛸 GUN POD':'🛸 DRONE',x,y:y-34,life:50,max:50});
   tone(300,900,.3,'square',.04);hud();
 }
 
@@ -475,6 +485,13 @@ function update(dt){
   // drones
   for(const d of S.dr){
     d.t-=dt;d.a+=.05*dt;d.cool-=dt;
+    if(d.m==='b'){if(!d.tg||d.tg.dead||d.tg.y>H){d.tg=null;let bd=1e9;for(const e of S.en){if(e.dead||e.y<-10)continue;const dd=Math.hypot(e.x-d.x,e.y-d.y);if(dd<bd){bd=dd;d.tg=e;}}}
+      if(!d.tg){d.m='g';continue;}const dx=d.tg.x-d.x,dy=d.tg.y-d.y,l=Math.hypot(dx,dy)||1;d.x+=dx/l*7*dt;d.y+=dy/l*7*dt;
+      if(Math.random()<.5)S.fx.push({x:d.x,y:d.y,vx:rand(-.5,.5),vy:rand(.5,1.5),life:12,max:12,size:rand(3,5),col:'smoke'});
+      if(l<d.tg.w/2+12){explode(d.x,d.y,bombR());d.t=0;}continue;}
+    if(d.m==='g'){d.x+=(p.x+Math.cos(d.a*2)*20-d.x)*.3;d.y+=(py-56-d.y)*.3;
+      if((firing||keys[' '])&&d.cool<=0){S.bul.push({x:d.x-6,y:d.y-6,vx:0,vy:-15,dmg:1,kind:'drone'},{x:d.x+6,y:d.y-6,vx:0,vy:-15,dmg:1,kind:'drone'});d.cool=Math.max(4,7-U().drone*.6);tone(1400,600,.04,'square',.01);}
+      continue;}
     d.x=p.x+Math.cos(d.a)*44;d.y=py-46+Math.sin(d.a)*16;
     if(d.cool<=0){
       let best=null,bd=1e9;
@@ -543,7 +560,7 @@ function update(dt){
       else if(o.k==='mine'){o.dead=1;blast(o.x,o.y,30,true);boom(true);if(!prot)hurt(25);}
       else{o.dead=1;blast(o.x,o.y,o.k==='cones'?8:18,false);boom(false);if(!prot)hurt((o.k==='cones'?3:15)*(B.ram||1));}}
     if(o.hp>0&&!o.dead)for(const b of S.bul){if(!b.hit&&Math.abs(b.x-o.x)<o.w/2+3&&Math.abs(b.y-o.y)<o.h/2+3){b.hit=1;o.hp-=b.kind==='shell'?6:b.dmg;
-      if(o.hp<=0){o.dead=1;blast(o.x,o.y,o.k==='mine'?30:14,o.k==='mine');boom(o.k==='mine');SAVE.cash+=2;}}}}
+      if(o.hp<=0){o.dead=1;blast(o.x,o.y,o.k==='mine'?30:14,o.k==='mine');boom(o.k==='mine');SAVE.cash+=1;}}}}
   S.hz=S.hz.filter(o=>!o.dead&&o.y<H+60);
   if(S.spin>0){S.spin-=dt;p.tx+=Math.sin(S.t*.35)*7*dt;}
   if(S.slow>0)S.slow-=dt;
@@ -593,7 +610,7 @@ function endLevel(){
   S.mode='end';
   const ok=S.kills>=S.goal;let bonus=0;
   for(const e of S.en)kill(e,false);
-  if(ok){bonus=100+40*S.L;SAVE.cash+=bonus;SAVE.level++;if(worldOf(SAVE.level)!==worldOf(S.L))SAVE.world=worldOf(SAVE.level);tone(300,1500,.6,'triangle',.12);}
+  if(ok){bonus=50+20*S.L;SAVE.cash+=bonus;SAVE.level++;if(worldOf(SAVE.level)!==worldOf(S.L))SAVE.world=worldOf(SAVE.level);tone(300,1500,.6,'triangle',.12);}
   else tone(400,120,.6,'sawtooth',.08);
   save();hud();
   const info={ok,bonus,kills:S.kills,goal:S.goal,earned:S.earned,L:S.L,from:S.world,to:curWorld()};
@@ -651,7 +668,7 @@ function spawnArenaPick(){const p=freeSpot(0,[]);S.picks.push({x:p.x,y:p.y,k:['B
 function startArena(mode,net){
   document.body.classList.add('arena');$('padTag').textContent='DRIVE';
   const ak=net?net.arena:SAVE.arena||'city',ar=ARENAS[ak],world=ar.world,vk=net?NET.players.find(p=>p.id===NET.id)[world]:vehKey(world),V=VEH[vk],R=SAVE.alv||1;
-  A=buildArena(ak,net?net.seed:1234+R*97+ak.length*31);
+  UVK=vk;A=buildArena(ak,net?net.seed:1234+R*97+ak.length*31);
   S={kind:'arena',mode,L:R,world,vk,V,ak,t:0,kills:0,earned:0,hp:0,bombs:5+U().bombs,fuel:fuelMax(),drones:1+U().drone,dr:[],
     p:{x:0,tx:0,cool:0,inv:0},cars:[],ab:[],bm:[],fx:[],picks:[],decals:[],wrecks:[],shake:0,shield:0,boost:0,fly:0,surf:0,shieldHit:0,
     banner:null,vsT:mode==='play'?200:0,aSteer:0,cam:{x:0,y:0,r:0},pickT:0,pickN:0,en:[],hz:[],strikes:[],dist:0,len:1,goal:0};
@@ -672,7 +689,7 @@ function dmgCar(c,n,src){
   if(c.me){if(c.inv>0)return;if(S.online&&src&&!src.me){c.lastBy=src;c.lastT=S.t;}if(S.shield>0){S.shieldHit=8;return;}if(c.V.sub&&S.surf<=0)return;c.hp-=n;c.inv=n>10?20:4;S.shake=Math.max(S.shake,Math.min(10,n));tone(160,60,.15,'sawtooth',.05);}
   else{c.hp-=n;c.flash=4;}
   if(c.hp<=0){if(S.online){netWrecked(c);return;}c.hp=0;c.dead=true;blast(c.x,c.y,50,true);boom(true);if(S.world!=='sea')S.decals.push({x:c.x,y:c.y,r:40});S.wrecks.push({x:c.x,y:c.y,a:c.a,k:c.k,t:0});
-    if(!c.me){if(src&&src.me){S.kills++;const cash=80+20*(SAVE.alv||1);SAVE.cash+=cash;S.earned+=cash;S.fx.push({txt:'+$'+cash,x:c.x,y:c.y,life:60,max:60});}
+    if(!c.me){if(src&&src.me){S.kills++;const cash=40+10*(SAVE.alv||1);SAVE.cash+=cash;S.earned+=cash;S.fx.push({txt:'+$'+cash,x:c.x,y:c.y,life:60,max:60});}
       const left=S.cars.filter(o=>!o.me&&!o.dead).length;S.banner={txt:c.name+' WRECKED',sub:left?left+' rival'+(left>1?'s':'')+' left':'Arena cleared!',t:90};
       S.picks.push({x:c.x,y:c.y,k:['B','+','S','F','D','K'][Math.random()*6|0]});}}
 }
@@ -693,7 +710,7 @@ function driveCar(c,turn,thr,dt){
   if(c.hp<c.max*.35&&Math.random()<.15)S.fx.push({x:c.x,y:c.y,vx:rand(-.3,.3),vy:rand(-.6,-.2),life:40,max:40,size:rand(6,10),col:S.world==='sea'?'spray':'smoke'});
 }
 function arenaShoot(c,p){
-  p=p||c;if(c.me&&S.online)netSend({t:'f',id:c.id,x:Math.round(c.x),y:Math.round(c.y),a:+c.a.toFixed(3),v:+c.v.toFixed(2)});
+  p=p||c;c.shotT=S.t;if(c.me&&S.online)netSend({t:'f',id:c.id,x:Math.round(c.x),y:Math.round(c.y),a:+c.a.toFixed(3),v:+c.v.toFixed(2)});
   const g=c.me?U().guns:c.rem?c.g:Math.min(2,(SAVE.alv||1)>>1),fx=Math.sin(p.a),fy=-Math.cos(p.a),rx=Math.cos(p.a),ry=Math.sin(p.a),front=c.V.h/2+4,dm=c.me||c.rem?1:1.6;
   const shot=(off,ang,kind,dmg,spd)=>{const a=p.a+ang,dx=Math.sin(a),dy=-Math.cos(a),fw=Math.max(0,p.v)*.5;S.ab.push({x:p.x+fx*front+rx*off,y:p.y+fy*front+ry*off,vx:dx*spd+fx*fw,vy:dy*spd+fy*fw,dmg,kind,owner:c,life:60,air:!!c.V.air});};
   if(c.V.gun==='cannon'){shot(0,0,'shell',3,10);if(g>=2)shot(-9,0,'shell',3,10);if(c.me)noise(.12,500,.1);}
@@ -767,7 +784,17 @@ function updateArena(dt){
     }else S.fuel=Math.min(fuelMax(),S.fuel+.12*dt);
   }
   // drones
-  for(const d of S.dr){const o=d.o||me;d.t-=dt;d.a+=.05*dt;d.cool-=dt;d.x=o.x+Math.cos(d.a)*46;d.y=o.y+Math.sin(d.a)*46;if(o.dead)d.t=0;
+  for(const d of S.dr){const o=d.o||me;d.t-=dt;d.a+=.05*dt;d.cool-=dt;
+    if(d.m==='b'){if(!d.tg||d.tg.dead){d.tg=null;let bd=1e9;for(const c of S.cars){if(c===o||c.dead)continue;const dd=Math.hypot(c.x-d.x,c.y-d.y);if(dd<bd){bd=dd;d.tg=c;}}}
+      if(!d.tg){d.m='g';continue;}const dx=d.tg.x-d.x,dy=d.tg.y-d.y,l=Math.hypot(dx,dy)||1;d.x+=dx/l*6.5*dt;d.y+=dy/l*6.5*dt;
+      if(Math.random()<.5)S.fx.push({x:d.x,y:d.y,vx:rand(-.4,.4),vy:rand(-.4,.4),life:14,max:14,size:rand(3,5),col:'smoke'});
+      if(l<d.tg.r+12){arenaBlast(d.x,d.y,90+15*(d.lv||0),14,o,true);d.t=0;}continue;}
+    if(o.dead){d.t=0;continue;}
+    if(d.m==='g'){const fx=Math.sin(o.a),fy=-Math.cos(o.a);d.x+=(o.x-fx*8+Math.cos(o.a)*Math.sin(d.a*2)*16-d.x)*.35;d.y+=(o.y-fy*8+Math.sin(o.a)*Math.sin(d.a*2)*16-d.y)*.35;
+      const shooting=o===me?(firing||keys[' ']):S.t-(o.shotT||-99)<14;
+      if(shooting&&d.cool<=0){for(const off of [-6,6])S.ab.push({x:d.x+Math.cos(o.a)*off+fx*14,y:d.y+Math.sin(o.a)*off+fy*14,vx:fx*14+Math.sin(o.a)*Math.max(0,o.v)*.5,vy:fy*14-Math.cos(o.a)*Math.max(0,o.v)*.5,dmg:1,kind:'drone',owner:o,life:50,air:true});d.cool=Math.max(4,7-(d.lv||0)*.6);}
+      continue;}
+    d.x=o.x+Math.cos(d.a)*46;d.y=o.y+Math.sin(d.a)*46;
     if(d.cool<=0){let best=null,bd=380;for(const c of S.cars){if(c===o||c.dead)continue;const dd=Math.hypot(c.x-d.x,c.y-d.y);if(dd<bd){bd=dd;best=c;}}
       if(best){S.ab.push({x:d.x,y:d.y,vx:(best.x-d.x)/bd*13,vy:(best.y-d.y)/bd*13,dmg:1,kind:'drone',owner:o,life:50,air:true});d.cool=Math.max(7,16-2*(d.lv||0));}else d.cool=8;}}
   S.dr=S.dr.filter(d=>d.t>0);
@@ -793,7 +820,7 @@ function updateArena(dt){
   if(S.mode==='play'&&S.online)netResult();
   else if(S.mode==='play'){const left=S.cars.filter(c=>!c.me&&!c.dead).length;
     if(me.dead){S.mode='over';save();setTimeout(()=>showOverlay('over'),1300);}
-    else if(left===0){S.mode='end';const prize=200+80*(SAVE.alv||1);SAVE.cash+=prize;const info={prize,earned:S.earned,n:S.cars.length-1,name:ARENAS[S.ak].name.toLowerCase()};SAVE.alv=(SAVE.alv||1)+1;save();tone(300,1500,.6,'triangle',.12);setTimeout(()=>showOverlay('awin',info),1400);}}
+    else if(left===0){S.mode='end';const prize=100+40*(SAVE.alv||1);SAVE.cash+=prize;const info={prize,earned:S.earned,n:S.cars.length-1,name:ARENAS[S.ak].name.toLowerCase()};SAVE.alv=(SAVE.alv||1)+1;save();tone(300,1500,.6,'triangle',.12);setTimeout(()=>showOverlay('awin',info),1400);}}
   // camera
   const c=S.cam,fo=me.dead&&S.online&&S.cars.find(o=>!o.dead)||me;c.x+=(fo.x-c.x)*Math.min(1,.14*dt);c.y+=(fo.y-c.y)*Math.min(1,.14*dt);
   c.r+=angDiff(SAVE.view==='top'?0:-me.a,c.r)*Math.min(1,(SAVE.view==='cockpit'?.35:SAVE.view==='chase'?.2:.1)*dt);
@@ -875,7 +902,7 @@ function drawArena(){
     vehTop(ctx,cr.k,cr.col,{lvl:cr.me?U().armor:0,under,scroll:S.t*cr.v});
     if(cr.flash>0)flashOver(ctx,cr.V.w,cr.V.h,8);
     if(cr.rem&&cr.sh){ctx.fillStyle='rgba(157,123,255,.15)';ctx.strokeStyle='#9d7bff';ctx.lineWidth=3;ell(ctx,0,0,cr.V.w/2+13,cr.V.h/2+11);ctx.fill();ctx.stroke();}
-    if(cr.me&&S.shield>0&&(S.shield>90||Math.floor(S.shield/6)%2)){const hit=S.shieldHit>0;S.shieldHit=Math.max(0,S.shieldHit-1);ctx.fillStyle=hit?'rgba(255,255,255,.3)':'rgba(157,123,255,.15)';ctx.strokeStyle=hit?'#fff':'#9d7bff';ctx.lineWidth=3;ell(ctx,0,0,cr.V.w/2+13,cr.V.h/2+11);ctx.fill();ctx.stroke();}
+    if(cr.me&&S.shield>0&&(S.shield>90||Math.floor(S.shield/6)%2)){const hit=S.shieldHit>0;S.shieldHit=Math.max(0,S.shieldHit-1);drawShield(ctx,0,0,cr.V.w/2+13,cr.V.h/2+11,hit?S.shieldHit+1:0);}
     ctx.restore();};
   for(const cr of S.cars)if(!cr.V.air)drawCar(cr);
   for(const b of S.ab){ctx.strokeStyle=b.kind==='shell'?'#ffd23e':b.kind==='drone'?'#7fd4ff':b.owner.me?'#fff3c4':'#ff6a4a';ctx.lineWidth=b.kind==='shell'?5:3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(b.x,b.y);ctx.lineTo(b.x-b.vx*.9,b.y-b.vy*.9);ctx.stroke();}
@@ -960,7 +987,7 @@ function drawArena3D(){
     const z=cr.V.air?34:0,under=cr.me&&cr.V.sub&&S.surf<=0;
     if(z)addS(cr.x,cr.y,0,p=>softShadow(ctx,p.x,p.y,cr.V.w*.7*p.s,4*p.s,.35));
     addS(cr.x,cr.y,z,p=>{if(cr.me&&cr.inv>0&&Math.floor(cr.inv/3)%2)return;rearSprite(ctx,kindOf(cr),p.x,p.y,p.s,cr.col,{w:cr.V.w,flash:cr.flash>0,ht:30,under,noShadow:!!z});
-      if(cr.me&&S.shield>0){ctx.strokeStyle='#9d7bff';ctx.lineWidth=3;ctx.fillStyle='rgba(157,123,255,.14)';ell(ctx,p.x,p.y-16*p.s,(cr.V.w/2+14)*p.s,26*p.s);ctx.fill();ctx.stroke();}
+      if(cr.me&&S.shield>0&&(S.shield>90||Math.floor(S.shield/6)%2)){drawShield(ctx,p.x,p.y-16*p.s,(cr.V.w/2+14)*p.s,26*p.s,S.shieldHit);S.shieldHit=Math.max(0,S.shieldHit-1);}
       if(!cr.me){const ty=p.y-(cr.V.air?60:52)*p.s;ctx.font='700 '+Math.max(9,Math.min(13,11*p.s))+'px Chakra Petch, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
         const tw=ctx.measureText(cr.name).width+10;ctx.fillStyle='rgba(20,15,12,.7)';rrect(ctx,p.x-tw/2,ty-8,tw,15,4);ctx.fill();ctx.fillStyle='#ff6a4a';ctx.fillText(cr.name,p.x,ty);
         ctx.fillStyle='#3a2c21';ctx.fillRect(p.x-18,ty+9,36,4);ctx.fillStyle=cr.hp/cr.max>.35?'#ffb02e':'#ff4a3d';ctx.fillRect(p.x-18,ty+9,36*cr.hp/cr.max,4);}},cr.me);}
@@ -977,7 +1004,7 @@ function drawArena3D(){
   for(const it of L){const fade=it.d>far-300?Math.max(0,(far-it.d)/300):1;ctx.globalAlpha=fade;it.fn();ctx.globalAlpha=1;}
   if(S.boost>0){ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=2;ctx.beginPath();for(let i=0;i<14;i++){const an=rand(0,6.283),r1=rand(W*.25,W*.4),r2=r1+rand(30,80);ctx.moveTo(W/2+Math.cos(an)*r1,hy+Math.sin(an)*r1*.6);ctx.lineTo(W/2+Math.cos(an)*r2,hy+Math.sin(an)*r2*.6);}ctx.stroke();}
   if(mode==='cockpit'&&!me.dead){S.speed=Math.abs(me.v)*3.5;const fl=S.p.cool;S.p.cool=(firing||keys[' '])&&S.mode==='play'?Math.max(3,fl):0;cockpit(V,0,me.V.sub&&S.surf<=0);S.p.cool=fl;
-    if(S.shield>0){ctx.strokeStyle='rgba(157,123,255,.6)';ctx.lineWidth=10;ctx.strokeRect(5,5,W-10,H-10);}
+    if(S.shield>0&&(S.shield>90||Math.floor(S.shield/6)%2)){shieldScreen(S.shieldHit);S.shieldHit=Math.max(0,S.shieldHit-1);}
     const fa=Math.sin(me.a),fb=-Math.cos(me.a),q=cam(me.x+fa*340,me.y+fb*340,12);let box=null,best=1e9;
     for(const c of S.cars){if(c.me||c.dead)continue;const dx=c.x-me.x,dy=c.y-me.y,d=Math.hypot(dx,dy);if(d>650||d>=best)continue;
       if(Math.abs(angDiff(Math.atan2(dx,-dy),me.a))*d<c.r+6&&los(me,c)){const qq=cam(c.x,c.y,c.V.air?34:0);if(qq.f>near){const pp=pr(qq),w=c.V.w*pp.s;best=d;box={x0:pp.x-w/2-4,x1:pp.x+w/2+4,y1:pp.y+2,y0:pp.y-(c.V.air?30:34)*pp.s};}}}
@@ -997,7 +1024,7 @@ let peerLib=null;
 function loadPeer(){if(window.Peer)return Promise.resolve();
   return peerLib=peerLib||new Promise((ok,no)=>{const sc=document.createElement('script');sc.src='lib/peerjs.min.js';sc.onload=ok;sc.onerror=()=>{peerLib=null;no(new Error('load'));};document.head.appendChild(sc);});}
 function netOpts(){const q=new URLSearchParams(location.search).get('peer');if(!q)return{debug:0};const [host,port]=q.split(':');return{host,port:+port||443,path:'/',secure:location.protocol==='https:',debug:0};}
-const myInfo=()=>({land:vehKey('land'),sea:vehKey('sea'),g:U().guns,ar:U().armor});
+const myInfo=()=>({land:vehKey('land'),sea:vehKey('sea'),g:U(vehKey('land')).guns,ar:U(vehKey('land')).armor,gs:U(vehKey('sea')).guns,as:U(vehKey('sea')).armor});
 function netSend(m){if(NET.host){for(const c of NET.conns)if(c.open)c.send(m);}else if(NET.hostConn&&NET.hostConn.open)NET.hostConn.send(m);}
 function netRelay(m,from){for(const c of NET.conns)if(c!==from&&c.open)c.send(m);}
 function netReset(){NET.leaving=true;clearTimeout(NET.timer);if(NET.peer)try{NET.peer.destroy();}catch(e){}
@@ -1039,7 +1066,7 @@ function netAccept(conn){
       const no=NET.inGame?'busy':slot==null?'full':null;
       if(no){conn.send({t:'no',why:no});setTimeout(()=>conn.close(),800);return;}
       const i=d.info||{},ok=k=>VEH[k]?k:null,id='p'+(++NET.n);conn.pid=id;NET.conns.push(conn);
-      NET.players.push({id,slot,land:ok(i.land)||'racer',sea:ok(i.sea)||'speedboat',g:clamp(i.g|0,0,4),ar:clamp(i.ar|0,0,4)});
+      NET.players.push({id,slot,land:ok(i.land)||'racer',sea:ok(i.sea)||'speedboat',g:clamp(i.g|0,0,4),ar:clamp(i.ar|0,0,4),gs:clamp(i.gs|0,0,4),as:clamp(i.as|0,0,4)});
       conn.send({t:'you',id,code:NET.code});netLobby();tone(600,1200,.15,'triangle',.06);return;}
     if(!conn.pid)return;
     if('id' in d)d.id=conn.pid;
@@ -1081,8 +1108,8 @@ function netSetup(m,me){
   const world=S.world;S.online=true;S.byId={};S.picks=m.picks.map(p=>Object.assign({},p));S.pickN=m.picks.length;
   for(const p of NET.players){const sp=m.spawns[p.id]||freeSpot(300,S.cars),col=SLOTS[p.slot].col;let c;
     if(p.id===NET.id){c=me;c.col=col;c.name='YOU';}
-    else{const k=VEH[p[world]]?p[world]:world==='sea'?'speedboat':'racer';c=mkCar(k,col,false);c.rem=true;c.name=SLOTS[p.slot].name;c.g=p.g|0;
-      c.hp=c.max=Math.round((100+30*(p.ar|0))*c.V.armor);S.cars.push(c);}
+    else{const k=VEH[p[world]]?p[world]:world==='sea'?'speedboat':'racer';c=mkCar(k,col,false);c.rem=true;c.name=SLOTS[p.slot].name;const sea=world==='sea'&&p.gs!=null;c.g=(sea?p.gs:p.g)|0;
+      c.hp=c.max=Math.round((100+30*((sea?p.as:p.ar)|0))*c.V.armor);S.cars.push(c);}
     c.id=p.id;c.x=sp.x;c.y=sp.y;c.a=sp.a;c.tx=c.x;c.ty=c.y;c.ta=c.a;c.v=0;S.byId[p.id]=c;}
   const n=S.cars.length-1;
   S.vs={t0:200,top:'ONLINE · ROOM '+NET.code+' · '+ARENAS[S.ak].name,b:n+' PLAYER'+(n>1?'S':''),foot:'Wreck them before they wreck you. Last one standing wins.'};
@@ -1095,7 +1122,7 @@ function netHandle(d){
   if(d.t==='s'){if(!c||c.me||c.dead)return;c.tx=+d.x||0;c.ty=+d.y||0;c.ta=+d.a||0;c.v=clamp(+d.v||0,-8,8);c.hp=+d.hp||0;c.max=+d.mx||c.max;c.fl=d.fl|0;c.sh=!!d.sh;c.bst=!!d.bo;c.un=!!d.un;return;}
   if(d.t==='f'){if(!c||c.me||c.dead)return;arenaShoot(c,{x:+d.x,y:+d.y,a:+d.a,v:+d.v||0});return;}
   if(d.t==='b'){if(!c||c.me||c.dead||!d.m)return;const m=d.m;S.bm.push(m.torp?{owner:c,torp:1,x:+m.x,y:+m.y,vx:+m.vx,vy:+m.vy,life:80,R:+m.R||90}:{owner:c,x0:+m.x0,y0:+m.y0,x1:+m.x1,y1:+m.y1,t:0,dur:34,x:+m.x0,y:+m.y0,z:0,R:+m.R||90});return;}
-  if(d.t==='d'){if(!c||c.me||c.dead)return;const lv=clamp(d.lv|0,0,4);S.dr.push({t:600+120*lv,a:rand(0,6.28),cool:20,x:c.x,y:c.y,o:c,lv});return;}
+  if(d.t==='d'){if(!c||c.me||c.dead)return;const lv=clamp(d.lv|0,0,4);S.dr.push({t:600+120*lv,a:rand(0,6.28),cool:20,x:c.x,y:c.y,o:c,lv,m:['h','b','g'].includes(d.m)?d.m:'h'});return;}
   if(d.t==='x'){if(c&&!c.me)netKill(c,d.by);return;}
   if(d.t==='pk'){if(d.p&&!S.picks.some(k=>k.id===d.p.id))S.picks.push({x:+d.p.x,y:+d.p.y,k:d.p.k,id:d.p.id});return;}
   if(d.t==='pg'){S.picks=S.picks.filter(k=>k.id!==d.pid);return;}
@@ -1108,7 +1135,7 @@ function netKill(c,by){
   if(c.dead)return;c.hp=0;c.dead=true;blast(c.x,c.y,50,true);boom(true);
   if(S.world!=='sea')S.decals.push({x:c.x,y:c.y,r:40});S.wrecks.push({x:c.x,y:c.y,a:c.a,k:c.k,t:0});
   const k=S.byId[by];
-  if(k&&k.me){S.kills++;SAVE.cash+=100;S.earned+=100;S.fx.push({txt:'+$100',x:c.x,y:c.y,life:60,max:60});}
+  if(k&&k.me){S.kills++;SAVE.cash+=50;S.earned+=50;S.fx.push({txt:'+$50',x:c.x,y:c.y,life:60,max:60});}
   S.banner={txt:c.name+' WRECKED',sub:k?'by '+(k.me?'you':k.name):'',t:90};
   if(NET.host){const p={x:Math.round(c.x),y:Math.round(c.y),k:['B','+','S','F','D','K'][Math.random()*6|0],id:++S.pickN};S.picks.push(p);netSend({t:'pk',p});}
 }
@@ -1131,10 +1158,10 @@ function netTick(dt){
 function netResult(){
   const alive=S.cars.filter(c=>!c.dead);if(alive.length>1)return;
   S.mode='end';const w=alive[0],me=S.me;
-  if(w&&w.me){SAVE.cash+=250;S.earned+=250;tone(300,1500,.6,'triangle',.12);}
+  if(w&&w.me){SAVE.cash+=125;S.earned+=125;tone(300,1500,.6,'triangle',.12);}
   if(w&&NET.host){const p=NET.players.find(p=>p.id===w.id);if(p)p.w=(p.w||0)+1;}
   save();hud();
-  const msg=(w?w.me?'Last one standing! +$250 prize. ':w.name+' is the last one standing. ':'')+'You wrecked '+S.kills+' · earned $'+S.earned+'.';
+  const msg=(w?w.me?'Last one standing! +$125 prize. ':w.name+' is the last one standing. ':'')+'You wrecked '+S.kills+' · earned $'+S.earned+'.';
   setTimeout(()=>{if(!NET.ok)return;NET.inGame=false;netShow(w&&w.me?'YOU WIN!':me.dead?'WRECKED':'MATCH OVER',msg);if(NET.host)netLobby();},1600);
 }
 $('nstart').onclick=()=>{try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();}catch(e){}netStart();};
@@ -1217,10 +1244,13 @@ $('vgrid').addEventListener('click',e=>{
   if(S.mode!=='play')startLevel('title');
   renderBoard();renderGarage();hud();
 });
+const garageVk=()=>vehKey(boardTab||curWorld());
+const upCost=(k,l)=>Math.round(UP[k].base*1.5*Math.pow(l+1,1.5)/10)*10;
 function renderGarage(){
-  $('gcash').textContent='$'+SAVE.cash;
+  $('gcash').textContent='$'+SAVE.cash;$('gveh').textContent=VEH[garageVk()].name.toUpperCase();
+  const UG=U(garageVk());
   $('rows').innerHTML=Object.keys(UP).map(k=>{
-    const u=UP[k],l=U()[k]||0,max=l>=u.max,cost=u.base*(l+1);
+    const u=UP[k],l=UG[k]||0,max=l>=u.max,cost=upCost(k,l);
     return '<div class="row"><div class="ri"><b>'+u.name+'</b><span class="pips">'+'<i class="on"></i>'.repeat(l+1)+'<i></i>'.repeat(u.max-l)+'</span>'+
       '<small>'+(max?u.desc(l)+' · maxed':'Now: '+u.desc(l)+'<br>Next: '+u.desc(l+1))+'</small></div>'+
       '<button class="buy" data-k="'+k+'"'+(max||SAVE.cash<cost?' disabled':'')+'>'+(max?'MAX':'$'+cost)+'</button></div>';
@@ -1228,8 +1258,8 @@ function renderGarage(){
 }
 $('rows').addEventListener('click',e=>{
   const b=e.target.closest('.buy');if(!b||b.disabled)return;
-  const k=b.dataset.k,cost=UP[k].base*((U()[k]||0)+1);
-  if(SAVE.cash>=cost&&(U()[k]||0)<UP[k].max){SAVE.cash-=cost;U()[k]=(U()[k]||0)+1;save();
+  const k=b.dataset.k,UG=U(garageVk()),cost=upCost(k,UG[k]||0);
+  if(SAVE.cash>=cost&&(UG[k]||0)<UP[k].max){SAVE.cash-=cost;UG[k]=(UG[k]||0)+1;save();
     if(S.mode!=='play')startLevel('title');renderBoard();renderGarage();hud();tone(600,1800,.25,'triangle',.08);}
 });
 let resetArmed=false;
@@ -1276,7 +1306,7 @@ function drawPick(g,x,y,sz,k){
   g.font=emoFont(sz*.66);g.textAlign='center';g.textBaseline='middle';g.fillStyle='#fff';g.fillText(EMO[k]||k,x,y+sz*.04);
 }
 function applyPick(k){
-  SAVE.cash+=5;
+  SAVE.cash+=2;
   if(k==='B')S.bombs=Math.min(9+U().bombs,S.bombs+2);else if(k==='S')S.shield=480;else if(k==='F')S.fuel=fuelMax();
   else if(k==='D')S.drones=Math.min(6,S.drones+1);else if(k==='K')S.boost=240;
   else{if(S.kind==='arena')S.me.hp=Math.min(S.me.max,S.me.hp+30);else S.hp=Math.min(maxHp(),S.hp+30);}
@@ -1624,8 +1654,7 @@ function drawTop(){
     ctx.restore();
     if((firing||keys[' '])&&S.mode==='play'&&S.p.cool>2){ctx.fillStyle='#ffd23e';ctx.beginPath();ctx.arc(px-9*s,yy-(B.h/2+8)*s,4,0,6.283);ctx.arc(px+9*s,yy-(B.h/2+8)*s,4,0,6.283);ctx.fill();}
     if(S.shield>0&&(S.shield>90||Math.floor(S.shield/6)%2)){const hit=S.shieldHit>0;S.shieldHit=Math.max(0,S.shieldHit-1);
-      ctx.fillStyle=hit?'rgba(255,255,255,.3)':'rgba(157,123,255,.15)';ctx.strokeStyle=hit?'#fff':'#9d7bff';ctx.lineWidth=3;
-      ctx.beginPath();ctx.ellipse(px,yy,(B.w/2+13)*s,(B.h/2+11)*s,0,0,6.283);ctx.fill();ctx.stroke();}
+      drawShield(ctx,px,yy,(B.w/2+13)*s,(B.h/2+11)*s,hit?S.shieldHit+1:0);}
   }
   for(const d of S.dr)drawDroneTop(d.x,d.y);
   for(const m of S.bm){
@@ -1635,6 +1664,33 @@ function drawTop(){
     ctx.fillStyle=(m.t|0)%4<2?'#ffd23e':'#ff4a3d';ctx.beginPath();ctx.arc(m.x+4*s,m.y-m.z-7*s,2.5*s,0,6.283);ctx.fill();}
   drawFxTop();
   ctx.restore();
+}
+// Energy bubble: glowing dome, drifting hex mesh, sweeping rim highlights, ripple when hit
+function drawShield(g,x,y,rx,ry,hit){
+  const t=performance.now()/1000,h=clamp((hit||0)/8,0,1),R=rx;
+  g.save();g.translate(x,y);g.scale(1,ry/rx);
+  const gr=g.createRadialGradient(0,0,R*.15,0,0,R);
+  gr.addColorStop(0,'rgba(110,230,255,0)');gr.addColorStop(.7,'rgba(110,230,255,'+(.10+.3*h)+')');gr.addColorStop(1,'rgba(160,130,255,'+(.42+.4*h)+')');
+  g.beginPath();g.arc(0,0,R,0,6.283);g.fillStyle=gr;g.fill();
+  g.save();g.clip();
+  const sz=Math.max(5,R/4.2),hh=sz*Math.sqrt(3)/2,off=(t*sz*.8)%(sz*3),nr=Math.ceil(R/hh)+1,nc=Math.ceil(R/(sz*3))+2;
+  g.strokeStyle='rgba(200,245,255,'+(.32+.15*Math.sin(t*3)+.4*h)+')';g.lineWidth=Math.max(.7,R/38);g.beginPath();
+  for(let r=-nr;r<=nr;r++)for(let c=-nc;c<=nc;c++){const cx=c*sz*3+(r&1)*sz*1.5+off-sz*3,cy=r*hh;
+    for(let k=0;k<6;k++){const a=k*1.0472,px=cx+sz*Math.cos(a),py=cy+sz*Math.sin(a);if(k)g.lineTo(px,py);else g.moveTo(px,py);}g.closePath();}
+  g.stroke();g.restore();
+  g.shadowColor='#7fe0ff';g.shadowBlur=12;g.strokeStyle='rgba(190,240,255,'+(.8+.2*h)+')';g.lineWidth=Math.max(1.5,R/14);g.beginPath();g.arc(0,0,R,0,6.283);g.stroke();
+  g.shadowBlur=0;g.strokeStyle='rgba(255,255,255,.9)';g.lineWidth=Math.max(2,R/9);g.lineCap='round';const a0=t*2.6;
+  g.beginPath();g.arc(0,0,R*.96,a0,a0+.8);g.stroke();g.beginPath();g.arc(0,0,R*.96,a0+3.14,a0+3.6);g.stroke();
+  g.fillStyle='rgba(255,255,255,.2)';g.beginPath();g.ellipse(-R*.35,-R*.42,R*.3,R*.14,-.6,0,6.283);g.fill();
+  if(h>0){g.strokeStyle='rgba(255,255,255,'+h+')';g.lineWidth=3;g.beginPath();g.arc(0,0,R*(1+(1-h)*.4),0,6.283);g.stroke();}
+  g.restore();
+}
+// Windshield view: the bubble seen from inside, as a glowing frame around the screen
+function shieldScreen(hit){
+  const t=performance.now()/1000,h=clamp((hit||0)/8,0,1);
+  const gr=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.32,W/2,H/2,Math.hypot(W,H)/2);
+  gr.addColorStop(0,'rgba(110,230,255,0)');gr.addColorStop(1,'rgba(150,130,255,'+(.38+.4*h)+')');ctx.fillStyle=gr;ctx.fillRect(0,0,W,H);
+  ctx.save();ctx.shadowColor='#7fe0ff';ctx.shadowBlur=16;ctx.strokeStyle='rgba(190,240,255,'+(.55+.25*Math.sin(t*4)+.2*h)+')';ctx.lineWidth=4;rrect(ctx,6,6,W-12,H-12,18);ctx.stroke();ctx.restore();
 }
 function drawDroneTop(x,y){
   ctx.fillStyle='rgba(0,0,0,.25)';ell(ctx,x+10,y+14,9,6);ctx.fill();
@@ -1755,7 +1811,7 @@ function draw3D(){
       if(lift>0&&!B.air)wingsRear(ctx,p.x,p.y,p.s,B.w,lift);
       rearSprite(ctx,S.vk,p.x,p.y,p.s,B.col,{w:B.w,under,noShadow:true});
       if((firing||keys[' '])&&S.mode==='play'&&S.p.cool>2&&!under){ctx.fillStyle='#ffd23e';ell(ctx,p.x-9*p.s,p.y-24*p.s,4*p.s,4*p.s);ctx.fill();ell(ctx,p.x+9*p.s,p.y-24*p.s,4*p.s,4*p.s);ctx.fill();}
-      if(S.shield>0&&(S.shield>90||Math.floor(S.shield/6)%2)){const hit=S.shieldHit>0;S.shieldHit=Math.max(0,S.shieldHit-1);ctx.fillStyle=hit?'rgba(255,255,255,.25)':'rgba(157,123,255,.15)';ctx.strokeStyle=hit?'#fff':'#9d7bff';ctx.lineWidth=3;ell(ctx,p.x,p.y-16*p.s,(B.w/2+14)*p.s,26*p.s);ctx.fill();ctx.stroke();}
+      if(S.shield>0&&(S.shield>90||Math.floor(S.shield/6)%2)){const hit=S.shieldHit>0;S.shieldHit=Math.max(0,S.shieldHit-1);drawShield(ctx,p.x,p.y-16*p.s,(B.w/2+14)*p.s,26*p.s,hit?S.shieldHit+1:0);}
     });
   }
   L.sort((a,b)=>b.p.z-a.p.z);
@@ -1767,7 +1823,7 @@ function draw3D(){
     for(const e of S.en){if(e.dead||e.y>py-12)continue;if(Math.abs(e.x-S.p.x)<e.w/2+9){const d=py-e.y,a1=P(e.x-e.w/2,e.y,0),a2=P(e.x+e.w/2,e.y,0);
       if(a1&&a2&&d<best){best=d;const ht=e.type==='truck'?42:e.type==='gun'?28:30;box={x0:a1.x-3,x1:a2.x+3,y1:a1.y+2,y0:a1.y-ht*a1.s};}}}
     if(ap)drawReticle(ap.x,ap.y,box);}
-  if(mode==='cockpit'&&S.shield>0&&(S.shield>90||Math.floor(S.shield/6)%2)){ctx.strokeStyle=S.shieldHit>0?'rgba(255,255,255,.8)':'rgba(157,123,255,.6)';S.shieldHit=Math.max(0,S.shieldHit-1);ctx.lineWidth=10;ctx.strokeRect(5,5,W-10,H-10);}
+  if(mode==='cockpit'&&S.shield>0&&(S.shield>90||Math.floor(S.shield/6)%2)){shieldScreen(S.shieldHit);S.shieldHit=Math.max(0,S.shieldHit-1);}
   ctx.restore();
 }
 
@@ -1855,7 +1911,7 @@ function drawHUD(){
     sy=42;
   }
   const dr=S.dr.reduce((m,d)=>d.o&&d.o!==S.me?m:Math.max(m,d.t),0);
-  for(const [n,v,m,c] of [['🛡️ SHIELD',S.shield,480,'#9d7bff'],['⚡ BOOST',S.boost,240,'#3fd0c9'],['✈️ FLYING',S.fly,480,'#c46bff'],['🛸 DRONE'+(S.dr.length>1?' ×2':''),dr,600+120*U().drone,'#7fd4ff']])if(v>0){
+  for(const [n,v,m,c] of [['🛡️ SHIELD',S.shield,480,'#9d7bff'],['⚡ BOOST',S.boost,240,'#3fd0c9'],['✈️ FLYING',S.fly,480,'#c46bff'],[(S.dr.some(d=>d.m==='g'&&(!d.o||d.o===S.me))?'🛸 GUN POD':'🛸 DRONE')+(S.dr.length>1?' ×2':''),dr,600+120*U().drone,'#7fd4ff']])if(v>0){
     ctx.fillStyle='rgba(20,15,12,.75)';rrect(ctx,8,sy,112,24,6);ctx.fill();
     ctx.fillStyle=c;ctx.fillRect(12,sy+18,104*Math.min(1,v/m),3);
     ctx.font='700 12px Chakra Petch, sans-serif';ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle='#f7efe2';ctx.fillText(n,14,sy+14);sy+=30;}
