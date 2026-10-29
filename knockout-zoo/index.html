@@ -1,4 +1,8 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}.kzvslink{display:block;width:100%;box-sizing:border-box;background:rgba(0,0,0,.35);color:var(--gold);border:2px dashed var(--gold);border-radius:10px;padding:8px 10px;font:700 14px/1.3 var(--body,sans-serif);word-break:break-all;user-select:all;-webkit-user-select:all;text-align:center}
+.tour-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.tour-list li{background:#000;border-radius:10px;padding:6px 10px;display:flex;justify-content:space-between;gap:8px;font-weight:800}.tour-list li small{color:var(--muted);font-weight:500}
+.brk{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}.brk .col{display:flex;flex-direction:column;justify-content:space-around;gap:8px;min-width:120px;flex:1}.brk h4{margin:0 0 2px;font-family:var(--display);color:var(--gold);font-size:15px;letter-spacing:1px;text-align:center}
+.brk .m{background:#000;border:2px solid #333;border-radius:10px;padding:4px 6px;font-size:13px;font-weight:800}.brk .m div{display:flex;justify-content:space-between;padding:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brk .m .w{color:var(--good)}.brk .m .l{color:#666;text-decoration:line-through}.brk .m.live{border-color:var(--gold)}.brk .m.me{box-shadow:0 0 0 2px var(--accent2)}
+.champ{font-family:var(--display);font-size:34px;color:var(--gold);text-align:center;letter-spacing:1px}
 </style></head><body>
 <!doctype html>
 <html>
@@ -102,7 +106,7 @@ body.fs{padding:0}body.fs .app{max-width:none}
 .banner .sm{font-family:var(--display);font-size:22px;color:#fff;text-shadow:2px 2px 0 #000;letter-spacing:1px}
 @keyframes throb{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,200,40,.8)}50%{transform:scale(1.05);box-shadow:0 0 0 12px rgba(255,200,40,0)}}
 #bInvite,#bJoinInvite{font-size:24px;padding:18px 12px;animation:throb 1.2s infinite}
-body.hasInvite #bPlay,body.hasInvite #bVs,body.hasInvite #bOnline,body.hasInvite #bReset{opacity:.35}
+body.hasInvite #bTour,body.hasInvite #bPlay,body.hasInvite #bVs,body.hasInvite #bOnline,body.hasInvite #bReset{opacity:.35}
 body.hasInvite #bHost{display:none}
 @keyframes pop{from{transform:scale(0) rotate(-8deg)}to{transform:scale(1) rotate(0)}}
 .result{background:var(--panel);border:3px solid #000;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center}
@@ -126,6 +130,7 @@ body.hasInvite #bHost{display:none}
   <button class="btn gold" id="bPlay" disabled>LOADING…</button>
   <button class="btn" id="bVs" disabled hidden style="display:none">2 PLAYER • SAME PHONE</button><!-- v41: removed at Edgar's request (one-phone 2-player) -->
   <button class="btn alt" id="bOnline" disabled>2 PLAYER • ONLINE</button>
+  <button class="btn gold" id="bTour" disabled>&#127942; TOURNAMENT • PARTY</button>
   <button class="btn alt small" id="bReset">Reset Progress</button>
   <p class="foot">Hold ◀ ▶ to step in and out. JAB is fast, HOOK hits hard. BLOCK cuts damage to a sliver. Knock them down twice, or once in round 3, for the KO.</p>
 </section>
@@ -186,6 +191,35 @@ body.hasInvite #bHost{display:none}
       <div class="ctl hook" data-p="2" data-k="hook">HOOK</div>
     </div>
   </div>
+</section>
+<section class="screen" id="sTour">
+  <h2>TOURNAMENT <span style="font-size:12px;color:var(--muted)">v42</span></h2>
+  <p class="sub" id="tourStatus">Up to 8 players. Everybody fights, winners move on, last one standing is the champ.</p>
+  <div class="preview" style="flex-direction:column;align-items:stretch;gap:10px">
+    <div id="tourSetup" style="display:flex;flex-direction:column;gap:10px">
+      <input id="tourNick" maxlength="12" placeholder="YOUR NICKNAME" autocomplete="off" autocorrect="off" spellcheck="false" style="font-family:var(--display);font-size:24px;letter-spacing:2px;text-align:center;background:#000;color:var(--gold);border:3px solid #000;border-radius:12px;padding:8px">
+      <button class="btn gold" id="bTourParty" hidden>JOIN PARTY</button>
+      <button class="btn gold" id="bTourHost">HOST A TOURNAMENT</button>
+      <div class="row" style="gap:6px;flex-wrap:nowrap">
+        <input id="tourCode" placeholder="PARTY CODE" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" style="flex:1;min-width:0;font-family:var(--display);font-size:24px;letter-spacing:4px;text-align:center;text-transform:uppercase;background:#000;color:var(--gold);border:3px solid #000;border-radius:12px;padding:8px">
+        <button class="btn alt" id="bTourJoin">JOIN</button>
+      </div>
+    </div>
+    <div id="tourParty" hidden style="flex-direction:column;gap:10px">
+      <div style="text-align:center"><div class="sub">Party code:</div><div class="cash" id="tourMyCode" style="font-size:44px;letter-spacing:10px">----</div></div>
+      <div id="tourInvite" style="display:none;flex-direction:column;gap:8px">
+        <button class="btn gold" id="bTourShare">&#128228; SHARE INVITE LINK</button>
+        <div class="kzvslink" id="tourLink"></div>
+        <button class="btn alt" id="bTourCopy">COPY LINK</button>
+      </div>
+      <div class="sub" id="tourMsg" style="text-align:left"></div>
+      <ul class="tour-list" id="tourPlayers"></ul>
+      <div class="brk" id="tourBracket"></div>
+      <button class="btn gold" id="bTourStart" hidden>START TOURNAMENT</button>
+      <button class="btn small grey" id="bTourFighter">FIGHTER</button>
+    </div>
+  </div>
+  <button class="btn small grey" id="bTourBack">LEAVE</button>
 </section>
 <section class="screen" id="sOnline">
   <h2>ONLINE VS <span style="font-size:12px;color:var(--muted)">v40</span></h2>
@@ -333,7 +367,7 @@ async function loadAssets(){
   await Promise.all(jobs.map(j=>j.then(()=>{done++;if(bar)bar.style.width=(done/jobs.length*100)+'%';})));
   assetsReady=true;
   if(window.KZ_HOSTED&&window.HASH_INVITE_UP&&!NET.usedHash)setTimeout(()=>{if(!NET.usedHash&&!NET.room)joinInvite(window.HASH_INVITE_UP);},300);
-  const b=document.getElementById('bPlay');b.disabled=false;b.textContent='FIGHT!';document.getElementById('bVs').disabled=false;document.getElementById('bOnline').disabled=false;
+  const b=document.getElementById('bPlay');b.disabled=false;b.textContent='FIGHT!';document.getElementById('bVs').disabled=false;document.getElementById('bOnline').disabled=false;document.getElementById('bTour').disabled=false;KZT.loaded();
   const lb=document.getElementById('loadBar');if(lb)lb.style.display='none';
   titleHero();
   netInit().then(l=>{if(l)lobbyWatch();netInvites();});netInvites();
@@ -578,11 +612,11 @@ async function netEnterRoom(code){
   catch(e){const c=e&&e.code||'error';netStatus(c==='not_permitted'?'This account is not allowed to use live rooms on this game. The owner must invite you (Share → add email) and you must open it signed in.':c==='timeout'||c==='upstream_error'?'The live link did not answer. Close and reopen the game, make sure you are signed in to Claude, then try again.':'Could not open room ('+c+')');return null;}
   NET.room=room;NET.code=code;netInvites();return room;
 }
-async function hostStart(){
-  netStatus('Opening room…');const code=genCode();const r=await netEnterRoom(code);if(!r)return;
+async function hostStart(forced){
+  netStatus('Opening room…');const code=forced||genCode();const r=await netEnterRoom(code);if(!r)return;
   NET.host=true;NET.peerId=null;NET.fxSeq=0;NET.fxBuf=[];NET.started=false;
   document.getElementById('codeBox').hidden=false;document.getElementById('myCode').textContent=code;netStatus('Room open');
-  r.presence({role:'h',v:31}).catch(()=>{});netOpenInvite(code);
+  r.presence({role:'h',v:31}).catch(()=>{});if(!forced)netOpenInvite(code);
   document.getElementById('inviteRow').style.display=window.KZ_HOSTED?'flex':'none';document.getElementById('shareCall').hidden=!!window.KZ_HOSTED;
   document.getElementById('vsLink').textContent=kzInvite(code).url;document.getElementById('shareMsg').textContent='Tap Share to send your friend the link. When they open it, they jump straight into your fight.';
     NET.unsub.push(r.onPeers(()=>{
@@ -607,8 +641,8 @@ async function hostStart(){
     const j=+d[3]||0,h=+d[4]||0;if(j>NET.seenJ){keys2.jab=true;NET.seenJ=j;}if(h>NET.seenH){keys2.hook=true;NET.seenH=h;}
   },e=>netStatus('Room error: '+e.code)));
 }
-async function guestJoin(){
-  const code=(document.getElementById('joinCode').value||'').toUpperCase().replace(/[^A-Z]/g,'');if(code.length!==4){netStatus('Enter the 4-letter code');return;}
+async function guestJoin(forced){
+  const code=(forced||document.getElementById('joinCode').value||'').toUpperCase().replace(/[^A-Z]/g,'');if(code.length!==4){netStatus('Enter the 4-letter code');return;}
   netStatus('Joining '+code+'…');const r=await netEnterRoom(code);if(!r)return;
   NET.host=false;NET.started=false;NET.snap=null;NET.lastFx=0;NET.inJ=0;NET.inH=0;NET.lastIn='';
   r.presence({role:'g',v:31,f:S.fighter,in:[0,0,0,0,0]}).catch(()=>{});
@@ -656,6 +690,7 @@ function finishOnlineGuest(d){if(!G)return;G.phase='done';if(raf){cancelAnimatio
   const youWin=!d.p1;const box=document.getElementById('resultBox');box.className='result '+(youWin?'win':'lose');
   document.getElementById('resBig').textContent=youWin?'YOU WIN!':'YOU LOSE';document.getElementById('resHow').textContent=d.how||'';document.getElementById('resMoney').textContent='';document.getElementById('resLines').innerHTML='';
   document.getElementById('bResNext').textContent='BACK TO MENU';banner(youWin?'YOU WIN':'YOU LOSE','',2.5);
+  if(KZT.inFight()){clearTimeout(finishFight._t);finishFight._t=setTimeout(()=>{G=null;KZT.matchDone(!youWin);},2200);return;}
   clearTimeout(finishFight._t);finishFight._t=setTimeout(()=>{show('sResult');G=null;},2200);}
 function guestTick(rawDt){
   G.t+=rawDt;netSendInputs();
@@ -827,6 +862,7 @@ function finishFight(win,decision){
     document.getElementById('resLines').innerHTML='<li>Jabs: '+G.log.jabs+' • Hooks: '+G.log.hooks+' • Blocks: '+G.log.blocks+'</li>';
     document.getElementById('bResNext').textContent='BACK TO MENU';
     banner(win?'P1 WINS':'P2 WINS',winner.name,2.5);
+    if(G.net&&KZT.inFight()){const w=win;clearTimeout(finishFight._t);finishFight._t=setTimeout(()=>{G=null;KZT.matchDone(w);},2200);return;}
     clearTimeout(finishFight._t);finishFight._t=setTimeout(()=>{show('sResult');G=null;},2200);return;}
   const li=G.li,lvl=G.lvl,p=G.p;const lines=[];let money=0;
   if(win){money=lvl.reward;lines.push('Purse: $'+lvl.reward);const hb=Math.round(lvl.reward*.5*(p.hp/p.maxHp));money+=hb;lines.push('Health bonus: $'+hb);if(G.log.ko){money+=Math.round(lvl.reward*.3);lines.push('KO bonus: $'+Math.round(lvl.reward*.3));}
@@ -954,6 +990,7 @@ document.getElementById('bPlay').addEventListener('click',()=>{if(!assetsReady)r
 document.getElementById('bReset').addEventListener('click',()=>{S={cash:100,unlocked:1,beaten:[],gloves:['leather'],outfits:['red'],glove:'leather',outfit:'red',fighter:'rocky'};save();pendingFighter='rocky';document.getElementById('bReset').textContent='Progress reset';});
 document.getElementById('bCharOk').addEventListener('click',()=>{
   if(vsPick===1){vsP1=pendingFighter;vsPick=2;document.getElementById('charTitle').textContent='PLAYER 2: PICK YOUR FIGHTER';pendingFighter=vsP1==='rocky'?'goat':'rocky';buildChars();return;}
+  if(vsPick===3){vsPick=0;S.fighter=pendingFighter;save();show('sTour');KZT.me();return;}
   if(vsPick===2){const p2=pendingFighter;vsPick=0;document.getElementById('charTitle').textContent='PICK YOUR FIGHTER';ac();startVs(vsP1,p2);return;}
   S.fighter=pendingFighter;save();buildMap();show('sMap');});
 document.getElementById('bOnline').addEventListener('click',async()=>{if(!assetsReady)return;ac();show('sOnline');document.getElementById('codeBox').hidden=true;netStatus('Connecting…');
@@ -977,6 +1014,122 @@ document.getElementById('bShareLink').addEventListener('click',async()=>{const v
     if(cap){await cap.share({title:'Knockout Zoo',text:v.text,url:v.url,dialogTitle:'Send the fight link'});return;}}
   catch(e){if(e&&(e.name==='AbortError'||/cancel/i.test(e.message||'')))return;}
   kzCopied();});
+// v42 TOURNAMENT (Edgar 2026-10-29: party play, a boxing tournament). No accounts: a nickname and one party link.
+// The party lives in room 'kzt-<code>'. Everyone's presence is {t:{n,f,res}}; the party host's also carries the bracket
+// {t:{...,host:1,st,br}}. Each bracket fight is an ordinary online 1v1 (hostStart/guestJoin with the match code), so
+// fights play exactly like 2 PLAYER • ONLINE. Fighters report {res:{m,w}}; the host moves the winner on.
+const KZT=(()=>{
+  const T={room:null,code:null,host:false,me:null,un:null,match:null,fighting:false,br:null,st:'lobby',seen:{},gone:{},partyCode:null};
+  const $=id=>document.getElementById(id),esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+  const nick=()=>(($('tourNick').value||'').replace(/[^A-Za-z0-9 ]/g,'').replace(/\s+/g,' ').trim().slice(0,12));
+  try{$('tourNick').value=localStorage.getItem('koz_nick')||'';}catch(e){}
+  const say=t=>{$('tourStatus').textContent=t;};
+  const link=c=>(window.KZ_SHARE_BASE||location.origin+location.pathname)+'?party='+c;
+  const others=()=>T.room?T.room.peers().filter(p=>!p.sameTab):[];
+  const hostPeer=()=>T.host?{peer:T.me,presence:{t:mine()}}:others().find(p=>p.presence&&p.presence.t&&p.presence.t.host);
+  let myRes=null;
+  function mine(){const o={n:nick()||'Player',f:S.fighter};if(T.host){o.host=1;o.st=T.st;o.br=T.br;}if(myRes)o.res=myRes;return o;}
+  function push(){if(T.room)T.room.presence({t:mine()}).catch(()=>{});}
+  function players(){const list=[];if(T.room)for(const p of T.room.peers()){const t=p.sameTab?mine():p.presence&&p.presence.t;if(t&&t.n)list.push({peer:p.sameTab?T.me:p.peer,n:t.n,f:t.f,host:!!t.host});}return list;}
+  const nameOf=id=>id===null?'bye':id===undefined?'…':(T.br&&T.br.n[id]?T.br.n[id].n:'?');
+  // --- host: bracket ---
+  function makeBracket(){const ps=players().slice(0,8);for(let i=ps.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[ps[i],ps[j]]=[ps[j],ps[i]];}
+    let size=2;while(size<ps.length)size*=2;const n={};ps.forEach(p=>n[p.peer]={n:p.n,f:p.f});
+    const r=[];let cnt=size/2;while(cnt>=1){r.push(Array.from({length:cnt},()=>({})));cnt/=2;}
+    for(let i=0;i<size/2;i++){r[0][i].a=ps[i]?ps[i].peer:null;r[0][i].b=ps[i+size/2]?ps[i+size/2].peer:null;}
+    return {n,r};}
+  function resolve(){if(!T.host||!T.br||T.st!=='run')return;let changed=false,again=true;const present=new Set(players().map(p=>p.peer));const now=Date.now();
+    const reports={};for(const p of T.room.peers()){const t=p.sameTab?mine():p.presence&&p.presence.t;if(t&&t.res&&t.res.m)(reports[t.res.m]=reports[t.res.m]||{})[p.sameTab?T.me:p.peer]=t.res.w;}
+    while(again){again=false;const R=T.br.r;
+      for(let ri=0;ri<R.length;ri++)R[ri].forEach((m,i)=>{
+        if(m.w!==undefined||m.a===undefined||m.b===undefined)return;
+        const id='r'+ri+'-'+i;let w;
+        if(m.a===null&&m.b===null)w=null;else if(m.a===null)w=m.b;else if(m.b===null)w=m.a;
+        else{const rep=reports[id]||{};if(rep[m.a]===m.a||rep[m.a]===m.b)w=rep[m.a];else if(rep[m.b]===m.a||rep[m.b]===m.b)w=rep[m.b];
+          if(w===undefined){if(!m.c){m.c=genCode();changed=true;}
+            for(const side of['a','b']){const pid=m[side];if(present.has(pid)){delete T.gone[pid];continue;}T.gone[pid]=T.gone[pid]||now;if(now-T.gone[pid]>20000)w=m[side==='a'?'b':'a'];}}}
+        if(w===undefined)return;m.w=w;changed=true;again=true;
+        if(ri+1<R.length){const nx=R[ri+1][i>>1];nx[i%2?'b':'a']=w;}});}
+    const last=T.br.r[T.br.r.length-1][0];if(last.w!==undefined){T.st='done';changed=true;}
+    if(changed)push();}
+  setInterval(()=>{if(T.host&&T.st==='run'){resolve();render();}},3000);
+  // --- everyone: follow the bracket ---
+  function myMatch(){if(!T.br||T.st!=='run')return null;const R=T.br.r;for(let ri=0;ri<R.length;ri++)for(let i=0;i<R[ri].length;i++){const m=R[ri][i];
+    if(m.w===undefined&&m.c&&(m.a===T.me||m.b===T.me)&&m.a&&m.b)return {id:'r'+ri+'-'+i,m,ri};}return null;}
+  function out(){if(!T.br)return false;for(const R of T.br.r)for(const m of R)if(m.w!==undefined&&m.w!==T.me&&(m.a===T.me||m.b===T.me))return true;return false;}
+  function follow(){
+    const h=hostPeer();
+    if(!T.host){if(!h){if(T.room&&!T.fighting)say(T.br?'The host left the tournament.':'Looking for the host…');render();return;}
+      const t=h.presence.t;T.br=t.br||null;T.st=t.st||'lobby';}
+    else resolve();
+    render();
+    // a fight the host already settled (the other player left): stop waiting for it
+    if(T.fighting&&!G&&T.match&&T.br){const [ri,i]=T.match.slice(1).split('-').map(Number);const m=T.br.r[ri]&&T.br.r[ri][i];
+      if(m&&m.w!==undefined){T.fighting=false;netLeave();show('sTour');say(m.w===T.me?'Your opponent left, so you move on!':'That fight is over.');render();}}
+    if(T.fighting||G)return;
+    const mm=myMatch();
+    if(mm&&T.match!==mm.id){T.match=mm.id;myRes=null;push();const opp=mm.m.a===T.me?mm.m.b:mm.m.a;
+      say('Your fight: '+nick()+' vs '+nameOf(opp)+'. Get ready!');T.fighting=true;
+      const go=()=>{NET.host=false;if(mm.m.a===T.me)hostStart(mm.m.c);else guestJoin(mm.m.c);};setTimeout(go,mm.m.a===T.me?600:1500);}
+  }
+  function render(){
+    const ps=players();
+    $('tourPlayers').innerHTML=T.br&&T.st!=='lobby'?'':ps.map(p=>'<li><span>'+esc(p.n)+(p.peer===T.me?' (you)':'')+(p.host?' &#9733;':'')+'</span><small>'+esc(SPECIES[p.f]?SPECIES[p.f].name:'')+'</small></li>').join('');
+    $('bTourStart').hidden=!(T.host&&T.st==='lobby');$('bTourStart').disabled=ps.length<2;
+    $('bTourStart').textContent=ps.length<2?'WAITING FOR PLAYERS…':'START TOURNAMENT ('+Math.min(8,ps.length)+' PLAYERS)';
+    $('bTourFighter').hidden=T.st!=='lobby';$('tourInvite').style.display=T.st==='lobby'&&window.KZ_HOSTED?'flex':'none';
+    if(!T.br||T.st==='lobby'){$('tourBracket').innerHTML='';if(T.room)$('tourMsg').textContent=T.host?(ps.length<2?'Send the link to your friends. Up to 8 can join.':'Tap START when everyone is in.'):'You\'re in! Waiting for the host to start.';return;}
+    const R=T.br.r,names=['FIRST ROUND','QUARTERS','SEMIS','FINAL'];const off=4-R.length;
+    $('tourBracket').innerHTML=R.map((col,ri)=>'<div class="col"><h4>'+names[Math.max(0,ri+off)]+'</h4>'+col.map(m=>{
+      const cls=(m.w===undefined&&m.a&&m.b&&m.c?' live':'')+(m.a===T.me||m.b===T.me?' me':'');
+      const row=x=>'<div class="'+(m.w!==undefined?(m.w===x?'w':'l'):'')+'">'+esc(nameOf(x))+(m.w===x&&x?' &#10004;':'')+'</div>';
+      return '<div class="m'+cls+'">'+row(m.a)+row(m.b)+'</div>';}).join('')+'</div>').join('');
+    const last=R[R.length-1][0];
+    if(T.st==='done'){const c=nameOf(last.w);$('tourMsg').innerHTML='<div class="champ">&#127942; '+esc(c)+' IS THE CHAMPION!</div>';if(!T.fighting)say(last.w===T.me?'You won the whole tournament!':'Tournament over. Great fights!');}
+    else if(!T.fighting){$('tourMsg').textContent=out()?'You\'re out this time. Watch the bracket to see who wins!':myMatch()?'Your fight is up next!':'Waiting for the other fights to finish…';}
+  }
+  async function enter(code,asHost){
+    const n=nick();if(!n){say('Type a nickname first.');$('tourNick').focus();return;}
+    try{localStorage.setItem('koz_nick',n);}catch(e){}
+    say('Connecting…');const lob=await netInit();if(!lob){say('Can\'t go online on this phone: '+NET.why+' '+NET_HELP);return;}
+    leave(true);let room;
+    try{room=await Promise.race([lob.join('kzt-'+code.toLowerCase()),new Promise((_,rej)=>setTimeout(()=>rej({code:'timeout'}),12000))]);}
+    catch(e){say('Could not open the party ('+(e&&e.code||'error')+'). Try again.');return;}
+    Object.assign(T,{room,code,host:asHost,me:null,match:null,fighting:false,br:null,st:'lobby',gone:{}});myRes=null;T.me=netMe(room);
+    $('tourSetup').style.display='none';$('tourParty').hidden=false;$('tourParty').style.display='flex';$('tourMyCode').textContent=code;$('tourLink').textContent=link(code);
+    say(asHost?'Party open! Invite your friends.':'Joined party '+code+'.');
+    if(asHost&&NET.lobby)NET.lobby.presence({party:code}).catch(()=>{});
+    push();T.un=room.onPeers(follow,e=>say('Party error: '+e.code));render();}
+  function leave(quiet){if(T.un){try{T.un();}catch(e){}T.un=null;}if(T.room){const r=T.room;T.room=null;r.leave().catch(()=>{});}
+    if(T.host&&NET.lobby)NET.lobby.presence({party:null}).catch(()=>{});T.host=false;T.br=null;T.st='lobby';T.fighting=false;T.match=null;
+    if(!quiet){$('tourSetup').style.display='flex';$('tourParty').hidden=true;$('tourParty').style.display='none';}}
+  function partyInvite(){let best=null;if(NET.lobby)for(const p of NET.lobby.peers()){if(p.sameTab)continue;const c=p.presence&&p.presence.party;if(typeof c==='string'&&/^[A-Z]{4}$/.test(c)&&(!best||p.updatedAt>best.u))best={c,u:p.updatedAt};}
+    const b=$('bTourParty');b.hidden=!best||!!T.room;if(best)b.textContent='JOIN PARTY '+best.c;b.dataset.code=best?best.c:'';}
+  async function open(){ac();show('sTour');if(T.room){render();return;}say('Up to 8 players. Everybody fights, winners move on, last one standing is the champ.');
+    if(!(await netInit()))return;lobbyWatch();if(!T.lw){T.lw=NET.lobby.onPeers(partyInvite,()=>{});}partyInvite();}
+  async function share(){const c=T.code,u=link(c),text='Join my Knockout Zoo boxing tournament! Tap the link, type a nickname and you\'re in.';
+    const cap=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.Share;
+    try{if(navigator.share){await navigator.share({title:'Knockout Zoo tournament',text,url:u});return;}if(cap){await cap.share({title:'Knockout Zoo tournament',text,url:u,dialogTitle:'Send the party link'});return;}}
+    catch(e){if(e&&(e.name==='AbortError'||/cancel/i.test(e.message||'')))return;}copyIt();}
+  async function copyIt(){const u=link(T.code);$('tourMsg').textContent=await kzCopy('Join my Knockout Zoo boxing tournament!\n'+u)?'Link copied! Paste it in a text to your friends.':'Copy did not work. Send your friends this link: '+u;}
+  $('bTour').addEventListener('click',()=>{if(assetsReady)open();});
+  $('bTourHost').addEventListener('click',()=>{ac();enter(genCode(),true);});
+  $('bTourJoin').addEventListener('click',()=>{ac();const c=($('tourCode').value||'').toUpperCase().replace(/[^A-Z]/g,'');if(c.length!==4){say('Enter the 4-letter party code.');return;}enter(c,false);});
+  $('bTourParty').addEventListener('click',()=>{ac();if($('bTourParty').dataset.code)enter($('bTourParty').dataset.code,false);});
+  $('bTourStart').addEventListener('click',()=>{if(!T.host||T.st!=='lobby'||players().length<2)return;ac();T.br=makeBracket();T.st='run';resolve();push();follow();});
+  $('bTourShare').addEventListener('click',share);$('bTourCopy').addEventListener('click',copyIt);
+  $('bTourFighter').addEventListener('click',()=>{vsPick=3;pendingFighter=S.fighter;buildChars();show('sChar');});
+  $('bTourBack').addEventListener('click',()=>{if(T.fighting)return;leave();show('sTitle');});
+  $('tourNick').addEventListener('input',()=>{const v=$('tourNick').value.replace(/[^A-Za-z0-9 ]/g,'');if(v!==$('tourNick').value)$('tourNick').value=v;if(T.room)push();});
+  const UP=((location.search||'').match(/party=([A-Za-z]{4})/)||[])[1];
+  if(UP){$('tourCode').value=UP.toUpperCase();try{history.replaceState(null,'',location.pathname);}catch(e){}}
+  return {
+    inFight:()=>!!(T.room&&T.fighting),
+    matchDone(iWon){const mm=T.match;let w=null;if(T.br){const [ri,i]=mm.slice(1).split('-').map(Number);const m=T.br.r[ri]&&T.br.r[ri][i];if(m)w=iWon?T.me:(m.a===T.me?m.b:m.a);}
+      myRes={m:mm,w};T.fighting=false;netLeave();push();show('sTour');say(iWon?'You won! On to the next round.':'Good fight! You\'re out this time.');banner(iWon?'YOU WIN':'K.O.','',2);follow();},
+    me:()=>{push();render();},
+    loaded(){if(UP){open().then(()=>{if(nick())enter(UP.toUpperCase(),false);else say('Type a nickname, then tap JOIN to enter the tournament.');});}}};
+})();
 document.getElementById('bInvite').addEventListener('click',()=>{if(NET.invite)joinInvite(NET.invite);});
 document.getElementById('bJoinInvite').addEventListener('click',()=>{if(NET.invite)joinInvite(NET.invite);});
 document.getElementById('bJoin').addEventListener('click',()=>{ac();guestJoin();});
