@@ -87,6 +87,12 @@ body.fs{padding:0}body.fs .app{max-width:none}
 :fullscreen body,body:fullscreen{background:var(--bg)}
 .controls{display:grid;grid-template-columns:1fr 1fr 1.2fr 1.2fr 1.2fr;gap:8px}
 .controls[hidden]{display:none}
+/* v44 (Edgar: punches up the side): steps tall on the left thumb, BLOCK / HOOK / JAB stacked for the right thumb */
+#controls1{width:100%;box-sizing:border-box;grid-template-columns:1fr 1fr 2fr;grid-template-rows:repeat(3,auto);gap:6px}
+#controls1 .ctl{padding:12px 4px}
+#controls1 [data-k=left],#controls1 [data-k=right]{grid-row:1/4;display:flex;flex-direction:column;justify-content:center}
+#controls1 [data-k=left]{grid-column:1}#controls1 [data-k=right]{grid-column:2}
+#controls1 .block{grid-column:3;grid-row:1}#controls1 .hook{grid-column:3;grid-row:2}#controls1 .jab{grid-column:3;grid-row:3}
 .vsctl{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .vsctl[hidden]{display:none}
 .pad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
