@@ -1,11 +1,11 @@
 # Builds the Knockout Zoo iOS app on GitHub's Mac and uploads it to TestFlight (no Mac needed at BIRCO).
-# Run it by pushing a tag like koz-ios-1.0.0-1 (or Actions > "Knockout Zoo iOS to TestFlight" > Run workflow).
+# Run it by pushing the commit to the koz-ios-build branch (or Actions > "Knockout Zoo iOS to TestFlight" > Run workflow).
 # Needs these repository secrets (App Store Connect > Users and Access > Integrations > App Store Connect API):
 #   ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8 (the .p8 file contents), APPLE_TEAM_ID
 name: Knockout Zoo iOS to TestFlight
 on:
   push:
-    tags: ['koz-ios-*']
+    branches: ['koz-ios-build']
   workflow_dispatch:
 jobs:
   ios:

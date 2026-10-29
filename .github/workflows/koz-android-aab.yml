@@ -1,11 +1,11 @@
 # Builds the Knockout Zoo Android app bundle (.aab) on GitHub.
-# Run it by pushing a tag like koz-android-1.0.0-1 (or Actions > "Knockout Zoo Android" > Run workflow).
+# Run it by pushing the commit to the koz-android-build branch (or Actions > "Knockout Zoo Android" > Run workflow).
 # The bundle is built UNSIGNED and pushed to the koz-builds branch; it is signed with the Play upload key
 # (kept in the project files, never in git) before it goes to Play Console.
 name: Knockout Zoo Android
 on:
   push:
-    tags: ['koz-android-*']
+    branches: ['koz-android-build']
   workflow_dispatch:
 permissions:
   contents: write

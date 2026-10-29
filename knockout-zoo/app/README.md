@@ -11,7 +11,7 @@ lock only turns on inside the app.
     NODE_PATH=$(npm root -g) node store-art.mjs   # icon, splash, Play feature graphic -> assets/, store/
     npx capacitor-assets generate --iconBackgroundColor '#0c0a14' --splashBackgroundColor '#0c0a14' --splashBackgroundColorDark '#0c0a14'
 
-Android: push a tag `koz-android-<version>-<n>`. GitHub Actions builds the unsigned `.aab` and puts it
+Android: push the commit to the `koz-android-build` branch. GitHub Actions builds the unsigned `.aab` and puts it
 on the `koz-builds` branch. Sign it with the Play upload key (project files, `knockout-zoo/signing/`,
 never in git):
 
@@ -19,7 +19,7 @@ never in git):
 
 Bump `versionCode` in `android/app/build.gradle` for every upload.
 
-iOS: push a tag `koz-ios-<version>-<n>`. GitHub Actions builds on a Mac and uploads to TestFlight
+iOS: push the commit to the `koz-ios-build` branch. GitHub Actions builds on a Mac and uploads to TestFlight
 (needs the App Store Connect API key secrets on this repo).
 
 Store text, product setup, and kids/privacy answers: `store/LISTING.md`.
