@@ -41,6 +41,7 @@ What the app does with data (true for v1.0.0):
 - No accounts, no ads, no analytics, no tracking, no ad ID, no chat.
 - Progress and the purchase flag are saved on the phone only.
 - Online versus sends fighter picks and moves through BIRCO's game server for the match only, joined by a 4-letter code. Nothing is stored after the room closes.
+- Tournament parties (up to 8) also send a typed nickname (letters/numbers, 12 max) so the bracket can show it; kept in memory only while the party is open. No chat. Play data safety: a nickname that is not stored and not linked to anyone is still worth declaring honestly; answer "Data not collected" only if Play's definition (data sent off device) allows ephemeral processing, which it does for data processed in memory only.
 - Purchases are handled by Apple and Google. BIRCO never sees card details.
 
 | Question | Answer |
