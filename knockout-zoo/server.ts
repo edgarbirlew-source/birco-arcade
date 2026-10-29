@@ -80,11 +80,11 @@ Bun.serve({
     }
     if (u.pathname === "/room.js") return new Response(SHIM, { headers: { "content-type": "application/javascript", "cache-control": "no-cache" } });
     if (u.pathname === "/health") return new Response("ok");
-    const path = u.pathname === "/" || u.pathname === "/index.html" ? "index.html" : u.pathname.slice(1);
-    if (!/^(index\.html|assets\/[a-z0-9_]+\.(png|jpg))$/.test(path)) return new Response("Not found", { status: 404 });
+    const path = u.pathname === "/" || u.pathname === "/index.html" ? "index.html" : u.pathname === "/privacy" || u.pathname === "/support" ? u.pathname.slice(1) + ".html" : u.pathname.slice(1);
+    if (!/^(index\.html|privacy\.html|support\.html|assets\/[a-z0-9_]+\.(png|jpg))$/.test(path)) return new Response("Not found", { status: 404 });
     const f = await getFile(path);
     if (!f) return new Response("Not found", { status: 404 });
-    return new Response(f.body, { headers: { "content-type": f.type, "cache-control": path === "index.html" ? "no-cache" : "public, max-age=604800" } });
+    return new Response(f.body, { headers: { "content-type": f.type, "cache-control": path.endsWith(".html") ? "no-cache" : "public, max-age=604800" } });
   },
   websocket: {
     idleTimeout: 120,

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Knockout Zoo</string>
+    <string name="title_activity_main">Knockout Zoo</string>
+    <string name="package_name">com.birco.knockoutzoo</string>
+    <string name="custom_url_scheme">com.birco.knockoutzoo</string>
+</resources>

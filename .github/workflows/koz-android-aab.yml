@@ -1,0 +1,37 @@
+# Builds the Knockout Zoo Android app bundle (.aab) on GitHub.
+# Run it by pushing a tag like koz-android-1.0.0-1 (or Actions > "Knockout Zoo Android" > Run workflow).
+# The bundle is built UNSIGNED and pushed to the koz-builds branch; it is signed with the Play upload key
+# (kept in the project files, never in git) before it goes to Play Console.
+name: Knockout Zoo Android
+on:
+  push:
+    tags: ['koz-android-*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: knockout-zoo/app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - run: npm run build && npx cap sync android
+      - run: cd android && ./gradlew --no-daemon bundleRelease
+      - name: Push the unsigned bundle to koz-builds
+        run: |
+          OUT=$RUNNER_TEMP/out; mkdir -p $OUT
+          cp android/app/build/outputs/bundle/release/app-release.aab $OUT/knockout-zoo-unsigned.aab
+          echo "${GITHUB_REF_NAME} ${GITHUB_SHA}" > $OUT/BUILD.txt
+          cd $OUT && git init -q -b koz-builds && git add . \
+            && git -c user.name=koz-ci -c user.email=koz-ci@users.noreply.github.com commit -qm "Android build ${GITHUB_REF_NAME}" \
+            && git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" koz-builds

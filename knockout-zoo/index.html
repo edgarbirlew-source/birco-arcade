@@ -113,6 +113,13 @@ body.hasInvite #bHost{display:none}
 #loadBar{height:6px;background:#000;border-radius:3px;overflow:hidden;border:1px solid #333}
 #loadBar i{display:block;height:100%;width:0;background:var(--gold);transition:width .2s}
 @media (prefers-reduced-motion:reduce){.banner .big{animation:none}}
+.kzsheet{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(5,3,12,.85)}
+.kzcard{width:100%;max-width:380px;max-height:100%;overflow-y:auto;background:var(--panel);border:3px solid var(--gold);border-radius:16px;box-shadow:0 8px 0 #000;padding:16px;display:flex;flex-direction:column;gap:10px;text-align:center}
+.kzcard h2{color:var(--gold)}.kzcard p{margin:0;line-height:1.3}.kzcard ul{margin:0;padding:0;list-style:none;text-align:left;display:flex;flex-direction:column;gap:4px}
+.kzcard li:before{content:'🥊 '}.kzprice{font-family:var(--display);font-size:30px;color:var(--good);letter-spacing:1px}.kzprice small{display:block;font-family:var(--body);font-size:13px;color:var(--muted);letter-spacing:0}
+.kzcard input{font-family:var(--display);font-size:26px;text-align:center;background:#000;color:var(--gold);border:3px solid #000;border-radius:12px;padding:8px;width:100%;box-sizing:border-box}
+.kzlink{background:none;border:0;color:var(--accent2);font:inherit;text-decoration:underline;cursor:pointer;padding:4px}.kzmsg{color:var(--bad);min-height:1em}
+.lvl .card.kzlock .opp{color:var(--gold)}
 </style>
 </head>
 <body>
@@ -140,6 +147,7 @@ body.hasInvite #bHost{display:none}
     <button class="btn small" id="bLocker">LOCKER</button>
     <button class="btn small grey" id="bChangeChar">FIGHTER</button>
     <button class="btn small grey" id="bHome">MENU</button>
+    <button class="btn small gold" id="bFullGame" hidden>FULL GAME</button>
   </div>
   <div class="grid lvl" id="lvlGrid"></div>
 </section>
@@ -910,10 +918,11 @@ function buildChars(){const g=document.getElementById('charGrid');g.innerHTML=''
     portrait(cv2,id,S.glove,S.outfit);
     d.addEventListener('click',()=>{pendingFighter=id;document.querySelectorAll('#charGrid .card').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');});
     g.appendChild(d);});}
-function buildMap(){document.getElementById('cash1').textContent='$'+S.cash;const g=document.getElementById('lvlGrid');g.innerHTML='';
+function buildMap(){document.getElementById('cash1').textContent='$'+S.cash;document.getElementById('bFullGame').hidden=!KZF.store||KZF.full();const g=document.getElementById('lvlGrid');g.innerHTML='';
   LEVELS.forEach((l,i)=>{const locked=i>=S.unlocked,done=S.beaten.includes(i);const d=document.createElement('div');d.className='card'+(locked?' locked':'')+(done?' done':'');d.tabIndex=0;
     d.style.backgroundImage='url(assets/ring_'+l.ring+'.jpg)';
     d.innerHTML=(done?'<span class="chk">✓</span>':'')+'<div class="num">'+(i+1)+'</div><div class="ring">'+RINGS[l.ring].name+'</div><div class="opp">vs '+(l.name||SPECIES[l.opp].name)+' • <span style="color:var(--gold)">$'+l.reward+'</span></div>';
+    if(!locked&&KZF.wall(i)){d.classList.add('kzlock');d.querySelector('.opp').textContent='🔒 FULL GAME';d.addEventListener('click',()=>{ac();KZF.offer(i);});g.appendChild(d);return;}
     if(!locked)d.addEventListener('click',()=>{ac();startLevel(i);});g.appendChild(d);});}
 let shopTab='gloves';
 function buildShop(){document.getElementById('cash2').textContent='$'+S.cash;document.getElementById('shopTitle').textContent=shopTab==='gloves'?'GLOVE SHOP':'LOCKER';
@@ -953,9 +962,11 @@ document.getElementById('bHost').addEventListener('click',()=>{ac();hostStart();
 // v37: Claude's game window blocks every way out on Edgar's Samsung (share sheet, clipboard, sms: links, popups),
 // so the in-game share buttons are gone. The host is pointed at Claude's own Share button; the friend who opens the
 // link gets the gold JOIN button from the lobby invite (netOpenInvite), so the code never has to travel by hand.
-function kzInvite(code){const url=location.origin+location.pathname+'#join='+code;return {url,text:'Fight me in Knockout Zoo! Tap the link, then tap the big gold JOIN button.'};}
+function kzInvite(code){const url=(window.KZ_SHARE_BASE||location.origin+location.pathname)+'#join='+code;return {url,text:'Fight me in Knockout Zoo! Tap the link, then tap the big gold JOIN button.'};}
 document.getElementById('bTextFriend').addEventListener('click',()=>{const code=document.getElementById('myCode').textContent;const v=kzInvite(code);
   const sms=()=>{location.href='sms:'+(/iPhone|iPad|iPod/.test(navigator.userAgent)?'&':'?')+'body='+encodeURIComponent(v.text+' '+v.url);};
+  const cs=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.Share;
+  if(cs&&window.KZN&&KZN.native){cs.share({title:'Knockout Zoo',text:v.text,url:v.url}).catch(()=>{});return;}
   if(navigator.share)navigator.share({title:'Knockout Zoo',text:v.text,url:v.url}).catch(e=>{if(!e||e.name!=='AbortError')sms();});else sms();});
 document.getElementById('bInvite').addEventListener('click',()=>{if(NET.invite)joinInvite(NET.invite);});
 document.getElementById('bJoinInvite').addEventListener('click',()=>{if(NET.invite)joinInvite(NET.invite);});
@@ -980,10 +991,47 @@ document.addEventListener('fullscreenchange',()=>document.body.classList.toggle(
 document.getElementById('bQuit').addEventListener('click',()=>{if(raf){cancelAnimationFrame(raf);raf=null;}const wasVs=G&&G.vs,wasNet=G&&G.net;G=null;if(wasNet)netLeave();if(wasVs){show('sTitle');return;}buildMap();show('sMap');});
 let lastLevel=0;
 let lastVs=null;
-document.getElementById('bResNext').addEventListener('click',()=>{netLeave();if(lastLevel<0){show('sTitle');return;}buildMap();show('sMap');});
+document.getElementById('bResNext').addEventListener('click',()=>{netLeave();if(lastLevel<0){show('sTitle');return;}buildMap();show('sMap');if(lastLevel===KZF.FREE-1&&S.beaten.includes(lastLevel))KZF.offer(KZF.FREE,'You beat fight '+KZF.FREE+'!');});
+document.getElementById('bFullGame').addEventListener('click',()=>{ac();KZF.offer(null);});
 document.getElementById('bResRetry').addEventListener('click',()=>{ac();if(lastLevel<0&&!lastVs){show('sTitle');return;}if(lastLevel<0&&lastVs)startVs(lastVs[0],lastVs[1]);else startLevel(lastLevel);});
-function startLevel(i){lastLevel=i;startFight(i);}
+function startLevel(i){if(KZF.wall(i)){buildMap();show('sMap');KZF.offer(i);return;}lastLevel=i;startFight(i);}
 const _startVs=startVs;startVs=function(a,b){lastLevel=-1;lastVs=[a,b];_startVs(a,b);};
+
+// ========================= FULL GAME (store apps) =========================
+// BIRCO rule: buy the game, no ads. In the App Store / Google Play apps (window.KZN, set by app/src/native.js)
+// fights 1-5 and both 2-player modes are free; one Apple / Google purchase unlocks fights 6-17.
+// The web game has no store, so everything stays open there.
+const KZF=(()=>{
+  const store=!!(window.KZN&&KZN.native),FREE=5;let PRICE='$3.99';
+  const full=()=>{try{return localStorage.getItem('koz_full')==='1';}catch(e){return false;}};
+  const grant=()=>{try{localStorage.setItem('koz_full','1');}catch(e){}if(document.getElementById('sMap').classList.contains('on'))buildMap();};
+  let sheet=null;
+  function close(){if(sheet){sheet.remove();sheet=null;}}
+  function sh(html,wire){close();sheet=document.createElement('div');sheet.className='kzsheet';sheet.innerHTML='<div class="kzcard">'+html+'</div>';document.body.appendChild(sheet);
+    const q=x=>sheet.querySelector(x);const x=q('[data-x]');if(x)x.onclick=close;if(wire)wire(q);}
+  function offer(i,head){if(!store)return;
+    if(full()){sh('<h2>FULL GAME</h2><p>All 17 fights are unlocked. Thanks for supporting Knockout Zoo!</p><p style="font-size:13px;color:var(--muted)">New phone? Sign in to the same '+KZN.store+' account and tap Restore purchase.</p><button class="btn gold" data-x>BACK</button>');return;}
+    sh('<h2>'+(head||'GET THE FULL GAME')+'</h2><ul><li>Fights 6 to 17, all the way to the Championship Ring</li><li>Lava Pit, Orbital Station, Deep Sea Dome and more</li><li>Keep every glove and outfit you earn</li><li>No ads, ever</li></ul>'
+      +'<div class="kzprice">'+PRICE+' ONE TIME<small>Real money. No subscription. A grown-up pays.</small></div>'
+      +'<button class="btn gold" data-buy>ASK A GROWN-UP</button><button class="kzlink" data-restore>Restore purchase</button><button class="btn small grey" data-x>KEEP PLAYING FREE</button>',
+      q=>{q('[data-buy]').onclick=gate;q('[data-restore]').onclick=restore;});}
+  function gate(){const a=11+Math.floor(Math.random()*8),b=3+Math.floor(Math.random()*6);
+    sh('<h2>GROWN-UPS ONLY</h2><p>To buy, type the answer:</p><p style="font-family:var(--display);font-size:34px">'+a+' × '+b+' = ?</p><input inputmode="numeric" autocomplete="off" data-a aria-label="Answer"><p class="kzmsg" data-m></p>'
+      +'<button class="btn gold" data-go>BUY WITH '+KZN.store.toUpperCase()+'</button><button class="btn small grey" data-x>CANCEL</button>',
+      q=>{const inp=q('[data-a]');setTimeout(()=>inp.focus(),50);
+        const go=()=>{if(+inp.value.trim()!==a*b){q('[data-m]').textContent='Not quite. Ask a grown-up to help.';inp.value='';return;}buy();};
+        q('[data-go]').onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};});}
+  async function buy(){sh('<h2>ONE MOMENT…</h2><p>Opening '+KZN.store+'.</p>');
+    try{if(await KZN.buy()){grant();done();}else close();}
+    catch(e){if(/cancel/i.test(String(e&&(e.message||e)||''))){close();return;}
+      sh('<h2>NOT BOUGHT</h2><p>'+KZN.store+' didn\u2019t finish the purchase, so nothing was charged. You can try again any time.</p><button class="btn gold" data-x>OK</button>');}}
+  async function restore(){sh('<h2>CHECKING…</h2><p>Looking for your Full Game on '+KZN.store+'.</p>');
+    try{if(await KZN.restore()){grant();done();return;}sh('<h2>NOTHING TO RESTORE</h2><p>We didn\u2019t find a Full Game purchase on this '+KZN.store+' account.</p><button class="btn gold" data-x>OK</button>');}
+    catch(e){sh('<h2>CAN\u2019T CHECK RIGHT NOW</h2><p>Make sure you\u2019re online and signed in to '+KZN.store+', then try again.</p><button class="btn gold" data-x>OK</button>');}}
+  function done(){sh('<h2>FULL GAME UNLOCKED!</h2><p>All 17 fights are open. Thanks for supporting Knockout Zoo!</p><button class="btn gold" data-x>FIGHT!</button>');}
+  if(store){KZN.price().then(p=>{if(p)PRICE=p;}).catch(()=>{});KZN.owned().then(o=>{if(o&&!full())grant();}).catch(()=>{});}
+  return {store,FREE,full,wall:i=>store&&!full()&&i>=FREE,offer};
+})();
 
 // ========================= TITLE HERO =========================
 function titleHero(){const tc=document.getElementById('titleArt');if(!tc||!tc.getContext)return;const c=tc.getContext('2d');let t=0;
