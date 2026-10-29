@@ -1,4 +1,5 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}.kzvslink{display:block;width:100%;box-sizing:border-box;background:rgba(0,0,0,.35);color:var(--gold);border:2px dashed var(--gold);border-radius:10px;padding:8px 10px;font:700 14px/1.3 var(--body,sans-serif);word-break:break-all;user-select:all;-webkit-user-select:all;text-align:center}
+</style></head><body>
 <!doctype html>
 <html>
 <head>
@@ -187,7 +188,7 @@ body.hasInvite #bHost{display:none}
   </div>
 </section>
 <section class="screen" id="sOnline">
-  <h2>ONLINE VS <span style="font-size:12px;color:var(--muted)">v38</span></h2>
+  <h2>ONLINE VS <span style="font-size:12px;color:var(--muted)">v40</span></h2>
   <p class="sub" id="onlineStatus">Connecting…</p>
   <div class="preview" style="flex-direction:column;align-items:stretch;gap:10px">
     <button class="btn gold" id="bJoinInvite" hidden>JOIN</button>
@@ -199,10 +200,16 @@ body.hasInvite #bHost{display:none}
     <div id="codeBox" hidden style="text-align:center">
       <div class="sub">Your code:</div>
       <div class="cash" id="myCode" style="font-size:54px;letter-spacing:12px">----</div>
-      <button class="btn gold" id="bTextFriend" hidden>TEXT A FRIEND</button>
+      <div id="inviteRow" style="display:none;flex-direction:column;gap:8px;margin:6px 0">
+        <button class="btn gold" id="bShareLink">&#128228; SHARE INVITE LINK</button>
+        <div class="kzvslink" id="vsLink"></div>
+        <button class="btn alt" id="bCopyLink">COPY LINK</button>
+        <div class="sub" id="shareMsg" style="text-align:left"></div>
+      </div>
       <div id="shareCall" style="margin:8px auto 4px;max-width:420px;background:#1b1400;border:3px solid var(--gold);border-radius:14px;padding:10px 12px;font-size:17px;line-height:1.35;color:#fff">
         <div style="font-family:var(--display);color:var(--gold);font-size:22px;letter-spacing:1px">INVITE A FRIEND &#8599;</div>
         Tap <b>Share</b> at the very top of the Claude screen and send the link to your friend.<br>When they open it, a gold <b>JOIN</b> button with your code is already waiting.
+        <div style="margin-top:8px">Want a share button with the code in the link? Play online here instead:<br><a href="https://knockout-zoo-production.up.railway.app/" target="_blank" rel="noopener" style="color:var(--gold);word-break:break-all">knockout-zoo-production.up.railway.app</a></div>
       </div>
       <div class="sub" id="waitMsg">Waiting for them to join…</div>
     </div>
@@ -325,6 +332,7 @@ async function loadAssets(){
   let done=0;const bar=document.querySelector('#loadBar i');
   await Promise.all(jobs.map(j=>j.then(()=>{done++;if(bar)bar.style.width=(done/jobs.length*100)+'%';})));
   assetsReady=true;
+  if(window.KZ_HOSTED&&window.HASH_INVITE_UP&&!NET.usedHash)setTimeout(()=>{if(!NET.usedHash&&!NET.room)joinInvite(window.HASH_INVITE_UP);},300);
   const b=document.getElementById('bPlay');b.disabled=false;b.textContent='FIGHT!';document.getElementById('bVs').disabled=false;document.getElementById('bOnline').disabled=false;
   const lb=document.getElementById('loadBar');if(lb)lb.style.display='none';
   titleHero();
@@ -552,8 +560,11 @@ async function joinInvite(code){NET.usedHash=true;ac();show('sOnline');document.
   const r=await netInit();if(!r){netStatus('Can\'t go online on this phone: '+NET.why+' '+NET_HELP);return;}lobbyWatch();guestJoin();}
 const NET_HELP=window.KZ_HOSTED?'Check your internet connection and try again.':'Open the game link signed in to Claude. On a different Claude account? The game owner must invite your email once (Share menu in Claude).';
 // v38: on the hosted web page (window.KZ_HOSTED, set by /room.js) the invite link carries the code (#join=CODE),
-// the friend gets the big gold JOIN button straight away, and TEXT A FRIEND opens the phone's own share sheet.
-window.HASH_INVITE_UP=((((location.hash||'')+(location.search||'')).match(/join=([A-Za-z]{4})/)||[])[1]||'').toUpperCase()||null;
+// the friend gets the big gold JOIN button straight away, and SHARE INVITE LINK opens the phone's own share sheet (v40).
+// v40 (Edgar: same share as Cash Diamond): invite links are ?vs=CODE (old #join=CODE links still work), and a hosted
+// page opened from one joins the fight by itself.
+window.HASH_INVITE_UP=((((location.hash||'')+(location.search||'')).match(/(?:join|vs)=([A-Za-z]{4})/)||[])[1]||'').toUpperCase()||null;
+if(window.HASH_INVITE_UP&&window.KZ_HOSTED)try{history.replaceState(null,'',location.pathname);}catch(e){}
 function netStatus(t){const el=document.getElementById('onlineStatus');if(el)el.textContent=t;}
 function netLeave(){netOpenInvite(null);if(NET.room){const r=NET.room;NET.room=null;r.leave().catch(()=>{});}NET.unsub.forEach(u=>{try{u();}catch(e){}});NET.unsub=[];NET.started=false;netInvites();}
 // the other phones in this room: every open page except this tab (same account counts as someone else)
@@ -572,7 +583,8 @@ async function hostStart(){
   NET.host=true;NET.peerId=null;NET.fxSeq=0;NET.fxBuf=[];NET.started=false;
   document.getElementById('codeBox').hidden=false;document.getElementById('myCode').textContent=code;netStatus('Room open');
   r.presence({role:'h',v:31}).catch(()=>{});netOpenInvite(code);
-  document.getElementById('bTextFriend').hidden=!window.KZ_HOSTED;document.getElementById('shareCall').hidden=!!window.KZ_HOSTED;
+  document.getElementById('inviteRow').style.display=window.KZ_HOSTED?'flex':'none';document.getElementById('shareCall').hidden=!!window.KZ_HOSTED;
+  document.getElementById('vsLink').textContent=kzInvite(code).url;document.getElementById('shareMsg').textContent='Tap Share to send your friend the link. When they open it, they jump straight into your fight.';
     NET.unsub.push(r.onPeers(()=>{
     const others=netOthers(r);
     if(!NET.started){
@@ -948,15 +960,23 @@ document.getElementById('bOnline').addEventListener('click',async()=>{if(!assets
   const r=await netInit();
   if(!r){netStatus('Can\'t go online on this phone: '+NET.why+' '+NET_HELP);return;}
   lobbyWatch();netInvites();if(NET.invite&&!document.getElementById('joinCode').value)document.getElementById('joinCode').value=NET.invite;
-  netStatus(NET.invite?'Your friend is waiting! Tap JOIN FIGHT '+NET.invite+'.':'Ready. Host a fight and send the link with Share at the top, or enter a code to join. Your fighter: '+SPECIES[S.fighter].name+' (change it under FIGHTER).');});
+  netStatus(NET.invite?'Your friend is waiting! Tap JOIN FIGHT '+NET.invite+'.':(window.KZ_HOSTED?'Ready. Host a fight to get your invite link, or enter a code to join.':'Ready. Host a fight and send the link with Share at the top, or enter a code to join.')+' Your fighter: '+SPECIES[S.fighter].name+' (change it under FIGHTER).');});
 document.getElementById('bHost').addEventListener('click',()=>{ac();hostStart();});
 // v37: Claude's game window blocks every way out on Edgar's Samsung (share sheet, clipboard, sms: links, popups),
 // so the in-game share buttons are gone. The host is pointed at Claude's own Share button; the friend who opens the
 // link gets the gold JOIN button from the lobby invite (netOpenInvite), so the code never has to travel by hand.
-function kzInvite(code){const url=location.origin+location.pathname+'#join='+code;return {url,text:'Fight me in Knockout Zoo! Tap the link, then tap the big gold JOIN button.'};}
-document.getElementById('bTextFriend').addEventListener('click',()=>{const code=document.getElementById('myCode').textContent;const v=kzInvite(code);
-  const sms=()=>{location.href='sms:'+(/iPhone|iPad|iPod/.test(navigator.userAgent)?'&':'?')+'body='+encodeURIComponent(v.text+' '+v.url);};
-  if(navigator.share)navigator.share({title:'Knockout Zoo',text:v.text,url:v.url}).catch(e=>{if(!e||e.name!=='AbortError')sms();});else sms();});
+function kzInvite(code){const url=(window.KZ_SHARE_BASE||location.origin+location.pathname)+'?vs='+code;return {url,text:'Fight me in Knockout Zoo! Tap the link to join my fight.'};}
+async function kzCopy(t){try{await navigator.clipboard.writeText(t);return true;}catch(e){}
+  try{const a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();const ok=document.execCommand('copy');a.remove();return ok;}catch(x){return false;}}
+async function kzCopied(){const v=kzInvite(document.getElementById('myCode').textContent);
+  document.getElementById('shareMsg').textContent=await kzCopy(v.text+'\n'+v.url)?'Link copied! Paste it in a text to your friend.':'Copy did not work. Send your friend this link: '+v.url;}
+document.getElementById('bCopyLink').addEventListener('click',kzCopied);
+document.getElementById('bShareLink').addEventListener('click',async()=>{const v=kzInvite(document.getElementById('myCode').textContent);
+  const cap=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.Share;
+  try{if(navigator.share){await navigator.share({title:'Knockout Zoo',text:v.text,url:v.url});return;}
+    if(cap){await cap.share({title:'Knockout Zoo',text:v.text,url:v.url,dialogTitle:'Send the fight link'});return;}}
+  catch(e){if(e&&(e.name==='AbortError'||/cancel/i.test(e.message||'')))return;}
+  kzCopied();});
 document.getElementById('bInvite').addEventListener('click',()=>{if(NET.invite)joinInvite(NET.invite);});
 document.getElementById('bJoinInvite').addEventListener('click',()=>{if(NET.invite)joinInvite(NET.invite);});
 document.getElementById('bJoin').addEventListener('click',()=>{ac();guestJoin();});
