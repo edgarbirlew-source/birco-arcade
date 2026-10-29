@@ -15,7 +15,7 @@ The full listing copy lives in Drive (Games/Knockout Zoo, "02" listing doc); thi
 
 ## Money (no ads, ever)
 
-Fights 1 to 5 and 2-player on one phone are free. One purchase, the Full Game, unlocks fights 6 to 17.
+Fights 1 to 5 and online fights with a friend are free. One purchase, the Full Game, unlocks fights 6 to 17.
 No ads, no subscription, no coins for sale. The buy button sits behind a grown-up check, and Restore purchase is on the same screen.
 
 | Field | Value |
