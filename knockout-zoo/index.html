@@ -138,6 +138,7 @@ body.hasInvite #bHost{display:none}
   <h2 id="charTitle">PICK YOUR FIGHTER</h2>
   <div class="grid" id="charGrid"></div>
   <button class="btn gold" id="bCharOk">LOCK IT IN</button>
+  <button class="btn small grey kzmenu">BACK TO MENU</button>
 </section>
 <section class="screen" id="sMap">
   <div class="row"><h2>THE CIRCUIT</h2><span class="cash" id="cash1">$0</span></div>
@@ -145,7 +146,7 @@ body.hasInvite #bHost{display:none}
     <button class="btn alt small" id="bShop">GLOVE SHOP</button>
     <button class="btn small" id="bLocker">LOCKER</button>
     <button class="btn small grey" id="bChangeChar">FIGHTER</button>
-    <button class="btn small grey" id="bHome">MENU</button>
+    <button class="btn small grey kzmenu" id="bHome">BACK TO MENU</button>
   </div>
   <div class="grid lvl" id="lvlGrid"></div>
 </section>
@@ -155,10 +156,11 @@ body.hasInvite #bHost{display:none}
   <div class="tabs"><div class="tab on" data-tab="gloves">GLOVES</div><div class="tab" data-tab="outfits">OUTFITS</div></div>
   <div class="grid shop" id="shopGrid"></div>
   <button class="btn gold" id="bShopBack">BACK TO CIRCUIT</button>
+  <button class="btn small grey kzmenu">BACK TO MENU</button>
 </section>
 <section class="screen" id="sFight">
   <div class="fightbar">
-    <button class="btn small grey" id="bQuit">✕ BACK</button>
+    <button class="btn small grey" id="bQuit">✕ BACK TO MENU</button>
     <span class="fname" id="fightName"></span>
     <button class="btn small grey" id="bFull">⛶ FULL</button>
   </div>
@@ -219,7 +221,7 @@ body.hasInvite #bHost{display:none}
       <button class="btn small grey" id="bTourFighter">FIGHTER</button>
     </div>
   </div>
-  <button class="btn small grey" id="bTourBack">LEAVE</button>
+  <button class="btn small grey kzmenu" id="bTourBack">BACK TO MENU</button>
 </section>
 <section class="screen" id="sOnline">
   <h2>ONLINE VS <span style="font-size:12px;color:var(--muted)">v40</span></h2>
@@ -248,7 +250,7 @@ body.hasInvite #bHost{display:none}
       <div class="sub" id="waitMsg">Waiting for them to join…</div>
     </div>
   </div>
-  <button class="btn small grey" id="bOnlineBack">BACK</button>
+  <button class="btn small grey kzmenu" id="bOnlineBack">BACK TO MENU</button>
 </section>
 <section class="screen" id="sResult">
   <div class="result" id="resultBox">
@@ -259,6 +261,7 @@ body.hasInvite #bHost{display:none}
   </div>
   <button class="btn gold" id="bResNext">CONTINUE</button>
   <button class="btn alt small" id="bResRetry">REMATCH</button>
+  <button class="btn small grey kzmenu">BACK TO MENU</button>
 </section>
 </div>
 
@@ -1119,11 +1122,11 @@ const KZT=(()=>{
   $('bTourStart').addEventListener('click',()=>{if(!T.host||T.st!=='lobby'||players().length<2)return;ac();T.br=makeBracket();T.st='run';resolve();push();follow();});
   $('bTourShare').addEventListener('click',share);$('bTourCopy').addEventListener('click',copyIt);
   $('bTourFighter').addEventListener('click',()=>{vsPick=3;pendingFighter=S.fighter;buildChars();show('sChar');});
-  $('bTourBack').addEventListener('click',()=>{if(T.fighting)return;leave();show('sTitle');});
   $('tourNick').addEventListener('input',()=>{const v=$('tourNick').value.replace(/[^A-Za-z0-9 ]/g,'');if(v!==$('tourNick').value)$('tourNick').value=v;if(T.room)push();});
   const UP=((location.search||'').match(/party=([A-Za-z]{4})/)||[])[1];
   if(UP){$('tourCode').value=UP.toUpperCase();try{history.replaceState(null,'',location.pathname);}catch(e){}}
   return {
+    leaveAll:()=>leave(),
     inFight:()=>!!(T.room&&T.fighting),
     matchDone(iWon){const mm=T.match;let w=null;if(T.br){const [ri,i]=mm.slice(1).split('-').map(Number);const m=T.br.r[ri]&&T.br.r[ri][i];if(m)w=iWon?T.me:(m.a===T.me?m.b:m.a);}
       myRes={m:mm,w};T.fighting=false;netLeave();push();show('sTour');say(iWon?'You won! On to the next round.':'Good fight! You\'re out this time.');banner(iWon?'YOU WIN':'K.O.','',2);follow();},
@@ -1138,19 +1141,24 @@ document.getElementById('bJoin').addEventListener('click',()=>{ac();guestJoin();
   el.addEventListener('compositionstart',()=>{comp=true;});el.addEventListener('compositionend',()=>{comp=false;clean();});
   el.addEventListener('input',e=>{if(!comp&&!e.isComposing)clean();});
   el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();ac();guestJoin();}});})();
-document.getElementById('bOnlineBack').addEventListener('click',()=>{netLeave();show('sTitle');});
 document.getElementById('bVs').addEventListener('click',()=>{if(!assetsReady)return;ac();vsPick=1;pendingFighter=S.fighter;document.getElementById('charTitle').textContent='PLAYER 1: PICK YOUR FIGHTER';buildChars();show('sChar');});
 document.getElementById('bChangeChar').addEventListener('click',()=>{pendingFighter=S.fighter;buildChars();show('sChar');});
 document.getElementById('bShop').addEventListener('click',()=>{shopTab='gloves';buildShop();show('sShop');});
 document.getElementById('bLocker').addEventListener('click',()=>{shopTab='outfits';buildShop();show('sShop');});
 document.getElementById('bShopBack').addEventListener('click',()=>{buildMap();show('sMap');});
-document.getElementById('bHome').addEventListener('click',()=>show('sTitle'));
 document.getElementById('bFull').addEventListener('click',()=>{const el=document.documentElement;
   if(document.fullscreenElement){(document.exitFullscreen||document.webkitExitFullscreen).call(document);return;}
   const req=el.requestFullscreen||el.webkitRequestFullscreen;if(req){req.call(el).catch(()=>{});}
   document.body.classList.toggle('fs');});
 document.addEventListener('fullscreenchange',()=>document.body.classList.toggle('fs',!!document.fullscreenElement));
-document.getElementById('bQuit').addEventListener('click',()=>{if(raf){cancelAnimationFrame(raf);raf=null;}const wasVs=G&&G.vs,wasNet=G&&G.net;G=null;if(wasNet)netLeave();if(wasVs){show('sTitle');return;}buildMap();show('sMap');});
+// v43 (Edgar: BACK TO MENU on every screen): every .kzmenu button and the fight's ✕ go to the title menu, leaving any
+// online fight or tournament party on the way. In a fight the first tap asks "TAP AGAIN" so a stray tap doesn't end it.
+function goMenu(){clearTimeout(finishFight._t);if(raf){cancelAnimationFrame(raf);raf=null;}G=null;netLeave();KZT.leaveAll();
+  vsPick=0;document.getElementById('charTitle').textContent='PICK YOUR FIGHTER';document.getElementById('banner').hidden=true;show('sTitle');}
+document.querySelectorAll('.kzmenu').forEach(b=>b.addEventListener('click',()=>{ac();goMenu();}));
+document.getElementById('bQuit').addEventListener('click',()=>{const b=document.getElementById('bQuit');
+  if(G&&G.phase!=='done'&&!b.dataset.armed){b.dataset.armed='1';b.textContent='TAP AGAIN TO QUIT';clearTimeout(b._t);b._t=setTimeout(()=>{delete b.dataset.armed;b.textContent='\u2715 BACK TO MENU';},2500);return;}
+  delete b.dataset.armed;b.textContent='\u2715 BACK TO MENU';goMenu();});
 let lastLevel=0;
 let lastVs=null;
 document.getElementById('bResNext').addEventListener('click',()=>{netLeave();if(lastLevel<0){show('sTitle');return;}buildMap();show('sMap');});
