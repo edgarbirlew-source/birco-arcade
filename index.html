@@ -147,6 +147,10 @@ body.arena .btns{--bs:62px}
 .plist li i{width:14px;height:14px;border-radius:4px;flex:none}
 .plist li span{margin-left:auto;color:var(--muted);font-size:12px;font-weight:500}
 .go:disabled{background:var(--line);color:var(--muted);box-shadow:none}
+.share{display:block;width:100%;box-sizing:border-box;margin:6px 0 0;font-family:var(--display);font-size:20px;background:var(--teal);color:var(--bg);border:0;border-radius:12px;padding:16px 12px;cursor:pointer;box-shadow:0 4px 0 #1f8a85}
+.ilink{display:flex;gap:6px;align-items:stretch;margin-top:10px}
+.ilink code{flex:1;min-width:0;border:1px dashed var(--line);border-radius:8px;padding:9px 8px;font:12px/1.35 ui-monospace,Menlo,monospace;color:var(--ink);word-break:break-all;text-align:left;user-select:all;-webkit-user-select:all}
+.ilink button{flex:none;font-family:var(--display);font-size:13px;background:none;color:var(--teal);border:1px solid var(--teal);border-radius:8px;padding:0 12px;cursor:pointer}
 @media (max-width:370px){.btns{--bs:48px}body.arena .btns{--bs:56px}}
 @media (max-width:400px){.hb{min-width:40px;padding:5px 4px}.cash{font-size:15px}}
 </style>
@@ -208,6 +212,10 @@ body.arena .btns{--bs:62px}
         <h1 id="nt">ONLINE VS</h1>
         <p id="nm"></p>
         <div class="code" id="ncode"></div>
+        <div id="nshare" hidden>
+          <button class="share" id="nshareBtn">SHARE INVITE LINK</button>
+          <div class="ilink"><code id="nlink"></code><button id="ncopy">COPY LINK</button></div>
+        </div>
         <p class="note" id="nhint"></p>
         <div class="panels" style="margin-top:8px">
           <div class="panel" id="narenaP">
@@ -1030,10 +1038,22 @@ function netRelay(m,from){for(const c of NET.conns)if(c!==from&&c.open)c.send(m)
 function netReset(){NET.leaving=true;clearTimeout(NET.timer);if(NET.peer)try{NET.peer.destroy();}catch(e){}
   Object.assign(NET,{peer:null,host:false,conns:[],hostConn:null,code:'',id:'',ok:false,players:[],inGame:false,played:false,n:0,leaving:false});}
 function netShow(title,msg){$('mainCard').hidden=true;$('netCard').hidden=false;$('nt').textContent=title;$('nm').textContent=msg||'';$('ov').hidden=false;$('ov').scrollTop=0;netRender();}
+const NET_SITE='https://edgarbirlew-source.github.io/birco-arcade/';
+function inviteUrl(code){const web=/^https?:$/.test(location.protocol)&&!/^capacitor|^ionic/.test(location.protocol),pr=new URLSearchParams(location.search).get('peer');
+  return (web?location.origin+location.pathname:NET_SITE)+'?vs='+code+(pr&&web?'&peer='+encodeURIComponent(pr):'');}
+function copyText(t){if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(t);
+  return new Promise((ok,no)=>{const a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.cssText='position:fixed;top:0;left:0;opacity:0';document.body.appendChild(a);a.select();a.setSelectionRange(0,t.length);
+    let r=false;try{r=document.execCommand('copy');}catch(e){}a.remove();r?ok():no();});}
+function flash(id,txt,back){const b=$(id);b.textContent=txt;clearTimeout(b._t);b._t=setTimeout(()=>b.textContent=back,1800);}
+function netCopy(){const u=inviteUrl(NET.code);return copyText(u).then(()=>flash('ncopy','COPIED!','COPY LINK'),()=>{const r=document.createRange();r.selectNodeContents($('nlink'));const s=getSelection();s.removeAllRanges();s.addRange(r);flash('ncopy','HOLD TO COPY','COPY LINK');});}
+async function netShare(){const u=inviteUrl(NET.code);
+  if(navigator.share){try{await navigator.share({title:'Online VS',text:'Join my Online VS battle! Room code '+NET.code+'.',url:u});return;}catch(e){if(e&&e.name==='AbortError')return;}}
+  netCopy().then(()=>flash('nshareBtn','LINK COPIED!','SHARE INVITE LINK'));}
 function netRender(){
   const room=NET.ok&&!!NET.code,world=ARENAS[NET.arena].world;
   $('ncode').hidden=!room;$('ncode').textContent=NET.code;
-  $('nhint').textContent=!room?'':NET.host?'Friends tap Online VS on their phone, type this code and tap JOIN.':NET.inGame?'':'Waiting for the room maker to start the battle.';
+  $('nshare').hidden=!(room&&NET.host);if(room&&NET.host)$('nlink').textContent=inviteUrl(NET.code);
+  $('nhint').textContent=!room?'':NET.host?'Tap Share to send your friend the link. Or they can tap Online VS, type this code and tap JOIN.':NET.inGame?'':'Waiting for the room maker to start the battle.';
   $('narenaP').hidden=!room;$('nplayers').parentNode.hidden=!room;
   for(const b of $('narena').children){b.classList.toggle('on',b.dataset.a===NET.arena);b.disabled=!NET.host;}
   $('ncount').textContent=NET.players.length+'/'+NET_MAX;
@@ -1166,6 +1186,7 @@ function netResult(){
 }
 $('nstart').onclick=()=>{try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();}catch(e){}netStart();};
 $('nleave').onclick=netLeave;
+$('nshareBtn').onclick=netShare;$('ncopy').onclick=netCopy;
 $('narena').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!NET.host)return;NET.arena=b.dataset.a;netLobby();});
 $('joinBtn').onclick=()=>{try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();}catch(e){}netJoin($('joinCode').value);};
 $('joinCode').addEventListener('input',e=>{const v=e.target.value.toUpperCase().replace(/[^A-Z]/g,'').slice(0,4);if(v!==e.target.value)e.target.value=v;});
@@ -1945,6 +1966,12 @@ let last=performance.now();
 function frame(now){const dt=Math.min(3,(now-last)/16.667);last=now;TT+=dt*.25;update(dt);draw();requestAnimationFrame(frame);}
 startLevel('title');showOverlay('title');
 requestAnimationFrame(frame);
+/* invite link: ?vs=CODE opens straight into that room */
+(()=>{const q=new URLSearchParams(location.search),v=(q.get('vs')||'').toUpperCase().replace(/[^A-Z]/g,'');if(!v)return;
+  q.delete('vs');history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:'')+location.hash);
+  if(v.length!==4)return;SAVE.mode='online';save();if(typeof renderMode==='function')renderMode();
+  addEventListener('pointerdown',()=>{try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();}catch(e){}},{once:true});
+  $('joinCode').value=v;netJoin(v);})();
 
 /* ---------- input ---------- */
 $('go').onclick=()=>{
