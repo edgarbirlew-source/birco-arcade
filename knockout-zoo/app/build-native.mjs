@@ -24,6 +24,10 @@ let html = readFileSync('../index.html', 'utf8');
 const link = /<link rel="stylesheet" href="https:\/\/fonts\.googleapis\.com[^>]*>/;
 if (!link.test(html)) throw new Error('font link not found');
 html = html.replace(link, '<link rel="stylesheet" href="fonts/fonts.css">');
+// Android draws apps edge to edge: without viewport-fit=cover Capacitor keeps the game inside the status and
+// navigation bars, so the fight buttons sit above the phone's bottom bar (Edgar 2026-10-29: controls too low).
+html = html.replaceAll(',viewport-fit=cover', '');
+html = html.replace('</head>', '<style>body{padding-bottom:max(8px,env(safe-area-inset-bottom,0px),var(--safe-area-inset-bottom,0px))}</style></head>');
 const i = html.indexOf('<script>');
 if (i < 0) throw new Error('game script not found');
 html = html.slice(0, i) + '<script src="room.js"></script>\n<script src="native.js"></script>\n' + html.slice(i);
