@@ -1203,8 +1203,16 @@ const KZF=(()=>{
     if(full()){sh('<h2>FULL GAME</h2><p>All 17 fights are unlocked. Thanks for supporting Knockout Zoo!</p><p style="font-size:13px;color:var(--muted)">New phone? Sign in to the same '+KZN.store+' account and tap Restore purchase.</p><button class="btn gold" data-x>BACK</button>');return;}
     sh('<h2>'+(head||'GET THE FULL GAME')+'</h2><ul><li>Fights 6 to 17, all the way to the Championship Ring</li><li>Lava Pit, Orbital Station, Deep Sea Dome and more</li><li>Keep every glove and outfit you earn</li><li>No ads, ever</li></ul>'
       +'<div class="kzprice">'+PRICE+' ONE TIME<small>Real money. No subscription. A grown-up pays.</small></div>'
-      +'<button class="btn gold" data-buy>ASK A GROWN-UP</button><button class="kzlink" data-restore>Restore purchase</button><button class="btn small grey" data-x>KEEP PLAYING FREE</button>',
-      q=>{q('[data-buy]').onclick=gate;q('[data-restore]').onclick=restore;});}
+      +'<button class="btn gold" data-buy>ASK A GROWN-UP</button><button class="kzlink" data-restore>Restore purchase</button>'+(KZN.store==='Google Play'?'<button class="kzlink" data-code>Have a review code?</button>':'')+'<button class="btn small grey" data-x>KEEP PLAYING FREE</button>',
+      q=>{q('[data-buy]').onclick=gate;q('[data-restore]').onclick=restore;const c=q('[data-code]');if(c)c.onclick=code;});}
+  // Google Play reviewers can't make purchases, so the App access form gives them a code that opens the Full Game.
+  // Only its SHA-256 is here; the code itself is kept with the signing files. Never shown on the App Store (Apple 3.1.1).
+  const REVIEW='37a526e6734f853da59cbe5ee2531729a8b7b3502af00c3378d3d2c0e6effa70';
+  function code(){sh('<h2>REVIEW CODE</h2><input autocomplete="off" autocapitalize="characters" data-c aria-label="Code"><p class="kzmsg" data-m></p><button class="btn gold" data-go>UNLOCK</button><button class="btn small grey" data-x>CANCEL</button>',
+      q=>{const inp=q('[data-c]');setTimeout(()=>inp.focus(),50);
+        const go=async()=>{let h='';try{const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(inp.value.trim().toUpperCase()));h=[...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join('');}catch(e){}
+          if(h!==REVIEW){q('[data-m]').textContent='That code didn\u2019t work.';return;}grant();done();};
+        q('[data-go]').onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};});}
   function gate(){const a=11+Math.floor(Math.random()*8),b=3+Math.floor(Math.random()*6);
     sh('<h2>GROWN-UPS ONLY</h2><p>To buy, type the answer:</p><p style="font-family:var(--display);font-size:34px">'+a+' × '+b+' = ?</p><input inputmode="numeric" autocomplete="off" data-a aria-label="Answer"><p class="kzmsg" data-m></p>'
       +'<button class="btn gold" data-go>BUY WITH '+KZN.store.toUpperCase()+'</button><button class="btn small grey" data-x>CANCEL</button>',
