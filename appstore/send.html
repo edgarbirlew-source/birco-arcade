@@ -1,0 +1,7 @@
+<!doctype html><meta charset="utf-8"><title>KZ sender</title><body style="font:16px sans-serif">Sending screenshots…
+<script>
+(async()=>{const names=(new URLSearchParams(location.search).get('f')||'1-title.png,2-fight.png,3-circuit.png,4-glove-shop.png,5-tournament.png').split(',');
+const dir=new URLSearchParams(location.search).get('d')||'medium';
+const files=[];for(const n of names){const r=await fetch('https://raw.githubusercontent.com/edgarbirlew-source/birco-arcade/koz-listing/appstore/'+dir+'/'+n,{cache:'no-store'});files.push(new File([await r.blob()],n,{type:'image/png'}));}
+window.opener.postMessage({kz:1,files},'https://appstoreconnect.apple.com');document.body.textContent='Sent '+files.length+'. You can close this window.';setTimeout(()=>window.close(),1500);})().catch(e=>document.body.textContent='Error: '+e);
+</script>
