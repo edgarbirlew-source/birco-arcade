@@ -1,0 +1,19 @@
+# Uploads the signed Knockout Zoo bundle in this branch to Google Play internal testing.
+# The bundle is signed with the Play upload key outside GitHub; this only sends it to Play.
+name: Knockout Zoo to Play internal testing
+on:
+  push:
+    branches: ['koz-release']
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.birco.knockoutzoo
+          releaseFiles: knockout-zoo-*.aab
+          releaseName: 1.0.2 (3)
+          track: internal
+          status: completed
