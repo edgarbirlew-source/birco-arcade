@@ -93,6 +93,11 @@ body.fs{padding:0}body.fs .app{max-width:none}
 #controls1 [data-k=left],#controls1 [data-k=right]{grid-row:1/4;display:flex;flex-direction:column;justify-content:center}
 #controls1 [data-k=left]{grid-column:1}#controls1 [data-k=right]{grid-column:2}
 #controls1 .block{grid-column:3;grid-row:1}#controls1 .hook{grid-column:3;grid-row:2}#controls1 .jab{grid-column:3;grid-row:3}
+/* v44 neon buttons (Edgar's pick of three styles) */
+#controls1 .ctl{background:rgba(10,10,20,.85);border-radius:16px;border:3px solid currentColor;box-shadow:0 0 12px currentColor,inset 0 0 10px rgba(255,255,255,.08);text-shadow:0 0 8px currentColor;font-size:24px}
+#controls1 .block{color:#4cff8f}#controls1 .hook{color:#ff4f8b}#controls1 .jab{color:#4fb4ff}#controls1 [data-k=left],#controls1 [data-k=right]{color:#c9b8ff}
+#controls1 .ctl .k{color:#ddd;text-shadow:none}
+#controls1 .ctl.down{transform:translateY(2px) scale(.97);box-shadow:0 0 22px currentColor,inset 0 0 18px currentColor;filter:brightness(1.4)}
 .vsctl{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .vsctl[hidden]{display:none}
 .pad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
@@ -230,7 +235,7 @@ body.hasInvite #bHost{display:none}
   <button class="btn small grey kzmenu" id="bTourBack">BACK TO MENU</button>
 </section>
 <section class="screen" id="sOnline">
-  <h2>ONLINE VS <span style="font-size:12px;color:var(--muted)">v40</span></h2>
+  <h2>ONLINE VS <span style="font-size:12px;color:var(--muted)">v44</span></h2>
   <p class="sub" id="onlineStatus">Connecting…</p>
   <div class="preview" style="flex-direction:column;align-items:stretch;gap:10px">
     <button class="btn gold" id="bJoinInvite" hidden>JOIN</button>
