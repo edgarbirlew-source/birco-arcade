@@ -73,13 +73,16 @@ h2{font-family:var(--display);font-size:30px;margin:0;letter-spacing:1px;color:v
 .preview canvas{width:110px;height:132px;border-radius:8px;background:var(--panel2);flex:none}
 .preview .info{min-width:0;font-size:13px;line-height:1.4;color:var(--muted)}
 .preview .info b{color:var(--fg)}
-#sFight.on{height:calc(100dvh - 16px);max-height:calc(100dvh - 16px);gap:8px}
+#sFight.on{height:calc(100dvh - 16px);max-height:calc(100dvh - 16px);gap:6px}
 @media (max-width:460px){.ctl{padding:16px 2px;font-size:19px}.ctl .k{display:none}}
 .fightbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:none}
 .fightbar .btn{padding:6px 10px;font-size:16px}
 .fname{font-family:var(--display);font-size:18px;color:var(--gold);letter-spacing:1px;text-shadow:2px 2px 0 #000;text-align:center;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #gameWrap{position:relative;flex:1 1 auto;min-height:0;display:flex;justify-content:center;align-items:center;border-radius:14px;overflow:hidden;border:3px solid #000;box-shadow:0 8px 24px rgba(0,0,0,.6);background:#000}
-#game{display:block;max-width:100%;max-height:100%;width:auto;height:100%;aspect-ratio:480/560;touch-action:none}
+#game{display:block;width:100%;height:100%;object-fit:contain;touch-action:none}
+/* v45: the arena frame hugs the art (sized by fitArena) so the extra height isn't black bars */
+#gameWrap.fit{background:transparent;border:0;box-shadow:none;overflow:visible}
+#gameWrap.fit #game{flex:none;border:3px solid #000;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.6);background:#000;box-sizing:border-box}
 .controls,.vsctl{flex:none}
 .top3{justify-content:flex-start}
 .top3 .btn{flex:1 1 auto;padding:10px 6px;font-size:16px}
@@ -87,14 +90,13 @@ body.fs{padding:0}body.fs .app{max-width:none}
 :fullscreen body,body:fullscreen{background:var(--bg)}
 .controls{display:grid;grid-template-columns:1fr 1fr 1.2fr 1.2fr 1.2fr;gap:8px}
 .controls[hidden]{display:none}
-/* v44 (Edgar: punches up the side): steps tall on the left thumb, BLOCK / HOOK / JAB stacked for the right thumb */
-#controls1{width:100%;box-sizing:border-box;grid-template-columns:1fr 1fr 2fr;grid-template-rows:repeat(3,auto);gap:6px}
-#controls1 .ctl{padding:12px 4px}
-#controls1 [data-k=left],#controls1 [data-k=right]{grid-row:1/4;display:flex;flex-direction:column;justify-content:center}
-#controls1 [data-k=left]{grid-column:1}#controls1 [data-k=right]{grid-column:2}
-#controls1 .block{grid-column:3;grid-row:1}#controls1 .hook{grid-column:3;grid-row:2}#controls1 .jab{grid-column:3;grid-row:3}
+/* v45 (Edgar: buttons made the fight view too small): one slim row under the arena, steps on the left thumb,
+   BLOCK / HOOK / JAB on the right thumb. Was 3 stacked rows (~213px tall); now ~60px so the arena keeps the space. */
+#controls1{width:100%;box-sizing:border-box;grid-template-columns:1fr 1fr 1.3fr 1.3fr 1.3fr;grid-template-rows:auto;gap:6px;padding-bottom:env(safe-area-inset-bottom,0px)}
+#controls1 .ctl{padding:0 2px;height:clamp(52px,8.5dvh,68px);display:flex;flex-direction:column;align-items:center;justify-content:center}
+#controls1 [data-k=left]{order:1}#controls1 [data-k=right]{order:2}#controls1 .block{order:3}#controls1 .hook{order:4}#controls1 .jab{order:5}
 /* v44 neon buttons (Edgar's pick of three styles) */
-#controls1 .ctl{background:rgba(10,10,20,.85);border-radius:16px;border:3px solid currentColor;box-shadow:0 0 12px currentColor,inset 0 0 10px rgba(255,255,255,.08);text-shadow:0 0 8px currentColor;font-size:24px}
+#controls1 .ctl{background:rgba(10,10,20,.85);border-radius:14px;border:3px solid currentColor;box-shadow:0 0 10px currentColor,inset 0 0 10px rgba(255,255,255,.08);text-shadow:0 0 8px currentColor;font-size:clamp(17px,5.2vw,24px)}
 #controls1 .block{color:#4cff8f}#controls1 .hook{color:#ff4f8b}#controls1 .jab{color:#4fb4ff}#controls1 [data-k=left],#controls1 [data-k=right]{color:#c9b8ff}
 #controls1 .ctl .k{color:#ddd;text-shadow:none}
 #controls1 .ctl.down{transform:translateY(2px) scale(.97);box-shadow:0 0 22px currentColor,inset 0 0 18px currentColor;filter:brightness(1.4)}
@@ -235,7 +237,7 @@ body.hasInvite #bHost{display:none}
   <button class="btn small grey kzmenu" id="bTourBack">BACK TO MENU</button>
 </section>
 <section class="screen" id="sOnline">
-  <h2>ONLINE VS <span style="font-size:12px;color:var(--muted)">v44</span></h2>
+  <h2>ONLINE VS <span style="font-size:12px;color:var(--muted)">v45</span></h2>
   <p class="sub" id="onlineStatus">Connecting…</p>
   <div class="preview" style="flex-direction:column;align-items:stretch;gap:10px">
     <button class="btn gold" id="bJoinInvite" hidden>JOIN</button>
@@ -716,6 +718,11 @@ function guestTick(rawDt){
 }
 // ========================= FIGHT ENGINE =========================
 const cv=document.getElementById('game'),cx=cv.getContext('2d');
+// v45: size the arena to the largest 480:560 box that fits above the slim controls, so it never stretches or letterboxes
+(function fitArena(){const wrap=document.getElementById('gameWrap');wrap.classList.add('fit');
+  const fit=()=>{const w=wrap.clientWidth,h=wrap.clientHeight;if(!w||!h)return;const sc=Math.min(w/480,h/560);
+    cv.style.width=Math.floor(480*sc)+'px';cv.style.height=Math.floor(560*sc)+'px';};
+  if(window.ResizeObserver)new ResizeObserver(fit).observe(wrap);addEventListener('resize',fit);fit();})();
 let G=null,raf=null,lastT=0,keys={},keys2={};
 function mkFighter(spId,gloveId,outfitId,ai,lvl,li){
   const sp=Object.assign({id:spId},SPECIES[spId]),gl=GLOVES.find(g=>g.id===gloveId)||GLOVES[0],of=OUTFITS.find(o=>o.id===outfitId)||OUTFITS[0];
