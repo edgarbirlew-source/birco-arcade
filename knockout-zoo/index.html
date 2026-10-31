@@ -93,6 +93,9 @@ body.fs{padding:0}body.fs .app{max-width:none}
 /* v45 (Edgar: buttons made the fight view too small): one slim row under the arena, steps on the left thumb,
    BLOCK / HOOK / JAB on the right thumb. Was 3 stacked rows (~213px tall); now ~60px so the arena keeps the space. */
 #controls1{width:100%;box-sizing:border-box;grid-template-columns:1fr 1fr 1.3fr 1.3fr 1.3fr;grid-template-rows:auto;gap:6px;padding-bottom:env(safe-area-inset-bottom,0px)}
+/* v46 (Edgar: not too low; soft keys and floating icons get in the way): lift the row off the bottom edge by the
+   safe-area inset plus a thumb margin, and keep it in from the sides */
+#controls1{padding:0 max(8px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + clamp(28px,7dvh,64px)) max(8px,env(safe-area-inset-left,0px))}
 #controls1 .ctl{padding:0 2px;height:clamp(52px,8.5dvh,68px);display:flex;flex-direction:column;align-items:center;justify-content:center}
 #controls1 [data-k=left]{order:1}#controls1 [data-k=right]{order:2}#controls1 .block{order:3}#controls1 .hook{order:4}#controls1 .jab{order:5}
 /* v44 neon buttons (Edgar's pick of three styles) */
@@ -245,7 +248,7 @@ body.hasInvite #bHost{display:none}
   <button class="btn small grey kzmenu" id="bTourBack">BACK TO MENU</button>
 </section>
 <section class="screen" id="sOnline">
-  <h2>ONLINE VS <span style="font-size:12px;color:var(--muted)">v45</span></h2>
+  <h2>ONLINE VS <span style="font-size:12px;color:var(--muted)">v46</span></h2>
   <p class="sub" id="onlineStatus">Connecting…</p>
   <div class="preview" style="flex-direction:column;align-items:stretch;gap:10px">
     <button class="btn gold" id="bJoinInvite" hidden>JOIN</button>
