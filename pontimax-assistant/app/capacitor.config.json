@@ -1,0 +1,41 @@
+{
+  "appId": "com.birco.pmassistantiq",
+  "appName": "PM Assistant IQ",
+  "webDir": "www",
+  "backgroundColor": "#050b26",
+  "server": {
+    "url": "https://pm-assistant-iq-production.up.railway.app/",
+    "errorPath": "offline.html",
+    "allowNavigation": [
+      "pm-assistant-iq-production.up.railway.app",
+      "app.pontimaxassistant.com",
+      "pontimaxassistant.com",
+      "*.intuit.com",
+      "*.xero.com",
+      "*.sage.com",
+      "www.sageone.com",
+      "*.procore.com",
+      "trello.com",
+      "*.trello.com",
+      "*.atlassian.com",
+      "app.asana.com",
+      "*.monday.com",
+      "*.clickup.com",
+      "*.smartsheet.com",
+      "launchpad.37signals.com",
+      "*.freshbooks.com",
+      "*.waveapps.com",
+      "*.gusto.com",
+      "connect.stripe.com",
+      "connect.squareup.com",
+      "login.microsoftonline.com",
+      "login.live.com"
+    ]
+  },
+  "android": { "allowMixedContent": false, "backgroundColor": "#050b26" },
+  "ios": { "contentInset": "never", "backgroundColor": "#050b26", "limitsNavigationsToAppBoundDomains": false },
+  "plugins": {
+    "SystemBars": { "insetsHandling": "css", "style": "DARK", "initialViewportFitValueHint": "cover" },
+    "SplashScreen": { "launchShowDuration": 600, "backgroundColor": "#050b26", "showSpinner": false }
+  }
+}
