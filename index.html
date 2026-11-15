@@ -147,6 +147,21 @@ body.arena .btns{--bs:62px}
 .plist li i{width:14px;height:14px;border-radius:4px;flex:none}
 .plist li span{margin-left:auto;color:var(--muted);font-size:12px;font-weight:500}
 .go:disabled{background:var(--line);color:var(--muted);box-shadow:none}
+/* store apps: Full Game, rewarded bonus, More from BIRCO */
+.xrow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+.pill{font:700 13px var(--body);background:none;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer}
+.pill.gold{border-color:var(--amber);color:var(--amber)}
+.rw{display:block;width:100%;max-width:340px;margin:10px auto 0;font:700 15px var(--body);background:var(--teal);color:var(--bg);border:0;border-radius:10px;padding:12px;cursor:pointer;box-shadow:0 3px 0 #1f8a85}
+.rw:disabled{background:var(--line);color:var(--muted);box-shadow:none}
+.sheet{position:fixed;inset:0;z-index:50;background:rgba(10,8,6,.88);display:flex;align-items:center;justify-content:center;padding:16px}
+.sheet>div{width:100%;max-width:400px;max-height:100%;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 16px;text-align:center}
+.sheet h2{font:22px var(--display);color:var(--amber);margin:0 0 8px}
+.sheet ul{text-align:left;margin:0 0 12px;padding-left:20px;line-height:1.5}
+.sheet p{margin:0 0 12px}
+.sheet .go{width:100%;margin-top:4px}
+.sheet .math{display:flex;gap:8px;justify-content:center;margin:0 0 10px}
+.sheet .math input{width:90px;font:22px var(--display);text-align:center;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px;user-select:text;-webkit-user-select:text}
+.lock{opacity:.6}
 .share{display:block;width:100%;box-sizing:border-box;margin:6px 0 0;font-family:var(--display);font-size:20px;background:var(--teal);color:var(--bg);border:0;border-radius:12px;padding:16px 12px;cursor:pointer;box-shadow:0 4px 0 #1f8a85}
 .ilink{display:flex;gap:6px;align-items:stretch;margin-top:10px}
 .ilink code{flex:1;min-width:0;border:1px dashed var(--line);border-radius:8px;padding:9px 8px;font:12px/1.35 ui-monospace,Menlo,monospace;color:var(--ink);word-break:break-all;text-align:left;user-select:all;-webkit-user-select:all}
@@ -169,6 +184,9 @@ body.arena .btns{--bs:62px}
         <h1 id="ovt">ROAD RAMPAGE</h1>
         <p id="ovm">Outlaws own Highway 9. Take it back.</p>
         <button class="go" id="go">START ENGINE</button>
+        <button class="rw" id="rwBtn" hidden></button>
+        <div class="xrow"><button class="pill gold" id="fullBtn" hidden>FULL GAME</button><button class="pill" id="moreBtn">MORE FROM BIRCO</button></div>
+        <button class="link" id="privBtn" hidden>Privacy choices</button>
         <button class="link" id="reset" hidden>Start over from level 1</button>
         <div class="panels">
           <div class="panel">
@@ -243,6 +261,7 @@ body.arena .btns{--bs:62px}
   </div>
 </div>
 
+<script src="birco/promo.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const cv=$('cv'),ctx=cv.getContext('2d');
@@ -1192,6 +1211,65 @@ $('joinBtn').onclick=()=>{try{AC=AC||new (window.AudioContext||window.webkitAudi
 $('joinCode').addEventListener('input',e=>{const v=e.target.value.toUpperCase().replace(/[^A-Z]/g,'').slice(0,4);if(v!==e.target.value)e.target.value=v;});
 $('joinCode').addEventListener('keydown',e=>{if(e.key==='Enter')$('joinBtn').click();});
 
+/* ---------- store apps: Full Game, rewarded bonus, More from BIRCO ----------
+   BIRCO Game Monetization and Growth Standard (2026-11-15). The web game stays free with no ads.
+   In the Google Play / App Store apps (window.BircoStore, from app/src/native.js):
+   - Full Game: one purchase unlocks street levels 9+ and the Derby and Harbor arenas, and removes all ads and promos.
+   - Rewarded ads only: after a run the player may tap to watch one and double that run's cash. Never during play.
+   - More from BIRCO (birco/promo.js) on every menu and results screen; one full-screen promo per session at most. */
+const FG=(()=>{
+  const app=()=>!!window.BircoStore,FREE_LEVELS=8,FREE_ARENAS=['city','town'];let price='$3.99';
+  const full=()=>!!SAVE.full;
+  const locked=(what,v)=>app()&&!full()&&(what==='level'?v>FREE_LEVELS:!FREE_ARENAS.includes(v));
+  let sheet=null;
+  function sh(html){close();sheet=document.createElement('div');sheet.className='sheet';sheet.innerHTML='<div>'+html+'</div>';document.body.appendChild(sheet);
+    sheet.addEventListener('click',e=>{const t=e.target;if(t===sheet||t.closest('[data-x]'))close();else if(t.closest('[data-ask]'))ask();else if(t.closest('[data-buy]'))buy();else if(t.closest('[data-restore]'))restore();});}
+  function close(){if(sheet){sheet.remove();sheet=null;}}
+  function grant(){SAVE.full=true;save();renderMenus();refresh();}
+  function offer(head){const S2=BircoStore.store;
+    if(full()){sh('<h2>FULL GAME</h2><p>Everything is unlocked and there are no ads. Thanks for supporting BIRCO!</p><p class="note">New phone? Sign in to the same '+S2+' account and tap Restore purchase.</p><button class="go" data-x>BACK</button>');return;}
+    sh('<h2>'+(head||'GET THE FULL GAME')+'</h2><ul><li>Every street level, highway and open water</li><li>Demolition Derby and Harbor arenas</li><li>No ads, ever. Cash bonuses without watching ads</li><li>One payment of <b>'+price+'</b>. No subscription</li></ul>'
+      +'<button class="go" data-ask>ASK A GROWN-UP</button><button class="link" data-restore>Restore purchase</button><button class="link" data-x>Keep playing free</button>');}
+  function ask(){const a=6+(Math.random()*4|0),b=6+(Math.random()*4|0);
+    sh('<h2>GROWN-UPS ONLY</h2><p>What is '+a+' × '+b+'?</p><div class="math"><input id="fgAns" inputmode="numeric" maxlength="3" autocomplete="off"></div><button class="go" id="fgOk">CONTINUE</button><button class="link" data-x>Cancel</button>');
+    const i=sheet.querySelector('#fgAns');i.focus();
+    sheet.querySelector('#fgOk').onclick=()=>{if(+i.value===a*b)sh('<h2>FULL GAME · '+price+'</h2><p>Pay once with '+BircoStore.store+'. Unlocks everything and removes all ads.</p><button class="go" data-buy>BUY WITH '+BircoStore.store.toUpperCase()+'</button><button class="link" data-x>Cancel</button>');else{i.value='';i.placeholder='Try again';}};}
+  async function buy(){sh('<h2>ONE MOMENT…</h2><p>Opening '+BircoStore.store+'.</p>');
+    try{if(await BircoStore.full.buy()){grant();done();}else close();}
+    catch(e){sh('<h2>NOT BOUGHT</h2><p>'+BircoStore.store+' didn\u2019t finish the purchase, so nothing was charged. You can try again any time.</p><button class="go" data-x>OK</button>');}}
+  async function restore(){sh('<h2>CHECKING…</h2><p>Looking for your Full Game on '+BircoStore.store+'.</p>');
+    try{if(await BircoStore.full.restore()){grant();done();return;}sh('<h2>NOTHING TO RESTORE</h2><p>We didn\u2019t find a Full Game purchase on this '+BircoStore.store+' account.</p><button class="go" data-x>OK</button>');}
+    catch(e){sh('<h2>CAN\u2019T CHECK RIGHT NOW</h2><p>Make sure you\u2019re online and signed in to '+BircoStore.store+', then try again.</p><button class="go" data-x>OK</button>');}}
+  function done(){sh('<h2>FULL GAME UNLOCKED!</h2><p>Every level and arena is open, and there are no ads. Thanks for supporting BIRCO!</p><button class="go" data-x>LET\u2019S DRIVE</button>');}
+  function refresh(){$('fullBtn').hidden=!app();$('fullBtn').textContent=full()?'FULL GAME ✓':'FULL GAME · '+price;
+    $('privBtn').hidden=!(app()&&BircoStore.ads.privacyRequired());}
+  function init(){if(!app())return;
+    BircoStore.full.price().then(p=>{if(p){price=p;refresh();}}).catch(()=>{});
+    BircoStore.full.owned().then(o=>{if(o&&!full())grant();}).catch(()=>{});
+    if(!full())setTimeout(()=>BircoStore.ads.start().then(refresh),1500);
+    refresh();renderMenus();}
+  return {locked,offer,full,app,refresh,init,close};
+})();
+let rwAmt=0,results=0;
+function storeAfterOverlay(kind,info){
+  // rewarded bonus: double the cash from the run that just ended (store apps only, never online)
+  const earned=kind==='over'?(S&&S.earned||0):info&&info.earned||0;
+  rwAmt=FG.app()&&!(S&&S.online)&&['over','missed','clear','awin'].includes(kind)?earned:0;
+  const ads=FG.app()&&BircoStore.ads.available();
+  $('rwBtn').hidden=!(rwAmt>0&&(FG.full()||ads));$('rwBtn').disabled=false;
+  $('rwBtn').textContent=FG.full()?'FULL GAME BONUS · DOUBLE YOUR $'+rwAmt:'▶ WATCH AN AD · DOUBLE YOUR $'+rwAmt;
+  FG.refresh();
+  if(kind!=='title'&&++results>=2&&window.BircoPromo)setTimeout(()=>{if(!$('ov').hidden)BircoPromo.maybeInterstitial();},700);
+}
+$('rwBtn').onclick=async()=>{const b=$('rwBtn'),amt=rwAmt;if(!amt||b.disabled)return;b.disabled=true;
+  const ok=FG.full()||await BircoStore.ads.show();
+  if(ok){SAVE.cash+=amt;rwAmt=0;save();renderMenus();hud();tone(600,1800,.25,'triangle',.08);b.textContent='+$'+amt+' ADDED!';}
+  else{b.textContent='NO AD RIGHT NOW · TRY LATER';}};
+$('fullBtn').onclick=()=>FG.offer();
+$('privBtn').onclick=()=>{try{BircoStore.ads.privacyOptions();}catch(e){}};
+$('moreBtn').onclick=()=>{if(window.BircoPromo)BircoPromo.open();};
+if(window.BircoPromo){BircoPromo.init({game:'arcade-drive',accent:'#ffb02e',font:"'Chakra Petch', system-ui, sans-serif"});BircoPromo.setSuppressed(()=>FG.full());}
+
 /* ---------- overlay: camera, motor pool, garage ---------- */
 let boardTab=null;
 function showOverlay(kind,info){
@@ -1213,12 +1291,13 @@ function showOverlay(kind,info){
   if(S.kind==='arena'||SAVE.mode==='arena')boardTab=ARENAS[SAVE.arena].world;
   renderMenus();setGoText();
   $('ov').hidden=false;$('ov').scrollTop=0;
+  storeAfterOverlay(kind,info);
 }
 function renderMenus(){renderMode();renderView();renderBoard();renderGarage();}
 function setGoText(){$('go').textContent=SAVE.mode==='online'?'MAKE A ROOM':SAVE.mode==='arena'?'ENTER ARENA · ROUND '+(SAVE.alv||1):'START LEVEL '+SAVE.level;}
 function renderMode(){
   for(const b of $('modeSeg').children)b.classList.toggle('on',b.dataset.m===SAVE.mode);
-  $('arenaSeg').hidden=SAVE.mode!=='arena';$('joinRow').hidden=SAVE.mode!=='online';for(const b of $('arenaSeg').children)b.classList.toggle('on',b.dataset.a===SAVE.arena);
+  $('arenaSeg').hidden=SAVE.mode!=='arena';$('joinRow').hidden=SAVE.mode!=='online';for(const b of $('arenaSeg').children){b.classList.toggle('on',b.dataset.a===SAVE.arena);b.classList.toggle('lock',FG.locked('arena',b.dataset.a));b.textContent=(FG.locked('arena',b.dataset.a)?'🔒 ':'')+ARENAS[b.dataset.a].short[0]+ARENAS[b.dataset.a].short.slice(1).toLowerCase();}
   $('modeNote').textContent=SAVE.mode==='online'?'Battle friends on their own phones. Make a room and share the 4-letter code, or type a friend\'s code and tap JOIN. Private rooms only.':SAVE.mode==='arena'?'Free-drive '+ARENAS[SAVE.arena].name.toLowerCase()+' battle, round '+(SAVE.alv||1)+'. Push the joystick toward where you want to go. Last one standing wins.'
     :'Drive the '+(curWorld()==='sea'?'shipping lane':'highway')+', blast what is ahead, dodge air strikes and obstacles. Level '+SAVE.level+'.';
   setGoText();
@@ -1964,7 +2043,7 @@ function draw(){
 /* ---------- loop ---------- */
 let last=performance.now();
 function frame(now){const dt=Math.min(3,(now-last)/16.667);last=now;TT+=dt*.25;update(dt);draw();requestAnimationFrame(frame);}
-startLevel('title');showOverlay('title');
+startLevel('title');showOverlay('title');FG.init();
 requestAnimationFrame(frame);
 /* invite link: ?vs=CODE opens straight into that room */
 (()=>{const q=new URLSearchParams(location.search),v=(q.get('vs')||'').toUpperCase().replace(/[^A-Z]/g,'');if(!v)return;
@@ -1977,6 +2056,7 @@ requestAnimationFrame(frame);
 $('go').onclick=()=>{
   try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();}catch(e){}
   if(SAVE.mode==='online'){netHost();return;}
+  if(SAVE.mode==='arena'?FG.locked('arena',SAVE.arena):FG.locked('level',SAVE.level)){FG.offer(SAVE.mode==='arena'?ARENAS[SAVE.arena].name+' IS IN THE FULL GAME':'LEVEL '+SAVE.level+' IS IN THE FULL GAME');return;}
   if(SAVE.mode==='arena')startArena('play');else startLevel('play');$('ov').hidden=true;
 };
 function cycleView(){const o=['top','chase','cockpit'];SAVE.view=o[(o.indexOf(SAVE.view)+1)%3];save();hud();renderView();}
@@ -2017,7 +2097,7 @@ cv.addEventListener('pointermove',e=>{
 for(const t of ['pointerup','pointercancel'])cv.addEventListener(t,()=>{drag=null;joy=null;});
 </script>
 <script>
-if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+if('serviceWorker' in navigator&&!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>
 </body>
 </html>
