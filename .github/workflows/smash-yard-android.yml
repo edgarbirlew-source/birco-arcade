@@ -1,0 +1,60 @@
+name: Smash Yard Android
+
+# Builds the Smash Yard Android bundle (.aab) from smash-yard/app (Capacitor around Cohen's game).
+# The bundle is built UNSIGNED and pushed with a test APK to the sy-android-builds branch.
+# It is signed with the Smash Yard upload key (Smash Yard project files, signing/, never in git) before Play.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, 'claude/smash-yard-**']
+    paths: ['smash-yard/**', 'shared/**', .github/workflows/smash-yard-android.yml]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sy-android
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '21' }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Make the Android project
+        working-directory: smash-yard/app
+        run: |
+          npm ci
+          npm run build
+          npx cap add android
+          npm run assets -- --android
+          npx cap sync android
+      - name: Set version
+        working-directory: smash-yard/app/android
+        run: |
+          NAME=$(node -p "require('../package.json').version")
+          CODE=$((100 + ${{ github.run_number }}))
+          sed -i "s/versionCode 1$/versionCode $CODE/; s/versionName \"1.0\"/versionName \"$NAME\"/" app/build.gradle
+          grep -n "versionCode\|versionName" app/build.gradle
+          grep -q "com.android.vending.BILLING" app/src/main/AndroidManifest.xml ../node_modules/@capgo/native-purchases/android/src/main/AndroidManifest.xml && echo "billing permission present" || echo "WARNING: billing permission not found"
+          echo "VERSION_LABEL=$NAME-$CODE" >> "$GITHUB_ENV"
+      - name: Build
+        working-directory: smash-yard/app/android
+        run: ./gradlew --no-daemon bundleRelease assembleDebug
+      - name: Publish build files to the sy-android-builds branch
+        run: |
+          OUT=$RUNNER_TEMP/out; mkdir -p "$OUT"
+          cp smash-yard/app/android/app/build/outputs/bundle/release/app-release.aab "$OUT/smash-yard-unsigned.aab"
+          cp smash-yard/app/android/app/build/outputs/apk/debug/app-debug.apk "$OUT/smash-yard-test.apk"
+          printf 'version %s\ncommit %s\nbranch %s\nrun %s\n' "$VERSION_LABEL" "$GITHUB_SHA" "$GITHUB_REF_NAME" "$GITHUB_RUN_ID" > "$OUT/BUILD.txt"
+          cd "$OUT" && git init -q -b sy-android-builds && git add . \
+            && git -c user.name=sy-ci -c user.email=sy-ci@users.noreply.github.com commit -qm "Smash Yard Android $VERSION_LABEL" \
+            && git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" sy-android-builds

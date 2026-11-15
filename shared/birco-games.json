@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "updated": "2026-11-15",
+  "note": "ONE list for every BIRCO game. Set live:true only once the app is live in that store. Edit here, push to main and gh-pages; every game reads this file.",
+  "apps": [
+    {
+      "id": "smash-yard",
+      "name": "Smash Yard",
+      "pitch": "Brawl friends and bots in a backyard arena.",
+      "icon": "https://edgarbirlew-source.github.io/birco-arcade/shared/icons/smash-yard.png",
+      "play": "https://play.google.com/store/apps/details?id=com.birco.smashyard",
+      "appStore": "",
+      "ageRating": "Everyone 10+ / Apple 9+",
+      "kidsSafe": true,
+      "live": { "play": false, "appStore": false }
+    },
+    {
+      "id": "knockout-zoo",
+      "name": "Knockout Zoo",
+      "pitch": "Arcade boxing with wild animal fighters.",
+      "icon": "https://edgarbirlew-source.github.io/birco-arcade/shared/icons/knockout-zoo.png",
+      "play": "https://play.google.com/store/apps/details?id=com.birco.knockoutzoo",
+      "appStore": "",
+      "ageRating": "Everyone 10+ / Apple 9+",
+      "kidsSafe": true,
+      "live": { "play": false, "appStore": false }
+    },
+    {
+      "id": "road-rampage",
+      "name": "Road Rampage",
+      "pitch": "Upgrade your car and race your friends.",
+      "icon": "https://edgarbirlew-source.github.io/birco-arcade/icons/icon-192.png",
+      "play": "https://play.google.com/store/apps/details?id=com.birco.arcade.drive",
+      "appStore": "",
+      "ageRating": "Everyone",
+      "kidsSafe": true,
+      "live": { "play": false, "appStore": false }
+    },
+    {
+      "id": "cash-diamond",
+      "name": "Cash Diamond",
+      "pitch": "",
+      "icon": "",
+      "play": "",
+      "appStore": "",
+      "ageRating": "",
+      "kidsSafe": false,
+      "live": { "play": false, "appStore": false }
+    },
+    {
+      "id": "sword-of-the-spirit",
+      "name": "Sword of the Spirit",
+      "pitch": "",
+      "icon": "",
+      "play": "",
+      "appStore": "",
+      "ageRating": "",
+      "kidsSafe": true,
+      "live": { "play": false, "appStore": false }
+    },
+    {
+      "id": "search-and-destroy",
+      "name": "Search and Destroy",
+      "pitch": "",
+      "icon": "",
+      "play": "",
+      "appStore": "",
+      "ageRating": "",
+      "kidsSafe": false,
+      "live": { "play": false, "appStore": false }
+    }
+  ],
+  "recon": {
+    "name": "Watch Recon the Raccoon",
+    "pitch": "The newest Recon the Raccoon episode.",
+    "icon": "",
+    "latestEpisodeUrl": "",
+    "kidsSafe": true
+  }
+}
