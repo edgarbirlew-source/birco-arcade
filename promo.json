@@ -101,14 +101,17 @@
    "id": "recon-the-raccoon",
    "type": "video",
    "name": "Watch Recon the Raccoon",
-   "pitch": "Recon and friends explore real science. New episodes!",
+   "pitch": "Recon and friends explore real science. Watch the latest episode!",
    "icon": "",
    "color": "#b9b0d6",
    "age": "All ages",
-   "kidsSafe": true,
-   "live": false,
-   "url": "",
-   "_note": "Put the latest episode link in url and set live:true. Same link on Android and iPhone."
+   "kidsSafe": false,
+   "live": true,
+   "url": "https://www.facebook.com/share/r/19zybBH59v/",
+   "_note": "Latest episode, Facebook reel from Edgar 2026-11-15 (primary); altUrls = same episode elsewhere, not shown yet. Not kidsSafe: Facebook/TikTok are 13+, so kids games never show it. Swap url any time; games pick it up on next launch.",
+   "altUrls": {
+    "tiktok": "https://www.tiktok.com/t/ZPLwavjhr/"
+   }
   }
  ]
 }
