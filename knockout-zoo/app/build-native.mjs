@@ -2,12 +2,31 @@
 // (works offline), the native bridge, and the room shim pointed at the hosted room server for online versus.
 import { build } from 'esbuild';
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 
 const HOST = 'knockout-zoo-production.up.railway.app'; // Railway room server (server.ts) and the web game friends open
+// Shared BIRCO growth module (cross-promo + rewarded ads), one copy for every game: birco-arcade branch birco-shared.
+// Fetched at build time so each build bundles the current catalog and ad IDs (BIRCO_SHARED_DIR = local copy for tests).
+const SHARED_URL = 'https://raw.githubusercontent.com/edgarbirlew-source/birco-arcade/birco-shared/';
+const sharedDir = process.env.BIRCO_SHARED_DIR || 'birco-shared';
+if (!process.env.BIRCO_SHARED_DIR) {
+  rmSync(sharedDir, { recursive: true, force: true }); mkdirSync(sharedDir, { recursive: true });
+  for (const f of ['birco-growth.js', 'promo.json', 'ads.json', 'birco-native-patch.mjs']) {
+    const r = await fetch(SHARED_URL + f); if (!r.ok) throw new Error('shared ' + f + ' ' + r.status);
+    writeFileSync(sharedDir + '/' + f, await r.text());
+  }
+}
+const sharedPromo = JSON.parse(readFileSync(sharedDir + '/promo.json', 'utf8'));
+const sharedAds = JSON.parse(readFileSync(sharedDir + '/ads.json', 'utf8'));
+// AdMob App ID, SKAdNetwork IDs, tracking text, AD_ID removal -> android/ and ios/ (from ads.json)
+execFileSync('node', [sharedDir + '/birco-native-patch.mjs', 'knockout-zoo', '.', sharedDir + '/ads.json'], { stdio: 'inherit' });
+
 rmSync('www', { recursive: true, force: true });
 mkdirSync('www', { recursive: true });
 await build({ entryPoints: ['src/native.js'], bundle: true, format: 'iife', minify: true, outfile: 'www/native.js', target: 'es2020' });
 cpSync('src/fonts', 'www/fonts', { recursive: true });
+cpSync(sharedDir + '/birco-growth.js', 'www/birco-growth.js');
+writeFileSync('www/birco-shared.js', 'window.BIRCO_SHARED=' + JSON.stringify({ promo: sharedPromo, ads: sharedAds }) + ';');
 cpSync('../assets', 'www/assets', { recursive: true });
 
 // room.js: the same shim the server sends at /room.js, but with a fixed server address, and invites that
@@ -30,6 +49,10 @@ html = html.replaceAll(',viewport-fit=cover', '');
 html = html.replace('</head>', '<style>body{padding-bottom:max(8px,env(safe-area-inset-bottom,0px),var(--safe-area-inset-bottom,0px))}</style></head>');
 const i = html.indexOf('<script>');
 if (i < 0) throw new Error('game script not found');
-html = html.slice(0, i) + '<script src="room.js"></script>\n<script src="native.js"></script>\n' + html.slice(i);
+// the app bundles the shared module instead of loading it from the CDN (no remote code in store apps)
+const cdn = /<script async id="bircoGrowthJs"[^>]*><\/script>\n?/;
+if (!cdn.test(html)) throw new Error('birco-growth script tag not found');
+html = html.replace(cdn, '');
+html = html.slice(0, html.indexOf('<script>')) + '<script src="room.js"></script>\n<script src="birco-shared.js"></script>\n<script src="birco-growth.js"></script>\n<script src="native.js"></script>\n' + html.slice(html.indexOf('<script>'));
 writeFileSync('www/index.html', html);
 console.log('www ready');

@@ -11,6 +11,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Knockout Zoo</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<script async id="bircoGrowthJs" src="https://cdn.jsdelivr.net/gh/edgarbirlew-source/birco-arcade@birco-shared/birco-growth.js" onload="window.kzGrowthInit&&kzGrowthInit()"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Teko:wght@600;700&family=Rubik:wght@500;800&display=swap">
 <style>
 :root{
@@ -141,6 +142,7 @@ body.hasInvite #bHost{display:none}
 .kzcard input{font-family:var(--display);font-size:26px;text-align:center;background:#000;color:var(--gold);border:3px solid #000;border-radius:12px;padding:8px;width:100%;box-sizing:border-box}
 .kzlink{background:none;border:0;color:var(--accent2);font:inherit;text-decoration:underline;cursor:pointer;padding:4px}.kzmsg{color:var(--bad);min-height:1em}
 .lvl .card.kzlock .opp{color:var(--gold)}
+.btn.kzad{background:linear-gradient(#3ddc84,#1e9e5a);color:#000}.btn.kzad small{display:block;font-family:var(--body);font-size:12px;letter-spacing:0}
 </style>
 </head>
 <body>
@@ -154,6 +156,7 @@ body.hasInvite #bHost{display:none}
   <button class="btn" id="bVs" disabled hidden style="display:none">2 PLAYER • SAME PHONE</button><!-- v41: removed at Edgar's request (one-phone 2-player) -->
   <button class="btn alt" id="bOnline" disabled>2 PLAYER • ONLINE</button>
   <button class="btn gold" id="bTour" disabled>&#127942; TOURNAMENT • PARTY</button>
+  <button class="btn small" id="bMore" hidden>MORE FROM BIRCO</button>
   <button class="btn alt small" id="bReset">Reset Progress</button>
   <p class="foot">Hold ◀ ▶ to step in and out. JAB is fast, HOOK hits hard. BLOCK cuts damage to a sliver. Knock them down twice, or once in round 3, for the KO.</p>
 </section>
@@ -283,8 +286,10 @@ body.hasInvite #bHost{display:none}
     <div class="money" id="resMoney"></div>
     <ul id="resLines"></ul>
   </div>
+  <button class="btn kzad" id="bResAd" hidden></button>
   <button class="btn gold" id="bResNext">CONTINUE</button>
   <button class="btn alt small" id="bResRetry">REMATCH</button>
+  <button class="btn small" id="bResMore" hidden>MORE FROM BIRCO</button>
   <button class="btn small grey kzmenu">BACK TO MENU</button>
 </section>
 </div>
@@ -905,7 +910,7 @@ function finishFight(win,decision){
     document.getElementById('resHow').textContent=winner.name+(loser.hp<=0?' knocked out ':' outboxed ')+loser.name;
     document.getElementById('resMoney').textContent='';
     document.getElementById('resLines').innerHTML='<li>Jabs: '+G.log.jabs+' • Hooks: '+G.log.hooks+' • Blocks: '+G.log.blocks+'</li>';
-    document.getElementById('bResNext').textContent='BACK TO MENU';
+    document.getElementById('bResNext').textContent='BACK TO MENU';kzRewardOffer(null);
     banner(win?'P1 WINS':'P2 WINS',winner.name,2.5);
     if(G.net&&KZT.inFight()){const w=win;clearTimeout(finishFight._t);finishFight._t=setTimeout(()=>{G=null;KZT.matchDone(w);},2200);return;}
     clearTimeout(finishFight._t);finishFight._t=setTimeout(()=>{show('sResult');G=null;},2200);return;}
@@ -925,8 +930,8 @@ function finishFight(win,decision){
   document.getElementById('resLines').innerHTML=lines.map(l=>'<li>'+l+'</li>').join('');
   document.getElementById('bResNext').textContent=win&&li===LEVELS.length-1?'YOU ARE THE CHAMPION!':'CONTINUE';
   banner(win?'WINNER':'K.O.',win?'':G.o.name+' wins',2.5);
-  G.result={win,money};
-  clearTimeout(finishFight._t);finishFight._t=setTimeout(()=>{show('sResult');G=null;},2200);
+  G.result={win,money};kzRewardOffer(null);
+  clearTimeout(finishFight._t);finishFight._t=setTimeout(()=>{show('sResult');G=null;kzRewardOffer({money});if(window.BircoGrowth&&kzGrowthOn)BircoGrowth.maybePromo('gameover');},2200);
 }
 function render(){
   const c=cx,p=G.p,o=G.o;c.save();
@@ -1214,7 +1219,7 @@ function startLevel(i){if(KZF.wall(i)){buildMap();show('sMap');KZF.offer(i);retu
 const _startVs=startVs;startVs=function(a,b){lastLevel=-1;lastVs=[a,b];_startVs(a,b);};
 
 // ========================= FULL GAME (store apps) =========================
-// BIRCO rule: buy the game, no ads. In the App Store / Google Play apps (window.KZN, set by app/src/native.js)
+// BIRCO rule: buy the game (ads are optional rewarded videos; the Full Game removes them). In the App Store / Google Play apps (window.KZN, set by app/src/native.js)
 // fights 1-5 and both 2-player modes are free; one Apple / Google purchase unlocks fights 6-17.
 // The web game has no store, so everything stays open there.
 const KZF=(()=>{
@@ -1227,7 +1232,7 @@ const KZF=(()=>{
     const q=x=>sheet.querySelector(x);const x=q('[data-x]');if(x)x.onclick=close;if(wire)wire(q);}
   function offer(i,head){if(!store)return;
     if(full()){sh('<h2>FULL GAME</h2><p>All 17 fights are unlocked. Thanks for supporting Knockout Zoo!</p><p style="font-size:13px;color:var(--muted)">New phone? Sign in to the same '+KZN.store+' account and tap Restore purchase.</p><button class="btn gold" data-x>BACK</button>');return;}
-    sh('<h2>'+(head||'GET THE FULL GAME')+'</h2><ul><li>Fights 6 to 17, all the way to the Championship Ring</li><li>Lava Pit, Orbital Station, Deep Sea Dome and more</li><li>Keep every glove and outfit you earn</li><li>No ads, ever</li></ul>'
+    sh('<h2>'+(head||'GET THE FULL GAME')+'</h2><ul><li>Fights 6 to 17, all the way to the Championship Ring</li><li>Lava Pit, Orbital Station, Deep Sea Dome and more</li><li>Keep every glove and outfit you earn</li><li>No ads: every bonus, no videos</li></ul>'
       +'<div class="kzprice">'+PRICE+' ONE TIME<small>Real money. No subscription. A grown-up pays.</small></div>'
       +'<button class="btn gold" data-buy>ASK A GROWN-UP</button><button class="kzlink" data-restore>Restore purchase</button>'+(KZN.store==='Google Play'?'<button class="kzlink" data-code>Have a review code?</button>':'')+'<button class="btn small grey" data-x>KEEP PLAYING FREE</button>',
       q=>{q('[data-buy]').onclick=gate;q('[data-restore]').onclick=restore;const c=q('[data-code]');if(c)c.onclick=code;});}
@@ -1256,6 +1261,34 @@ const KZF=(()=>{
   if(store){KZN.price().then(p=>{if(p)PRICE=p;}).catch(()=>{});KZN.owned().then(o=>{if(o&&!full())grant();}).catch(()=>{});}
   return {store,FREE,full,wall:i=>store&&!full()&&i>=FREE,offer};
 })();
+
+// ========================= BIRCO GROWTH (v48) =========================
+// Shared BIRCO module (birco-arcade branch birco-shared): "More from BIRCO" cross-promo, one promo pop-up per session
+// on the result screen only, and optional rewarded videos (AdMob, app only). Full Game owners: no videos, no pop-ups,
+// and the bonus is free. Nothing here runs during a fight (show('sFight') marks play time). Ads never unlock fights.
+let kzGrowthOn=false;
+function kzGrowthInit(){if(kzGrowthOn||!window.BircoGrowth)return;kzGrowthOn=true;
+  const N=window.KZN&&KZN.native,sh=window.BIRCO_SHARED||{};
+  BircoGrowth.init({game:'knockout-zoo',platform:N?KZN.platform:'web',native:!!N,kids:false,parentalGate:true,
+    isFullGame:()=>KZF.store&&KZF.full(),admob:N?KZN.admob:null,promo:sh.promo,ads:sh.ads});
+  BircoGrowth.setPlaying(document.getElementById('sFight').classList.contains('on'));
+  for(const id of['bMore','bResMore'])document.getElementById(id).hidden=false;
+  if(kzReward)kzRewardOffer(kzReward);}
+document.getElementById('bMore').addEventListener('click',()=>{ac();if(window.BircoGrowth)BircoGrowth.openMore();});
+document.getElementById('bResMore').addEventListener('click',()=>{ac();if(window.BircoGrowth)BircoGrowth.openMore();});
+{const _show=show;show=function(id){if(window.BircoGrowth&&kzGrowthOn)BircoGrowth.setPlaying(id==='sFight');_show(id);};}
+// rewarded video on the result screen: double what this fight paid, once
+let kzReward=null;
+function kzRewardOffer(r){kzReward=r&&r.money>0?{money:r.money,used:false}:null;const b=document.getElementById('bResAd');
+  if(!kzReward||!window.BircoGrowth||!kzGrowthOn||!BircoGrowth.ads.canOffer()){b.hidden=true;return;}
+  const free=BircoGrowth.ads.isFree();
+  b.innerHTML=(free?'&#11088; FULL GAME BONUS: +$'+kzReward.money:'&#9654; WATCH A VIDEO: +$'+kzReward.money)+'<small>'+(free?'Double this fight’s cash, on us':'Double this fight’s cash')+'</small>';b.hidden=false;}
+document.getElementById('bResAd').addEventListener('click',async()=>{ac();const b=document.getElementById('bResAd');if(!kzReward||kzReward.used||b.disabled)return;
+  b.disabled=true;const r=await BircoGrowth.ads.watch('double_cash');b.disabled=false;
+  if(r.rewarded&&!kzReward.used){kzReward.used=true;S.cash+=kzReward.money;save();
+    document.getElementById('resMoney').textContent='+$'+(kzReward.money*2)+'  (bank $'+S.cash+')';b.hidden=true;}
+  else if(!r.rewarded){b.innerHTML='No video right now<small>Try again in a moment</small>';setTimeout(()=>kzRewardOffer(kzReward),2500);}});
+kzGrowthInit();
 
 // ========================= TITLE HERO =========================
 function titleHero(){const tc=document.getElementById('titleArt');if(!tc||!tc.getContext)return;const c=tc.getContext('2d');let t=0;

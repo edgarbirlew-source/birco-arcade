@@ -34,7 +34,17 @@ jobs:
             -authenticationKeyID ${{ secrets.ASC_KEY_ID }} -authenticationKeyIssuerID ${{ secrets.ASC_ISSUER_ID }} \
             DEVELOPMENT_TEAM=${{ secrets.APPLE_TEAM_ID }} CODE_SIGN_STYLE=Automatic \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
-            MARKETING_VERSION=1.0.0 CURRENT_PROJECT_VERSION=${{ github.run_number }} archive
+            MARKETING_VERSION=1.0.4 CURRENT_PROJECT_VERSION=${{ github.run_number }} archive
+      # Google's AdMob/UMP xcframeworks arrive pre-signed by Google; an unsigned archive keeps that vendor
+      # signature and export then fails ITMS-90035. Strip it so export signs every framework with BIRCO's cert.
+      - name: Strip vendor framework signatures
+        run: |
+          for f in $RUNNER_TEMP/App.xcarchive/Products/Applications/App.app/Frameworks/*.framework; do
+            n=$(basename "$f" .framework)
+            codesign --remove-signature "$f/$n" || true
+            rm -rf "$f/_CodeSignature"
+            echo "stripped $n"
+          done
       - name: Upload to TestFlight
         run: |
           cat > $RUNNER_TEMP/export.plist <<PLIST

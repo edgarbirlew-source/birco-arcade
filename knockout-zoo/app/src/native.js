@@ -1,9 +1,11 @@
-// Store-app bridge: Apple / Google in-app purchase for the Full Game, native share sheet, full-screen status bar.
+// Store-app bridge: Apple / Google in-app purchase for the Full Game, native share sheet, full-screen status bar,
+// and the AdMob plugin handed to the shared BIRCO growth module (rewarded videos only; see birco-shared/ads.json).
 import { Capacitor } from '@capacitor/core';
 import { NativePurchases, PURCHASE_TYPE } from '@capgo/native-purchases';
 import { StatusBar } from '@capacitor/status-bar';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { Share } from '@capacitor/share';
+import { AdMob } from '@capacitor-community/admob';
 
 const ID = 'knockoutzoo_full_game';
 const T = PURCHASE_TYPE.INAPP;
@@ -13,6 +15,7 @@ window.KZN = {
   native: Capacitor.isNativePlatform(),
   platform: Capacitor.getPlatform(),
   store: Capacitor.getPlatform() === 'ios' ? 'App Store' : 'Google Play',
+  admob: Capacitor.isNativePlatform() ? AdMob : null,
   async price() {
     const { products } = await NativePurchases.getProducts({ productIdentifiers: [ID], productType: T });
     return products && products[0] ? products[0].priceString : null;
