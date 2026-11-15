@@ -1,8 +1,8 @@
 # Smash Yard: store listing kit
 
 Publisher: BIRCO, Inc. Made by Cohen. App id (both stores): `com.birco.smashyard`. Version 1.0.0.
-Privacy policy: https://smash-yard-production-53259e16.up.railway.app/privacy
-Support: https://smash-yard-production-53259e16.up.railway.app/support
+Privacy policy: https://smash-yard-production-b96422af.up.railway.app/privacy
+Support: https://smash-yard-production-b96422af.up.railway.app/support
 
 ## Names and text
 

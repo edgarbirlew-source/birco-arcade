@@ -27,4 +27,12 @@ at most one full-screen promo per session and never for Full Game owners.
 
 ## Smash Yard
 
-`smash-yard/` (Cohen's game) runs on Railway and has its own store apps in `smash-yard/app/`. See `smash-yard/README.txt`.
+Cohen's game lives in `edgarbirlew-source/smash-yard` (Railway deploys its `main` to
+https://smash-yard-production-b96422af.up.railway.app). This repo holds only the store apps, `smash-yard/app/`:
+`build-native.mjs` downloads the game page and `birco.js` from that server, points online play at it, turns off
+accounts/friends inside the app (no personal data: kids' game) and adds the Full Game purchase
+(`smashyard_full_game`, one-time, non-consumable, unlocks Duo/Trio/Squad in the app only). No ads.
+Workflows: "Smash Yard Android" (unsigned .aab + test APK to `sy-android-builds`; sign with the upload key in the Smash Yard
+project files, `signing/`) and "Smash Yard iPhone" (TestFlight once the App Store Connect record exists; result in
+`sy-ios-status`). Run them again (Actions > Run workflow) after a game change you want in the apps.
+Store text, art and kids/privacy answers: `smash-yard/app/store/`.

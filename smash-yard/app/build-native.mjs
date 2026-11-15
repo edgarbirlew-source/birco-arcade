@@ -1,21 +1,31 @@
-// Put the store build of Smash Yard in www/: Cohen's game file (unchanged on disk), the shared BIRCO module with a
-// bundled copy of the games list (works offline), the purchase bridge, and the online server address.
+// Put the store build of Smash Yard in www/: Cohen's game page as the live server sends it (source of truth:
+// edgarbirlew-source/smash-yard, deployed by Railway), the shared BIRCO module with a bundled copy of the games
+// list (works offline), the purchase bridge, and the online server address.
 // The app has no accounts or friends list: it collects no personal data (kids' game, COPPA / Families).
 // Online 1v1 by room code still works through the Railway server.
 import { build } from 'esbuild';
 import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 
-const HOST = process.env.SY_HOST || 'smash-yard-production-53259e16.up.railway.app'; // Railway (server.js)
+const HOST = process.env.SY_HOST || 'smash-yard-production-b96422af.up.railway.app'; // Railway (smash-yard repo, main)
+// SY_GAME_DIR: a local folder with index.html and birco.js (tests); otherwise both are downloaded from the live server.
+async function gameFile(name) {
+  if (process.env.SY_GAME_DIR) return readFileSync(process.env.SY_GAME_DIR + '/' + name, 'utf8');
+  const r = await fetch(`https://${HOST}/${name === 'index.html' ? '' : name}`);
+  if (!r.ok) throw new Error(`could not download ${name} from ${HOST}: ${r.status}`);
+  return r.text();
+}
 rmSync('www', { recursive: true, force: true });
 mkdirSync('www', { recursive: true });
 await build({ entryPoints: ['src/native.js'], bundle: true, format: 'iife', minify: true, outfile: 'www/native.js', target: 'es2020' });
 copyFileSync('../../shared/birco-more.js', 'www/birco-more.js');
-copyFileSync('../birco.js', 'www/birco.js');
+writeFileSync('www/birco.js', await gameFile('birco.js'));
 const games = readFileSync('../../shared/birco-games.json', 'utf8');
 JSON.parse(games);
 writeFileSync('www/birco-games.js', 'window.BIRCO_GAMES_FALLBACK=' + games.trim() + ';\n');
 
-let html = readFileSync('../index.html', 'utf8');
+let html = await gameFile('index.html');
+// the server adds the web copies of the shared scripts; the app loads its bundled copies instead (below)
+html = html.replace(/<script src="https:\/\/edgarbirlew-source\.github\.io\/birco-arcade\/shared\/birco-more\.js" defer><\/script><script src="\/birco\.js" defer><\/script>/, '');
 const must = (what, n) => { const c = html.split(what).length - 1; if (c !== n) throw new Error(`expected ${n} x ${what}, found ${c}`); };
 // 1) online play talks to the hosted server, not the app's own address
 const wsFrom = /\(location\.protocol === 'https:' \? 'wss:\/\/' : 'ws:\/\/'\)\s*\+\s*location\.host/g;
@@ -33,5 +43,4 @@ const tail = '<script src="native.js"></script><script src="birco-games.js"></sc
 must('</body>', 1);
 html = html.replace('</body>', tail + '</body>');
 writeFileSync('www/index.html', html);
-copyFileSync('../privacy.html', 'www/privacy.html');
 console.log('www ready, server', HOST);
