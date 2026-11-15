@@ -5,7 +5,7 @@
 import { build } from 'esbuild';
 import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 
-const HOST = process.env.SY_HOST || 'smash-yard-production.up.railway.app'; // Railway (server.js)
+const HOST = process.env.SY_HOST || 'smash-yard-production-53259e16.up.railway.app'; // Railway (server.js)
 rmSync('www', { recursive: true, force: true });
 mkdirSync('www', { recursive: true });
 await build({ entryPoints: ['src/native.js'], bundle: true, format: 'iife', minify: true, outfile: 'www/native.js', target: 'es2020' });
