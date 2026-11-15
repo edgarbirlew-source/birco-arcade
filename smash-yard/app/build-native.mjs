@@ -18,7 +18,10 @@ rmSync('www', { recursive: true, force: true });
 mkdirSync('www', { recursive: true });
 await build({ entryPoints: ['src/native.js'], bundle: true, format: 'iife', minify: true, outfile: 'www/native.js', target: 'es2020' });
 copyFileSync('../../shared/birco-more.js', 'www/birco-more.js');
-writeFileSync('www/birco.js', await gameFile('birco.js'));
+const hook = await gameFile('birco.js');
+// the server answers unknown paths with the game page, so make sure this really is the hook-up script
+if (!hook.includes('BircoMore.init') || hook.trimStart().startsWith('<')) throw new Error('birco.js from the server is not the Smash Yard hook-up script');
+writeFileSync('www/birco.js', hook);
 const games = readFileSync('../../shared/birco-games.json', 'utf8');
 JSON.parse(games);
 writeFileSync('www/birco-games.js', 'window.BIRCO_GAMES_FALLBACK=' + games.trim() + ';\n');
