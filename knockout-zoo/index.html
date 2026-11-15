@@ -310,12 +310,12 @@ const PLAYABLE=['rocky','bigmo','tina','kangaroo','bear','gorilla','monkey','pen
 const GLOVES=[
   {id:'leather',name:'Classic Leather',price:0,dmg:1,speed:1,kb:1,c:'#c81f28',desc:'Standard issue.'},
   {id:'steel',name:'Steel Knuckle',price:150,dmg:1.3,speed:1,kb:1.2,c:'#9aa3ad',desc:'Riveted plates. Stings.'},
-  {id:'brick',name:'Brick Gloves',price:350,dmg:1.7,speed:.8,kb:1.6,c:'#b5452c',desc:'Two bricks, taped on.'},
+  {id:'brick',name:'Brick Gloves',price:350,dmg:1.7,speed:.9,kb:1.6,c:'#b5452c',desc:'Two bricks, taped on.'},
   {id:'ice',name:'Frostbite',price:500,dmg:1.4,speed:1.1,kb:1,c:'#8fe3ff',fx:'freeze',desc:'Hits freeze foes for 3s.'},
   {id:'fire',name:'Fireball',price:750,dmg:1.6,speed:1.15,kb:1.1,c:'#ff7a1a',fx:'burn',desc:'Burns over time.'},
-  {id:'sledge',name:'Sledgehammer',price:1000,dmg:2.3,speed:.65,kb:2.2,c:'#555a63',desc:'Launch them across the ring.'},
+  {id:'sledge',name:'Sledgehammer',price:1000,dmg:2.5,speed:1,kb:2.2,c:'#555a63',desc:'Launch them across the ring.'},
   {id:'volt',name:'Thunder Volt',price:1400,dmg:1.8,speed:1.3,kb:1.2,c:'#ffe34d',fx:'stun',desc:'Hits stun. Fast as lightning.'},
-  {id:'gold',name:'Golden Champ',price:2000,dmg:2.6,speed:1.2,kb:1.5,c:'#f6c431',desc:'Nothing hits harder.'},
+  {id:'gold',name:'Golden Champ',price:2000,dmg:2.6,speed:1.3,kb:1.5,c:'#f6c431',desc:'Nothing hits harder.'},
 ];
 const OUTFITS=[
   {id:'red',name:'Classic',price:0,c1:'#c81f28',c2:'#ffffff',pat:'band',hp:0,native:true},
@@ -333,24 +333,34 @@ const RINGS={
   lava:{name:'Lava Pit',hazard:'lava'},neon:{name:'Neon Arena'},space:{name:'Orbital Station'},
   underwater:{name:'Deep Sea Dome',slow:true},volcano:{name:'Volcano Cage',hazard:'lava',cage:true},champ:{name:'Championship Ring'},
 };
+// ===== DIFFICULTY TABLE (v47, Edgar 2026-11-15) — the ONE place to tune the circuit =====
+// Goal: fight 1 easy, 2 a little hard, 3 back-and-forth, 4 you usually LOSE with Classic Leather
+// (the loss pays cash + a shop tip), 5 needs better gloves, then harder every fight. Fights 6-17 = Full Game.
+// Columns (opponent only):
+//   hp   = health multiplier (x the fighter's own HP)     dmg = punch damage multiplier (on top of its glove)
+//   agg  = aggression 0-1 (how often it throws punches)   blk = block skill 0-1
+//   spd  = punch speed (1 = normal, higher = faster)      cnt = counter-punch chance 0-1 when you miss / recover
+//   glove= opponent's glove id                            reward = win purse in $
+// LOSS_PAY = share of the purse you still get when you lose (so a loss buys toward gloves).
+const LOSS_PAY=.35;
 const LEVELS=[
-  {ring:'gym',opp:'monkey',hp:.8,dmg:.7,agg:.35,blk:.05,reward:120},
-  {ring:'barn',opp:'goat',hp:.9,dmg:.8,agg:.4,blk:.1,reward:160},
-  {ring:'pool',opp:'penguin',hp:.95,dmg:.85,agg:.45,blk:.12,reward:200},
-  {ring:'jungle',opp:'raccoon',hp:1,dmg:.9,agg:.5,blk:.15,reward:240},
-  {ring:'desert',opp:'ostrich',hp:1,dmg:1,agg:.55,blk:.18,reward:280},
-  {ring:'rooftop',opp:'bigmo',hp:1.05,dmg:1.05,agg:.55,blk:.22,reward:330},
-  {ring:'cage',opp:'kangaroo',hp:1.1,dmg:1.1,agg:.6,blk:.25,reward:380},
-  {ring:'ice',opp:'bear',hp:1.1,dmg:1.15,agg:.6,blk:.28,reward:430},
-  {ring:'stadium',opp:'tina',hp:1.15,dmg:1.2,agg:.65,blk:.3,reward:480},
-  {ring:'lava',opp:'alligator',hp:1.2,dmg:1.25,agg:.65,blk:.32,reward:540},
-  {ring:'neon',opp:'gorilla',hp:1.25,dmg:1.3,agg:.7,blk:.35,reward:600},
-  {ring:'space',opp:'penguin',name:'Astro Pengo',hp:1.3,dmg:1.35,agg:.72,blk:.38,reward:660},
-  {ring:'underwater',opp:'hippo',hp:1.3,dmg:1.4,agg:.72,blk:.4,reward:730},
-  {ring:'volcano',opp:'bear',name:'Magma Bruno',hp:1.4,dmg:1.5,agg:.78,blk:.42,reward:800},
-  {ring:'gym',opp:'dog',hp:1.45,dmg:1.55,agg:.8,blk:.44,reward:880},
-  {ring:'stadium',opp:'tiger',hp:1.5,dmg:1.6,agg:.82,blk:.45,reward:950},
-  {ring:'champ',opp:'rocky',name:'Iron Ike',hp:1.55,dmg:1.65,agg:.85,blk:.48,reward:1100},
+  {ring:'gym',opp:'monkey',             hp:.80,dmg:.70,agg:.35,blk:.05,spd:.80,cnt:.00,glove:'leather',reward:80},  // F1
+  {ring:'barn',opp:'goat',              hp:1.00,dmg:1.15,agg:0.65,blk:.15,spd:.88,cnt:0.20,glove:'leather',reward:110},  // F2
+  {ring:'pool',opp:'penguin',           hp:1.20,dmg:1.30,agg:.65,blk:.25,spd:.95,cnt:.30,glove:'leather',reward:140},  // F3
+  {ring:'jungle',opp:'raccoon',         hp:1.45,dmg:1.10,agg:0.70,blk:0.30,spd:0.97,cnt:0.32,glove:'leather',reward:180},  // F4
+  {ring:'desert',opp:'ostrich',         hp:1.50,dmg:1.15,agg:0.72,blk:0.32,spd:1.00,cnt:0.34,glove:'steel',reward:230},  // F5
+  {ring:'rooftop',opp:'bigmo',          hp:1.50,dmg:0.96,agg:0.70,blk:0.30,spd:1.00,cnt:0.32,glove:'steel',reward:330},  // F6
+  {ring:'cage',opp:'kangaroo',          hp:1.54,dmg:0.69,agg:0.71,blk:0.31,spd:1.01,cnt:0.33,glove:'steel',reward:380},  // F7
+  {ring:'ice',opp:'bear',               hp:1.57,dmg:0.82,agg:0.72,blk:0.33,spd:1.02,cnt:0.34,glove:'brick',reward:430},  // F8
+  {ring:'stadium',opp:'tina',           hp:1.61,dmg:0.99,agg:0.73,blk:0.34,spd:1.03,cnt:0.36,glove:'brick',reward:480},  // F9
+  {ring:'lava',opp:'alligator',         hp:1.65,dmg:0.90,agg:0.74,blk:0.35,spd:1.04,cnt:0.37,glove:'brick',reward:540},  // F10
+  {ring:'neon',opp:'gorilla',           hp:1.68,dmg:0.63,agg:0.75,blk:0.37,spd:1.05,cnt:0.38,glove:'ice',reward:600},  // F11
+  {ring:'space',opp:'penguin',name:'Astro Pengo',hp:1.72,dmg:0.80,agg:0.77,blk:0.38,spd:1.07,cnt:0.39,glove:'ice',reward:660},  // F12
+  {ring:'underwater',opp:'hippo',       hp:1.60,dmg:0.80,agg:0.78,blk:0.40,spd:1.08,cnt:0.40,glove:'brick',reward:730},  // F13
+  {ring:'volcano',opp:'bear',name:'Magma Bruno',hp:1.79,dmg:0.65,agg:0.79,blk:0.41,spd:1.09,cnt:0.41,glove:'brick',reward:800},  // F14
+  {ring:'gym',opp:'dog',                hp:1.83,dmg:0.75,agg:0.80,blk:0.42,spd:1.10,cnt:0.43,glove:'sledge',reward:880},  // F15
+  {ring:'stadium',opp:'tiger',          hp:1.86,dmg:0.48,agg:0.81,blk:0.44,spd:1.11,cnt:0.44,glove:'gold',reward:950},  // F16
+  {ring:'champ',opp:'rocky',name:'Iron Ike',hp:1.90,dmg:0.50,agg:0.82,blk:0.45,spd:1.12,cnt:0.45,glove:'gold',reward:1100},  // F17
 ];
 const ROUND_TIME=40, ROUNDS=3;
 // punch phase timings (seconds): windup, extend, recover
@@ -730,9 +740,9 @@ let G=null,raf=null,lastT=0,keys={},keys2={};
 function mkFighter(spId,gloveId,outfitId,ai,lvl,li){
   const sp=Object.assign({id:spId},SPECIES[spId]),gl=GLOVES.find(g=>g.id===gloveId)||GLOVES[0],of=OUTFITS.find(o=>o.id===outfitId)||OUTFITS[0];
   const maxHp=Math.round((sp.hp+(ai?0:of.hp))*(ai?lvl.hp:1));
-  const enemySpeed=.8+.35*(li/(LEVELS.length-1));
+  const enemySpeed=lvl.spd||(.8+.35*(li/(LEVELS.length-1)));
   return {sp,glove:gl,outfit:of,name:ai?(lvl.name||sp.name):sp.name,x:ai?330:150,facing:ai?-1:1,action:'idle',t:0,dur:0,hitDone:false,cool:0,
-    hp:maxHp,maxHp,dispHp:maxHp,ghostHp:maxHp,ghostDelay:0,ai,dmgMult:ai?lvl.dmg:1,agg:ai?lvl.agg:0,blk:ai?lvl.blk:0,fx:{burn:0,freeze:0,stun:0},bob:Math.random()*6,stunned:false,aiT:0,aiMove:0,hazT:0,
+    hp:maxHp,maxHp,dispHp:maxHp,ghostHp:maxHp,ghostDelay:0,ai,dmgMult:ai?lvl.dmg:1,agg:ai?lvl.agg:0,blk:ai?lvl.blk:0,cnt:ai?(lvl.cnt||0):0,pid:0,cntPid:0,fx:{burn:0,freeze:0,stun:0},bob:Math.random()*6,stunned:false,aiT:0,aiMove:0,hazT:0,
     durMult:ai?1/enemySpeed:1/gl.speed,queued:null,ghost:[],grin:0,jolt:0,round:1,dist:200,koT:0,sweatT:0};
 }
 function startVs(f1,f2){
@@ -754,7 +764,7 @@ function startFight(li){
   document.getElementById('controls1').hidden=false;document.getElementById('controls2').hidden=true;
   const lvl=LEVELS[li];
   const oppOutfit='red'; // opponents wear their own painted shorts
-  G={li,lvl,ring:RINGS[lvl.ring],ringId:lvl.ring,p:mkFighter(S.fighter,S.glove,S.outfit,false,lvl,li),o:mkFighter(lvl.opp,['leather','leather','steel','brick','ice','fire','sledge','volt','gold'][Math.min(8,Math.floor(li/2))],oppOutfit,true,lvl,li),
+  G={li,lvl,ring:RINGS[lvl.ring],ringId:lvl.ring,p:mkFighter(S.fighter,S.glove,S.outfit,false,lvl,li),o:mkFighter(lvl.opp,lvl.glove||'leather',oppOutfit,true,lvl,li),
     round:1,time:ROUND_TIME,phase:'intro',pt:0,t:0,parts:[],shake:0,freeze:0,slow:0,zoom:1,zoomX:240,excite:0,flash:0,log:{jabs:0,hooks:0,blocks:0,ko:false},flashes:[]};
   // pre-build sprites so the first punch doesn't hitch
   for(const f of[G.p,G.o])for(const p of POSES)spriteFor(f.sp.id,p,f.outfit.id);
@@ -768,7 +778,7 @@ function doAction(f,act){
   if(f.action==='ko'||f.action==='hit')return false;
   if(f.action==='jab'||f.action==='hook'){if(act==='jab'&&f.dur-f.t<=QUEUE_WINDOW)f.queued='jab';return false;}
   if(f.cool>0)return false;
-  f.action=act;f.t=0;f.dur=punchDur(f,act);f.hitDone=false;f.ghost=[];sfx(act);if(!f.ai){if(act==='jab')G.log.jabs++;else G.log.hooks++;}
+  f.action=act;f.t=0;f.dur=punchDur(f,act);f.hitDone=false;f.ghost=[];f.pid=(f.pid||0)+1;sfx(act);if(!f.ai){if(act==='jab')G.log.jabs++;else G.log.hooks++;}
   return true;
 }
 function addPart(p){if(G.parts.length>=MAX_PARTS)G.parts.shift();G.parts.push(p);}
@@ -816,6 +826,9 @@ function aiThink(o,p,dt){
   if(o.action==='ko'||G.phase!=='fight')return;
   o.aiT-=dt;const dist=Math.abs(o.x-p.x);
   if(o.action==='idle'){const want=112;if(dist>want+8)o.aiMove=o.facing;else if(dist<want-12)o.aiMove=-o.facing;else o.aiMove=0;}
+  // v47: smarter opponents punish a punch that's recovering (cnt column in the difficulty table)
+  if(o.cnt&&(p.action==='jab'||p.action==='hook')&&o.cntPid!==p.pid&&p.t>p.dur*.55){o.cntPid=p.pid;
+    if(dist<128&&o.action==='idle'&&o.cool<=0&&Math.random()<o.cnt){doAction(o,Math.random()<.35?'hook':'jab');return;}}
   if(o.aiT>0)return;
   o.aiT=.22+Math.random()*(1-o.agg)*.8;
   if(o.action==='block')o.action='idle';
@@ -891,7 +904,10 @@ function finishFight(win,decision){
   const li=G.li,lvl=G.lvl,p=G.p;const lines=[];let money=0;
   if(win){money=lvl.reward;lines.push('Purse: $'+lvl.reward);const hb=Math.round(lvl.reward*.5*(p.hp/p.maxHp));money+=hb;lines.push('Health bonus: $'+hb);if(G.log.ko){money+=Math.round(lvl.reward*.3);lines.push('KO bonus: $'+Math.round(lvl.reward*.3));}
     if(!S.beaten.includes(li)){S.beaten.push(li);S.unlocked=Math.max(S.unlocked,Math.min(LEVELS.length,li+2));}}
-  else{money=Math.round(lvl.reward*.15);lines.push('Appearance fee: $'+money);}
+  else{money=Math.round(lvl.reward*LOSS_PAY);lines.push('Appearance fee: $'+money);
+    const gi=GLOVES.findIndex(g=>g.id===S.glove),up=GLOVES.filter((g,k)=>k>gi&&!S.gloves.includes(g.id)&&g.price<=S.cash+money).pop();
+    if(up)lines.push('Tip: '+G.o.name+' is tough. Grab '+up.name+' ($'+up.price+') in the GLOVE SHOP, then REMATCH!');
+    else lines.push('So close! Hit REMATCH and keep that guard up.');}
   lines.push('Jabs: '+G.log.jabs+' • Hooks: '+G.log.hooks+' • Blocks: '+G.log.blocks);
   S.cash+=money;save();
   const box=document.getElementById('resultBox');box.className='result '+(win?'win':'lose');
