@@ -14,3 +14,17 @@ Online VS: private rooms joined by a 4-letter code, up to 4 players. Phones conn
 
 - **Android app** workflow: an unsigned Play bundle plus a test APK, pushed to the `app-builds` branch. The Play bundle is signed with BIRCO's upload key, which is kept outside this public repo.
 - **iPhone app** workflow: checks the app compiles. Once the repo has the `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` and `APPLE_TEAM_ID` secrets, it signs and uploads to TestFlight.
+
+## Shared across every BIRCO game
+
+`shared/birco-games.json` is the ONE list of BIRCO games and the latest Recon the Raccoon episode (store links, age rating,
+kids-safe flag, and which stores each app is live in). `shared/birco-more.js` is the one module every game loads for the
+"More from BIRCO" screen, the grown-up check and the Full Game sheet. Games load both from GitHub Pages
+(`https://edgarbirlew-source.github.io/birco-arcade/shared/`), so editing the JSON and publishing updates every game; store
+apps bundle a copy for offline use. Rules built in: this game's own tile hidden, only apps live in the player's store,
+kids' games show kids-safe apps with no external links, links tagged `utm_source=<game>&utm_campaign=crosspromo`,
+at most one full-screen promo per session and never for Full Game owners.
+
+## Smash Yard
+
+`smash-yard/` (Cohen's game) runs on Railway and has its own store apps in `smash-yard/app/`. See `smash-yard/README.txt`.

@@ -1,0 +1,13 @@
+{
+  "appId": "com.birco.smashyard",
+  "appName": "Smash Yard",
+  "webDir": "www",
+  "backgroundColor": "#241a63",
+  "android": { "backgroundColor": "#241a63", "allowMixedContent": false },
+  "ios": { "backgroundColor": "#241a63", "contentInset": "never" },
+  "plugins": {
+    "SplashScreen": { "launchAutoHide": false, "backgroundColor": "#241a63", "showSpinner": false },
+    "StatusBar": { "overlaysWebView": true },
+    "SystemBars": { "insetsHandling": "css" }
+  }
+}

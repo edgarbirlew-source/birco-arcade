@@ -1,0 +1,108 @@
+name: Smash Yard iPhone
+
+# Builds the Smash Yard iPhone app from smash-yard/app on GitHub's Mac.
+# With the App Store Connect API key secrets (ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8, APPLE_TEAM_ID)
+# it registers the bundle ID, and once the App Store Connect app record exists it signs the build
+# and uploads it to TestFlight. Without the secrets it only checks that the app compiles.
+# Each run writes its result to the sy-ios-status branch (STATUS.txt).
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, 'claude/smash-yard-**']
+    paths: ['smash-yard/**', 'shared/**', .github/workflows/smash-yard-ios.yml]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sy-ios
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  BUNDLE_ID: com.birco.smashyard
+
+jobs:
+  build:
+    runs-on: macos-26
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Make the iPhone project
+        working-directory: smash-yard/app
+        run: |
+          npm ci
+          npm run build
+          npx cap add ios
+          npm run assets -- --ios
+          npx cap sync ios
+      - name: Set version
+        working-directory: smash-yard/app/ios/App
+        run: |
+          NAME=$(node -p "require('../../package.json').version")
+          CODE=$((100 + ${{ github.run_number }}))
+          /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" App/Info.plist || true
+          echo "MARKETING_VERSION=$NAME" >> "$GITHUB_ENV"
+          echo "BUILD_NUMBER=$CODE" >> "$GITHUB_ENV"
+          echo "STATUS=compiled-only" >> "$GITHUB_ENV"
+      - name: Register the bundle ID and look for the app record
+        id: asc
+        if: env.ASC_KEY_ID != ''
+        working-directory: smash-yard/app
+        run: |
+          node scripts/asc.mjs ensure "$BUNDLE_ID" "Smash Yard"
+      - name: Waiting for the app record
+        if: env.ASC_KEY_ID != '' && steps.asc.outputs.app == 'none'
+        run: echo "STATUS=bundle ID $BUNDLE_ID registered; waiting for Edgar to create the app in App Store Connect" >> "$GITHUB_ENV"
+      - name: Check it compiles (simulator, unsigned)
+        if: env.ASC_KEY_ID == '' || steps.asc.outputs.app == 'none'
+        working-directory: smash-yard/app/ios/App
+        run: |
+          xcodebuild -project App.xcodeproj -scheme App -configuration Release -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build | tail -20
+          [ -n "$ASC_KEY_ID" ] || echo "STATUS=compiled-only (no App Store Connect key on the repo)" >> "$GITHUB_ENV"
+      - name: Sign and upload to TestFlight
+        if: env.ASC_KEY_ID != '' && steps.asc.outputs.app != 'none'
+        working-directory: smash-yard/app/ios/App
+        run: |
+          mkdir -p ~/private_keys
+          KEY=~/private_keys/AuthKey_$ASC_KEY_ID.p8
+          printf '%s' "$ASC_KEY_P8" > "$KEY"
+          AUTH=(-allowProvisioningUpdates -authenticationKeyPath "$KEY" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID")
+          xcodebuild -project App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" "${AUTH[@]}" \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" CODE_SIGN_STYLE=Automatic \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            MARKETING_VERSION="$MARKETING_VERSION" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" archive | tail -20
+          cat > "$RUNNER_TEMP/export.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$APPLE_TEAM_ID</string>
+            <key>signingStyle</key><string>automatic</string>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/App.xcarchive" -exportOptionsPlist "$RUNNER_TEMP/export.plist" \
+            -exportPath "$RUNNER_TEMP/export" "${AUTH[@]}"
+          rm -f "$KEY"
+          echo "STATUS=uploaded $MARKETING_VERSION ($BUILD_NUMBER) to TestFlight" >> "$GITHUB_ENV"
+      - name: Write the result to the sy-ios-status branch
+        if: always()
+        run: |
+          OUT=$RUNNER_TEMP/status; mkdir -p "$OUT"
+          printf 'result %s\nstatus %s\nversion %s (%s)\ncommit %s\nbranch %s\nrun %s\n' "${{ job.status }}" "${STATUS:-failed before the version step}" \
+            "${MARKETING_VERSION:-?}" "${BUILD_NUMBER:-?}" "$GITHUB_SHA" "$GITHUB_REF_NAME" "$GITHUB_RUN_ID" > "$OUT/STATUS.txt"
+          cd "$OUT" && git init -q -b sy-ios-status && git add . \
+            && git -c user.name=sy-ci -c user.email=sy-ci@users.noreply.github.com commit -qm "Smash Yard iPhone: ${{ job.status }}" \
+            && git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" sy-ios-status

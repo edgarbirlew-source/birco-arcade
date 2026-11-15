@@ -1,0 +1,23 @@
+{
+  "name": "smash-yard-app",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Smash Yard store apps (Android and iPhone) for BIRCO, Inc. Capacitor shell around Cohen's game.",
+  "scripts": {
+    "build": "node build-native.mjs",
+    "assets": "capacitor-assets generate --iconBackgroundColor '#241a63' --iconBackgroundColorDark '#241a63' --splashBackgroundColor '#241a63' --splashBackgroundColorDark '#241a63'"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/core": "8.5.3",
+    "@capacitor/ios": "8.5.3",
+    "@capacitor/splash-screen": "8.0.2",
+    "@capacitor/status-bar": "8.0.4",
+    "@capgo/native-purchases": "8.9.6"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "3.0.5",
+    "@capacitor/cli": "8.5.3",
+    "esbuild": "0.25.10"
+  }
+}
