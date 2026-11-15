@@ -4,3 +4,4 @@ icons/
 *.jks
 *.keystore
 android/keystore.properties
+birco-shared/

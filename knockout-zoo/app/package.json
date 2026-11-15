@@ -1,13 +1,14 @@
 {
   "name": "knockout-zoo-app",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "Knockout Zoo store apps (Android and iOS) for BIRCO, Inc.",
   "scripts": {
     "build": "node build-native.mjs",
     "sync": "npm run build && npx cap sync"
   },
   "dependencies": {
+    "@capacitor-community/admob": "8.3.0",
     "@capacitor/android": "8.5.3",
     "@capacitor/core": "8.5.3",
     "@capacitor/ios": "8.5.3",
