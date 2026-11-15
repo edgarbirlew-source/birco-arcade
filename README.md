@@ -8,7 +8,7 @@ This branch (`birco-shared` in edgarbirlew-source/birco-arcade) is the source of
 | `promo.json` | Cross-promo catalog: every BIRCO game + the latest Recon the Raccoon episode, with Play / App Store links, `live` flags, age rating, `kidsSafe`. Edit here and every game updates on its next launch (games cache it for offline). |
 | `ads.json` | AdMob IDs for every game (rewarded only) + Google's test IDs + SKAdNetwork IDs. Swap test IDs for real ones here: `appId` + `rewarded` per platform, then `test:false`. |
 | `birco-growth.js` | The module (`window.BircoGrowth`): "More from BIRCO" sheet, one promo pop-up per session on menu / game-over only, rewarded ads (AdMob through `@capacitor-community/admob`), Full Game owners get no ads and no pop-ups. |
-| `birco-native-patch.mjs` | Build step: writes the AdMob App ID, SKAdNetwork IDs, tracking text into iOS Info.plist and Android manifest from `ads.json`; removes AD_ID for child-directed games. |
+| `birco-native-patch.mjs` | Build step: writes the AdMob App ID, SKAdNetwork IDs into iOS Info.plist (tracking text only for games that track; never for child-directed games) and Android manifest from `ads.json`; removes AD_ID for child-directed games. |
 | `test/run.mjs` | `node test/run.mjs` unit tests. |
 
 ## Adopting it in a game (Capacitor)

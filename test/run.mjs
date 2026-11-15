@@ -63,6 +63,11 @@ t('plist patch idempotent', () => {
   const p0 = '<?xml version="1.0"?>\n<plist version="1.0">\n<dict>\n\t<key>CFBundleName</key>\n\t<string>X</string>\n</dict>\n</plist>\n';
   const ids = adIds(ads, 'knockout-zoo', 'ios'); const p1 = patchPlist(p0, ids, ads), p2 = patchPlist(p1, ids, ads);
   assert.equal(p1, p2); assert.match(p1, /GADApplicationIdentifier<\/key>\s*<string>ca-app-pub-3940256099942544~1458002511/); assert.equal((p1.match(/SKAdNetworkIdentifier/g) || []).length, ads.skAdNetworkIds.length);
-  assert.match(p1, /NSUserTrackingUsageDescription/); assert.equal(patchPlist(p1, null, ads).trim(), p0.trim());
+  assert.doesNotMatch(p1, /NSUserTrackingUsageDescription/); assert.equal(patchPlist(p1, null, ads).trim(), p0.trim());
+});
+t('plist: tracking text only for tracking games, and removed from old builds', () => {
+  const p0 = '<?xml version="1.0"?>\n<plist version="1.0">\n<dict>\n\t<key>NSUserTrackingUsageDescription</key>\n\t<string>old</string>\n</dict>\n</plist>\n';
+  const kz = adIds(ads, 'knockout-zoo', 'ios'); assert.doesNotMatch(patchPlist(p0, kz, ads), /NSUserTrackingUsageDescription/);
+  const tr = { appId: 'x', test: true, cfg: { requestTracking: true, childDirected: false } }; assert.match(patchPlist(p0, tr, ads), /NSUserTrackingUsageDescription/);
 });
 console.log(n + ' tests passed');

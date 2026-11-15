@@ -5,7 +5,9 @@
 //
 // Android: AdMob APPLICATION_ID meta-data; removes the AD_ID permission for games that don't track
 //          (child-directed games), so Play's "Advertising ID: No" stays true.
-// iOS:     GADApplicationIdentifier, Google's SKAdNetwork IDs, NSUserTrackingUsageDescription.
+// iOS:     GADApplicationIdentifier, Google's SKAdNetwork IDs; NSUserTrackingUsageDescription ONLY for games that track
+//          (requestTracking and not childDirected). Child-directed games must not ship it: App Store Connect then
+//          refuses 'not used for tracking' on App Privacy.
 // A game with ads disabled gets everything removed again.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
@@ -42,7 +44,8 @@ export function patchPlist(xml, ids, ads) {
   const sk = ads.skAdNetworkIds.map(s => `\n\t\t<dict>\n\t\t\t<key>SKAdNetworkIdentifier</key>\n\t\t\t<string>${s}</string>\n\t\t</dict>`).join('');
   const add = `\n\t<key>GADApplicationIdentifier</key>\n\t<string>${ids.appId}</string>`
     + `\n\t<key>SKAdNetworkItems</key>\n\t<array>${sk}\n\t</array>`
-    + `\n\t<key>NSUserTrackingUsageDescription</key>\n\t<string>${ads.trackingUsageDescription}</string>`;
+    + (ids.cfg.requestTracking && !ids.cfg.childDirected
+      ? `\n\t<key>NSUserTrackingUsageDescription</key>\n\t<string>${ads.trackingUsageDescription}</string>` : '');
   const i = xml.lastIndexOf('</dict>');
   return xml.slice(0, i).replace(/\s*$/, '') + add + '\n' + xml.slice(i);
 }
