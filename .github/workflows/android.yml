@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main, 'claude/**']
-    paths: [index.html, sw.js, manifest.webmanifest, 'fonts/**', 'icons/**', 'lib/**', 'app/**', .github/workflows/android.yml]
+    paths: [index.html, sw.js, 'birco/**', manifest.webmanifest, 'fonts/**', 'icons/**', 'lib/**', 'app/**', .github/workflows/android.yml]
 
 permissions:
   contents: write
@@ -36,6 +36,7 @@ jobs:
           npx cap add android
           npm run assets -- --android
           npx cap sync android
+          npm run native -- android
       - name: Set version
         working-directory: app/android
         run: |

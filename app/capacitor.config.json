@@ -1,8 +1,12 @@
 {
   "appId": "com.birco.arcade.drive",
-  "appName": "Road Rampage",
+  "appName": "Blast Buggies",
   "webDir": "www",
   "backgroundColor": "#140f0c",
-  "android": { "allowMixedContent": false },
-  "ios": { "contentInset": "never" }
+  "android": {
+    "allowMixedContent": false
+  },
+  "ios": {
+    "contentInset": "never"
+  }
 }

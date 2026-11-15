@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "updated": "2026-11-15",
+  "note": "ONE list for every BIRCO game's 'More from BIRCO' screen. Set playLive / appStoreLive to true only once the app is live in that store. Every game reads this file from https://edgarbirlew-source.github.io/birco-arcade/birco/promo.json, so editing it here updates all games.",
+  "recon": {
+    "id": "recon",
+    "name": "Watch Recon",
+    "pitch": "New Recon the Raccoon episode: Animals With Invisible Compasses",
+    "icon": "icons/recon.jpg",
+    "latest": "https://www.youtube.com/watch?v=UA0dbRHsEjQ",
+    "channel": "https://www.youtube.com/@Recontheracoon",
+    "age": "All ages",
+    "kidsSafe": true
+  },
+  "apps": [
+    {
+      "id": "knockout-zoo",
+      "name": "Knockout Zoo",
+      "pitch": "Humans vs. beasts arcade boxing",
+      "icon": "icons/knockout-zoo.png",
+      "play": "https://play.google.com/store/apps/details?id=com.birco.knockoutzoo",
+      "playLive": true,
+      "appStore": null,
+      "appStoreLive": false,
+      "age": "Everyone (Play) · 13+ audience",
+      "kidsSafe": false
+    },
+    {
+      "id": "cash-diamond",
+      "name": "Cash Diamond",
+      "pitch": "Cartoon baseball where every hit pays",
+      "icon": "icons/cash-diamond.png",
+      "play": "https://play.google.com/store/apps/details?id=com.birco.cashdiamond",
+      "playLive": true,
+      "appStore": null,
+      "appStoreLive": false,
+      "age": "Everyone",
+      "kidsSafe": true
+    },
+    {
+      "id": "arcade-drive",
+      "name": "Blast Buggies",
+      "pitch": "Drive, blast and battle friends online",
+      "icon": "icons/arcade-drive.png",
+      "play": "https://play.google.com/store/apps/details?id=com.birco.arcade.drive",
+      "playLive": false,
+      "appStore": null,
+      "appStoreLive": false,
+      "age": "Everyone 10+",
+      "kidsSafe": false
+    },
+    {
+      "id": "sword-of-the-spirit",
+      "name": "Sword of the Spirit",
+      "pitch": "Bible trivia adventure",
+      "icon": null,
+      "play": null,
+      "playLive": false,
+      "appStore": null,
+      "appStoreLive": false,
+      "age": "Everyone",
+      "kidsSafe": true
+    },
+    {
+      "id": "smash-yard",
+      "name": "Smash Yard",
+      "pitch": "Smash-everything sandbox",
+      "icon": null,
+      "play": null,
+      "playLive": false,
+      "appStore": null,
+      "appStoreLive": false,
+      "age": "Everyone",
+      "kidsSafe": true
+    },
+    {
+      "id": "search-and-destroy",
+      "name": "Search and Destroy",
+      "pitch": "Arcade action",
+      "icon": null,
+      "play": null,
+      "playLive": false,
+      "appStore": null,
+      "appStoreLive": false,
+      "age": "Everyone 10+",
+      "kidsSafe": false
+    }
+  ]
+}
