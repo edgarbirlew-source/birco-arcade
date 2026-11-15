@@ -1,0 +1,114 @@
+{
+ "_about": "BIRCO cross-promotion catalog. ONE file for every BIRCO game: edit here and every game picks it up on next launch (cached copy is used offline). Set live:true only when the store page is public. Tiles with kidsSafe:false never show in kids games.",
+ "version": 1,
+ "updated": "2026-11-15",
+ "utm": {
+  "campaign": "crosspromo",
+  "medium": "app"
+ },
+ "items": [
+  {
+   "id": "knockout-zoo",
+   "type": "game",
+   "name": "Knockout Zoo",
+   "pitch": "Humans vs. beasts arcade boxing in crazy arenas.",
+   "icon": "https://raw.githubusercontent.com/edgarbirlew-source/birco-arcade/birco-shared/icons/knockout-zoo.png",
+   "color": "#ffc83d",
+   "age": "ESRB Everyone / App Store 13+",
+   "kidsSafe": false,
+   "android": {
+    "live": true,
+    "url": "https://play.google.com/store/apps/details?id=com.birco.knockoutzoo"
+   },
+   "ios": {
+    "live": true,
+    "url": "https://apps.apple.com/app/id6828700996"
+   }
+  },
+  {
+   "id": "cash-diamond",
+   "type": "game",
+   "name": "Cash Diamond Baseball",
+   "pitch": "Cartoon baseball where every hit earns cash.",
+   "icon": "https://raw.githubusercontent.com/edgarbirlew-source/birco-arcade/birco-shared/icons/cash-diamond.png",
+   "color": "#3ddc84",
+   "age": "Everyone",
+   "kidsSafe": true,
+   "android": {
+    "live": true,
+    "url": "https://play.google.com/store/apps/details?id=com.birco.cashdiamond"
+   },
+   "ios": {
+    "live": false,
+    "url": ""
+   }
+  },
+  {
+   "id": "sword-of-the-spirit",
+   "type": "game",
+   "name": "Sword of the Spirit Kids",
+   "pitch": "A Bible verse adventure for kids.",
+   "icon": "",
+   "color": "#19e0ff",
+   "age": "4+",
+   "kidsSafe": true,
+   "android": {
+    "live": false,
+    "url": "https://play.google.com/store/apps/details?id=com.birco.swordofthespirit"
+   },
+   "ios": {
+    "live": true,
+    "url": "https://apps.apple.com/app/id6829037798"
+   }
+  },
+  {
+   "id": "smash-yard",
+   "type": "game",
+   "name": "Smash Yard",
+   "pitch": "",
+   "icon": "",
+   "color": "#ff2e63",
+   "age": "",
+   "kidsSafe": true,
+   "android": {
+    "live": false,
+    "url": ""
+   },
+   "ios": {
+    "live": false,
+    "url": ""
+   }
+  },
+  {
+   "id": "search-and-destroy",
+   "type": "game",
+   "name": "Search and Destroy",
+   "pitch": "",
+   "icon": "",
+   "color": "#ff7a1a",
+   "age": "",
+   "kidsSafe": false,
+   "android": {
+    "live": false,
+    "url": ""
+   },
+   "ios": {
+    "live": false,
+    "url": ""
+   }
+  },
+  {
+   "id": "recon-the-raccoon",
+   "type": "video",
+   "name": "Watch Recon the Raccoon",
+   "pitch": "Recon and friends explore real science. New episodes!",
+   "icon": "",
+   "color": "#b9b0d6",
+   "age": "All ages",
+   "kidsSafe": true,
+   "live": false,
+   "url": "",
+   "_note": "Put the latest episode link in url and set live:true. Same link on Android and iPhone."
+  }
+ ]
+}
