@@ -69,6 +69,11 @@ jobs:
           xcodebuild -project App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/App.xcarchive" DEVELOPMENT_TEAM="$APPLE_TEAM_ID" CODE_SIGN_STYLE=Automatic \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" "${AUTH[@]}" archive | tail -20
+          # Vendor frameworks (Google Mobile Ads, UMP) keep their vendor signature in an unsigned archive,
+          # which App Store Connect rejects (error 90035). Strip it so the export signs them with our team.
+          for F in "$RUNNER_TEMP/App.xcarchive/Products/Applications/App.app/Frameworks/"*.framework; do
+            [ -e "$F" ] && codesign --remove-signature "$F" && echo "Unsigned $(basename "$F") for re-signing"
+          done
           cat > "$RUNNER_TEMP/export.plist" <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
