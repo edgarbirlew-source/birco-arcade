@@ -140,10 +140,13 @@
   }
 
   // Full Game sheet, the same in every game: what it unlocks, price, BUY (behind the grown-up check) and RESTORE.
-  //   BircoMore.fullGame({ unlocks: 'Duo, Trio and Squad team battles', price: '$2.99', buy: async () => bool, restore: async () => bool, done: () => {} })
+  //   BircoMore.fullGame({ unlocks: 'Duo, Trio and Squad team battles', price: '$2.99', buy: async () => bool, restore: async () => bool, done: () => {},
+  //                        title: 'FREE TRIAL OVER', lead: 'Your free fights are used up.' })
   function fullGame(f) {
     var o = overlay();
-    o.innerHTML = '<div class="bm-box"><h2>FULL GAME</h2><p style="text-align:center">Unlock ' + esc(f.unlocks) + '.</p>' +
+    // optional: title (e.g. 'FREE TRIAL OVER') and lead (one line above the unlock list), for games with a trial paywall
+    o.innerHTML = '<div class="bm-box"><h2>' + esc(f.title || 'FULL GAME') + '</h2>' + (f.lead ? '<p style="text-align:center"><b>' + esc(f.lead) + '</b></p>' : '') +
+      '<p style="text-align:center">Unlock ' + esc(f.unlocks) + '.</p>' +
       '<p style="text-align:center">One purchase. No ads, ever.</p><p class="bm-msg" style="text-align:center;min-height:1.3em"></p>' +
       '<div class="bm-row"><button type="button" class="bm-btn" data-buy>BUY ' + esc(f.price || '') + '</button>' +
       '<button type="button" class="bm-btn alt" data-restore>RESTORE PURCHASE</button><button type="button" class="bm-btn alt" data-no>NOT NOW</button></div></div>';

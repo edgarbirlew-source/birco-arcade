@@ -21,6 +21,8 @@ copyFileSync('../../shared/birco-more.js', 'www/birco-more.js');
 const hook = await gameFile('birco.js');
 // the server answers unknown paths with the game page, so make sure this really is the hook-up script
 if (!hook.includes('BircoMore.init') || hook.trimStart().startsWith('<')) throw new Error('birco.js from the server is not the Smash Yard hook-up script');
+// the store apps must carry the free-trial paywall (Edgar 2026-11-16); refuse an older hook-up script
+if (!hook.includes('smash-yard-trial')) throw new Error('birco.js on the server has no free-trial paywall yet (deploy smash-yard main first)');
 writeFileSync('www/birco.js', hook);
 const games = readFileSync('../../shared/birco-games.json', 'utf8');
 JSON.parse(games);

@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updated": "2026-11-15",
-  "note": "ONE list for every BIRCO game. Set live:true only once the app is live in that store. Edit here, push to main and gh-pages; every game reads this file.",
+  "updated": "2026-11-16",
+  "note": "ONE list for every BIRCO game. Set live:true only once the app is live in that store. Edit here, push to main and gh-pages; every game reads this file. trialFights: free fights before the Full Game paywall (store apps).",
   "apps": [
     {
       "id": "smash-yard",
@@ -12,7 +12,11 @@
       "appStore": "",
       "ageRating": "Everyone 10+ / Apple 9+",
       "kidsSafe": true,
-      "live": { "play": false, "appStore": false }
+      "live": {
+        "play": false,
+        "appStore": false
+      },
+      "trialFights": 10
     },
     {
       "id": "knockout-zoo",
@@ -23,7 +27,10 @@
       "appStore": "",
       "ageRating": "Everyone 10+ / Apple 9+",
       "kidsSafe": true,
-      "live": { "play": false, "appStore": false }
+      "live": {
+        "play": false,
+        "appStore": false
+      }
     },
     {
       "id": "road-rampage",
@@ -34,7 +41,10 @@
       "appStore": "",
       "ageRating": "Everyone",
       "kidsSafe": true,
-      "live": { "play": false, "appStore": false }
+      "live": {
+        "play": false,
+        "appStore": false
+      }
     },
     {
       "id": "cash-diamond",
@@ -45,7 +55,10 @@
       "appStore": "",
       "ageRating": "",
       "kidsSafe": false,
-      "live": { "play": false, "appStore": false }
+      "live": {
+        "play": false,
+        "appStore": false
+      }
     },
     {
       "id": "sword-of-the-spirit",
@@ -56,7 +69,10 @@
       "appStore": "",
       "ageRating": "",
       "kidsSafe": true,
-      "live": { "play": false, "appStore": false }
+      "live": {
+        "play": false,
+        "appStore": false
+      }
     },
     {
       "id": "search-and-destroy",
@@ -67,7 +83,10 @@
       "appStore": "",
       "ageRating": "",
       "kidsSafe": false,
-      "live": { "play": false, "appStore": false }
+      "live": {
+        "play": false,
+        "appStore": false
+      }
     }
   ],
   "recon": {
