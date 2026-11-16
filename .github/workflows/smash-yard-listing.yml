@@ -1,0 +1,37 @@
+name: Smash Yard App Store listing
+
+# Fills the Smash Yard App Store Connect product page (text, categories, iPhone screenshots)
+# from smash-yard/app/store/ios/listing.json and smash-yard/app/store/appstore/*.png, with store/asc-listing.mjs.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['smash-yard/app/store/ios/**', 'smash-yard/app/store/appstore/**', .github/workflows/smash-yard-listing.yml]
+
+concurrency:
+  group: smash-yard-listing
+  cancel-in-progress: false
+
+jobs:
+  listing:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Fill the product page
+        run: node store/asc-listing.mjs smash-yard/app/store/ios/listing.json smash-yard/app/store/appstore 2>&1 | tee /tmp/listing.log; exit ${PIPESTATUS[0]}
+      - name: Write status branch
+        if: always()
+        run: |
+          mkdir -p /tmp/st && cp /tmp/listing.log /tmp/st/LISTING-LOG.txt 2>/dev/null || echo "no log" > /tmp/st/LISTING-LOG.txt
+          echo "run ${{ github.run_id }} result ${{ job.status }}" >> /tmp/st/LISTING-LOG.txt
+          cd /tmp/st && git init -q && git checkout -q -b sy-listing-status
+          git -c user.name=bot -c user.email=bot@users.noreply.github.com add . && git -c user.name=bot -c user.email=bot@users.noreply.github.com commit -qm status
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" sy-listing-status
