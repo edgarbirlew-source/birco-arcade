@@ -1,0 +1,28 @@
+name: App Store listing
+
+# Fills the App Store Connect product page (text, categories, iPhone screenshots) from store/ios/.
+# Uses the App Store Connect API key secrets. Runs when the listing files change, or by hand.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, 'claude/**']
+    paths: ['store/**', .github/workflows/app-store-listing.yml]
+
+concurrency:
+  group: app-store-listing
+  cancel-in-progress: false
+
+jobs:
+  listing:
+    runs-on: ubuntu-latest
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Fill the product page
+        if: env.ASC_KEY_ID != ''
+        run: node store/asc-listing.mjs store/ios/listing.json store/ios/iphone
