@@ -385,6 +385,9 @@ const QUEUE_WINDOW=.04, HITSTOP=.07, SLOWMO=.4, SLOWMO_T=.6, MAX_PARTS=60;
 // v33: cut-off boots and toes rebuilt from complete boots of other poses.
 // v32: sprites re-cleaned (no stray bits from neighbouring poses, jab gloves completed, Rocky/Billy jab feet restored).
 const SPR={"rocky_idle":{"w":160,"h":262,"ax":73,"hx":92,"lead":[111,55,48,23],"rear":[111,55,48,23]},"rocky_jab":{"w":222,"h":264,"ax":90,"hx":117,"lead":[209,48,25,20],"rear":[117,54,26,24]},"rocky_hook":{"w":198,"h":260,"ax":82,"hx":113,"lead":[187,46,22,18],"rear":[187,46,22,18]},"rocky_block":{"w":159,"h":260,"ax":73,"hx":103,"lead":[125,34,32,25],"rear":[125,34,32,25]},"rocky_hit":{"w":174,"h":253,"ax":75,"hx":31,"lead":[84,88,37,22],"rear":[84,88,37,22]},"rocky_ko":{"w":200,"h":100,"ax":96,"hx":61,"lead":[91,8,27,13],"rear":[16,61,24,23]},"goat_idle":{"w":168,"h":266,"ax":84,"hx":97,"lead":[140,75,23,25],"rear":[108,73,29,27]},"goat_jab":{"w":218,"h":263,"ax":99,"hx":113,"lead":[204,57,26,25],"rear":[113,62,27,26]},"goat_hook":{"w":198,"h":259,"ax":86,"hx":104,"lead":[187,54,20,21],"rear":[187,54,20,21]},"goat_block":{"w":158,"h":269,"ax":79,"hx":104,"lead":[128,58,38,30],"rear":[128,58,38,30]},"goat_hit":{"w":169,"h":260,"ax":89,"hx":40,"lead":[147,98,23,21],"rear":[106,101,32,25]},"goat_ko":{"w":201,"h":112,"ax":81,"hx":43,"lead":[23,75,23,23],"rear":[23,75,23,23]},"bigmo_idle":{"w":149,"h":270,"ax":76,"hx":90,"lead":[122,52,42,39],"rear":[122,52,42,39]},"bigmo_jab":{"w":224,"h":252,"ax":78,"hx":120,"lead":[210,30,28,26],"rear":[210,30,28,26]},"bigmo_hook":{"w":187,"h":257,"ax":79,"hx":102,"lead":[158,30,35,28],"rear":[29,70,32,30]},"bigmo_block":{"w":168,"h":246,"ax":79,"hx":100,"lead":[128,38,44,33],"rear":[128,38,44,33]},"bigmo_hit":{"w":176,"h":251,"ax":73,"hx":43,"lead":[103,33,30,23],"rear":[99,110,33,35]},"bigmo_ko":{"w":197,"h":77,"ax":96,"hx":60,"lead":[156,19,22,17],"rear":[65,56,36,33]},"tina_idle":{"w":133,"h":262,"ax":66,"hx":65,"lead":[99,62,36,32],"rear":[99,62,36,32]},"tina_jab":{"w":203,"h":256,"ax":79,"hx":89,"lead":[189,50,25,23],"rear":[189,50,25,23]},"tina_hook":{"w":176,"h":257,"ax":72,"hx":88,"lead":[140,54,30,28],"rear":[34,66,28,22]},"tina_block":{"w":153,"h":229,"ax":70,"hx":75,"lead":[103,47,37,34],"rear":[103,47,37,34]},"tina_hit":{"w":183,"h":221,"ax":107,"hx":61,"lead":[127,27,30,25],"rear":[123,98,40,30]},"tina_ko":{"w":193,"h":57,"ax":96,"hx":80,"lead":[104,43,41,26],"rear":[104,43,41,26]},"kangaroo_idle":{"w":187,"h":262,"ax":103,"hx":111,"lead":[133,77,31,33],"rear":[133,77,31,33]},"kangaroo_jab":{"w":182,"h":258,"ax":75,"hx":77,"lead":[167,61,29,26],"rear":[167,61,29,26]},"kangaroo_hook":{"w":162,"h":260,"ax":62,"hx":41,"lead":[138,70,32,27],"rear":[26,87,25,26]},"kangaroo_block":{"w":174,"h":227,"ax":96,"hx":111,"lead":[126,55,37,32],"rear":[126,55,37,32]},"kangaroo_hit":{"w":216,"h":228,"ax":97,"hx":50,"lead":[126,54,28,24],"rear":[126,54,28,24]},"kangaroo_ko":{"w":197,"h":60,"ax":101,"hx":89,"lead":[91,30,38,27],"rear":[91,30,38,27]},"bear_idle":{"w":164,"h":278,"ax":81,"hx":97,"lead":[134,70,56,40],"rear":[134,70,56,40]},"bear_jab":{"w":269,"h":275,"ax":123,"hx":158,"lead":[252,54,31,32],"rear":[252,54,31,32]},"bear_hook":{"w":212,"h":282,"ax":74,"hx":69,"lead":[149,71,45,40],"rear":[19,96,37,33]},"bear_block":{"w":162,"h":244,"ax":78,"hx":100,"lead":[139,44,44,39],"rear":[139,44,44,39]},"bear_hit":{"w":207,"h":242,"ax":104,"hx":48,"lead":[162,65,34,23],"rear":[128,118,38,37]},"bear_ko":{"w":197,"h":84,"ax":91,"hx":82,"lead":[133,12,28,15],"rear":[61,60,36,35]},"gorilla_idle":{"w":152,"h":278,"ax":81,"hx":95,"lead":[126,80,52,38],"rear":[126,80,52,38]},"gorilla_jab":{"w":237,"h":272,"ax":109,"hx":122,"lead":[219,67,26,32],"rear":[148,99,24,22]},"gorilla_hook":{"w":196,"h":265,"ax":68,"hx":67,"lead":[136,64,47,42],"rear":[22,93,39,39]},"gorilla_block":{"w":161,"h":225,"ax":76,"hx":93,"lead":[123,50,46,36],"rear":[123,50,46,36]},"gorilla_hit":{"w":169,"h":226,"ax":74,"hx":33,"lead":[126,64,37,24],"rear":[106,117,35,34]},"gorilla_ko":{"w":174,"h":76,"ax":83,"hx":66,"lead":[58,53,50,33],"rear":[58,53,50,33]},"monkey_idle":{"w":145,"h":236,"ax":76,"hx":85,"lead":[115,63,46,43],"rear":[115,63,46,43]},"monkey_jab":{"w":224,"h":235,"ax":83,"hx":112,"lead":[207,42,23,29],"rear":[119,70,22,21]},"monkey_hook":{"w":177,"h":235,"ax":62,"hx":70,"lead":[133,45,40,38],"rear":[27,72,32,38]},"monkey_block":{"w":151,"h":204,"ax":70,"hx":88,"lead":[113,32,43,38],"rear":[113,32,43,38]},"monkey_hit":{"w":159,"h":220,"ax":83,"hx":34,"lead":[122,57,35,25],"rear":[102,99,35,32]},"monkey_ko":{"w":166,"h":67,"ax":72,"hx":71,"lead":[80,8,30,14],"rear":[63,51,35,32]},"penguin_idle":{"w":150,"h":236,"ax":75,"hx":90,"lead":[117,52,44,40],"rear":[117,52,44,40]},"penguin_jab":{"w":208,"h":233,"ax":85,"hx":108,"lead":[191,46,23,29],"rear":[124,76,20,20]},"penguin_hook":{"w":167,"h":237,"ax":59,"hx":64,"lead":[130,54,44,34],"rear":[130,54,44,34]},"penguin_block":{"w":151,"h":210,"ax":74,"hx":92,"lead":[119,40,47,40],"rear":[119,40,47,40]},"penguin_hit":{"w":180,"h":229,"ax":78,"hx":31,"lead":[130,70,42,31],"rear":[130,70,42,31]},"penguin_ko":{"w":201,"h":67,"ax":99,"hx":113,"lead":[141,17,30,30],"rear":[141,17,30,30]},"ostrich_idle":{"w":141,"h":262,"ax":88,"hx":111,"lead":[125,85,32,37],"rear":[125,85,32,37]},"ostrich_jab":{"w":205,"h":254,"ax":95,"hx":115,"lead":[188,69,23,29],"rear":[187,68,22,32]},"ostrich_hook":{"w":150,"h":257,"ax":61,"hx":26,"lead":[118,74,36,36],"rear":[14,93,28,32]},"ostrich_block":{"w":144,"h":219,"ax":72,"hx":110,"lead":[122,50,41,36],"rear":[122,50,41,36]},"ostrich_hit":{"w":164,"h":219,"ax":89,"hx":29,"lead":[126,61,35,30],"rear":[111,106,33,32]},"ostrich_ko":{"w":169,"h":80,"ax":79,"hx":85,"lead":[85,10,30,17],"rear":[69,50,35,31]},"alligator_idle":{"w":170,"h":262,"ax":94,"hx":111,"lead":[137,64,51,40],"rear":[137,64,51,40]},"alligator_jab":{"w":234,"h":260,"ax":97,"hx":127,"lead":[216,53,26,32],"rear":[140,83,20,23]},"alligator_hook":{"w":178,"h":263,"ax":68,"hx":64,"lead":[134,67,47,40],"rear":[23,88,35,36]},"alligator_block":{"w":169,"h":231,"ax":95,"hx":111,"lead":[144,48,47,42],"rear":[144,48,47,42]},"alligator_hit":{"w":179,"h":234,"ax":88,"hx":31,"lead":[144,71,35,30],"rear":[118,123,40,37]},"alligator_ko":{"w":199,"h":81,"ax":94,"hx":98,"lead":[97,10,38,20],"rear":[92,60,38,37]},"raccoon_idle":{"w":163,"h":262,"ax":83,"hx":102,"lead":[127,75,48,40],"rear":[127,75,48,40]},"raccoon_jab":{"w":210,"h":259,"ax":91,"hx":101,"lead":[192,62,25,31],"rear":[128,97,22,28]},"raccoon_hook":{"w":171,"h":269,"ax":72,"hx":50,"lead":[132,79,46,42],"rear":[21,97,35,41]},"raccoon_block":{"w":160,"h":228,"ax":70,"hx":97,"lead":[130,56,46,40],"rear":[130,56,46,40]},"raccoon_hit":{"w":194,"h":224,"ax":100,"hx":49,"lead":[158,63,35,32],"rear":[158,63,35,32]},"raccoon_ko":{"w":170,"h":82,"ax":79,"hx":87,"lead":[142,59,34,42],"rear":[142,59,34,42]},"hippo_idle":{"w":208,"h":278,"ax":84,"hx":97,"lead":[132,76,56,40],"rear":[132,76,56,40]},"hippo_jab":{"w":236,"h":268,"ax":99,"hx":120,"lead":[216,58,28,34],"rear":[143,94,21,25]},"hippo_hook":{"w":188,"h":275,"ax":66,"hx":56,"lead":[129,69,50,46],"rear":[17,98,37,42]},"hippo_block":{"w":165,"h":222,"ax":77,"hx":94,"lead":[127,47,47,47],"rear":[127,47,47,47]},"hippo_hit":{"w":228,"h":228,"ax":86,"hx":41,"lead":[142,66,41,31],"rear":[142,66,41,31]},"hippo_ko":{"w":194,"h":87,"ax":95,"hx":77,"lead":[156,64,23,25],"rear":[93,41,91,79]},"dog_idle":{"w":182,"h":267,"ax":109,"hx":123,"lead":[167,78,27,36],"rear":[128,78,48,47]},"dog_jab":{"w":261,"h":262,"ax":90,"hx":108,"lead":[237,63,26,32],"rear":[131,94,20,29]},"dog_hook":{"w":183,"h":270,"ax":68,"hx":55,"lead":[124,84,51,44],"rear":[19,104,28,40]},"dog_block":{"w":178,"h":224,"ax":100,"hx":118,"lead":[145,49,56,44],"rear":[145,49,56,44]},"dog_hit":{"w":179,"h":225,"ax":96,"hx":48,"lead":[148,64,40,33],"rear":[118,113,44,42]},"dog_ko":{"w":160,"h":93,"ax":80,"hx":81,"lead":[84,9,31,17],"rear":[51,72,48,38]},"tiger_idle":{"w":203,"h":275,"ax":86,"hx":110,"lead":[128,83,58,48],"rear":[128,83,58,48]},"tiger_jab":{"w":239,"h":271,"ax":116,"hx":135,"lead":[221,65,26,32],"rear":[155,101,30,37]},"tiger_hook":{"w":167,"h":276,"ax":63,"hx":46,"lead":[120,83,50,43],"rear":[17,98,32,41]},"tiger_block":{"w":157,"h":225,"ax":74,"hx":96,"lead":[124,45,58,37],"rear":[124,45,58,37]},"tiger_hit":{"w":178,"h":224,"ax":92,"hx":43,"lead":[148,65,43,33],"rear":[148,65,43,33]},"tiger_ko":{"w":162,"h":95,"ax":79,"hx":86,"lead":[132,51,18,29],"rear":[63,50,80,93]}};
+// v49: painted glove outline per pose (assets/gmask_<fighter>_<pose>.png) + glove boxes [x,y,w,h].
+// Upgrade gloves now re-skin the painted red gloves instead of floating a sticker on top, so they follow every punch.
+const GBLOB={"rocky_idle":[[78,43,59,40]],"rocky_jab":[[185,39,36,24],[99,42,33,35]],"rocky_hook":[[170,37,27,23]],"rocky_block":[[107,21,35,44]],"rocky_hit":[[106,75,32,27],[57,79,42,32]],"rocky_ko":[[77,2,28,14],[3,50,27,25]],"goat_idle":[[87,59,66,38]],"goat_jab":[[181,46,35,27],[91,48,37,38]],"goat_hook":[[168,44,29,28]],"goat_block":[[106,43,42,50]],"goat_hit":[[78,86,79,33]],"goat_ko":[[175,54,21,18],[3,61,35,29]],"bigmo_idle":[[93,34,50,50]],"bigmo_jab":[[182,18,42,30],[104,62,21,26]],"bigmo_hook":[[138,14,36,34],[14,56,33,38]],"bigmo_block":[[102,23,48,46]],"bigmo_hit":[[88,21,31,39],[69,93,47,36]],"bigmo_ko":[[143,11,24,18],[39,39,45,34]],"tina_idle":[[78,47,40,43]],"tina_jab":[[166,39,37,26],[95,66,22,29]],"tina_hook":[[123,39,32,30],[19,54,30,35]],"tina_block":[[82,30,40,49]],"tina_hit":[[112,15,30,37],[101,79,40,37]],"tina_ko":[[70,0,22,11],[81,30,42,27]],"kangaroo_idle":[[109,62,40,40]],"kangaroo_jab":[[140,49,42,29],[83,80,23,29]],"kangaroo_hook":[[118,54,36,33],[14,74,25,34]],"kangaroo_block":[[107,41,37,42]],"kangaroo_hit":[[111,42,29,34],[95,92,37,34]],"kangaroo_ko":[[71,9,40,39]],"bear_idle":[[98,51,66,51]],"bear_jab":[[225,39,44,35],[160,79,24,27]],"bear_hook":[[125,48,46,44],[0,79,38,46]],"bear_block":[[110,26,51,50]],"bear_hit":[[138,52,41,32],[95,95,53,44]],"bear_ko":[[111,4,35,16],[36,42,43,35]],"gorilla_idle":[[92,62,60,49]],"gorilla_jab":[[188,47,47,35],[131,91,28,26]],"gorilla_hook":[[112,40,47,46],[3,74,40,44]],"gorilla_block":[[94,33,53,48]],"gorilla_hit":[[106,51,38,31],[78,94,46,42]],"gorilla_ko":[[64,0,20,8],[34,37,51,34]],"monkey_idle":[[83,43,55,47]],"monkey_jab":[[180,25,42,30],[101,60,29,30]],"monkey_hook":[[111,24,42,41],[12,55,32,39]],"monkey_block":[[90,14,44,49]],"monkey_hit":[[104,44,35,30],[72,79,48,39]],"monkey_ko":[[63,0,32,15],[36,35,45,32]],"penguin_idle":[[89,34,50,50]],"penguin_jab":[[164,29,42,37],[108,65,26,34]],"penguin_hook":[[107,37,44,39],[5,53,32,43]],"penguin_block":[[92,22,52,51]],"penguin_hit":[[108,55,42,34],[70,97,54,43]],"penguin_ko":[[71,26,42,37]],"ostrich_idle":[[103,69,38,46]],"ostrich_jab":[[161,52,42,30],[102,92,22,30]],"ostrich_hook":[[100,55,36,37],[1,78,28,39]],"ostrich_block":[[100,31,44,48]],"ostrich_hit":[[107,48,36,32],[85,85,43,39]],"ostrich_ko":[[66,0,35,18],[50,35,36,31]],"alligator_idle":[[104,42,60,53]],"alligator_jab":[[185,34,47,34],[119,72,32,34]],"alligator_hook":[[109,43,48,44],[5,71,36,42]],"alligator_block":[[116,29,52,51]],"alligator_hit":[[120,56,42,34],[85,99,54,46]],"alligator_ko":[[77,0,40,21],[63,41,49,38]],"raccoon_idle":[[97,57,54,50]],"raccoon_jab":[[163,44,45,38],[109,84,32,35]],"raccoon_hook":[[108,56,47,44],[2,78,37,42]],"raccoon_block":[[102,37,52,51]],"raccoon_hit":[[131,47,46,33],[96,88,65,54]],"raccoon_ko":[[81,3,40,19],[18,31,52,48]],"hippo_idle":[[97,56,52,51],[150,59,6,36]],"hippo_jab":[[184,38,50,36],[127,83,28,29]],"hippo_hook":[[103,42,51,48],[0,73,37,47]],"hippo_block":[[99,25,52,50]],"hippo_hit":[[121,51,41,32],[84,93,54,46]],"hippo_ko":[[90,0,39,23],[48,37,53,44]],"dog_idle":[[101,58,55,47],[157,58,24,47]],"dog_jab":[[198,44,61,40],[148,79,23,34]],"dog_hook":[[98,60,51,45],[7,82,28,43]],"dog_block":[[114,28,59,48]],"dog_hit":[[128,47,40,34],[89,93,51,42]],"dog_ko":[[67,0,35,18],[25,52,49,39]],"tiger_idle":[[93,61,60,50]],"tiger_jab":[[191,46,46,34],[136,84,33,38]],"tiger_hook":[[93,56,52,48],[1,78,34,42]],"tiger_block":[[91,26,61,50]],"tiger_hit":[[124,49,43,33],[78,92,55,46]],"tiger_ko":[[69,0,37,27],[17,48,56,47]]};
 const POSES=['idle','jab','hook','block','hit','ko'];
 const SC=0.92; // sprite pixels -> canvas pixels (v2: rendered sprite art replaces the shape-drawn fighters)
 // 'red' (Classic) means "shorts as painted" for every fighter; Billy's painted shorts also match Blue Stripe
@@ -402,7 +405,7 @@ let assetsReady=false;
 function loadImg(key,src){return new Promise(res=>{const i=new Image();i.onload=()=>{IMG[key]=i;res(true);};i.onerror=()=>{console.warn('missing',src);res(false);};i.src=src;});}
 async function loadAssets(){
   const jobs=[];
-  for(const who of BASES)for(const p of POSES){jobs.push(loadImg(who+'_'+p,'assets/'+who+'_'+p+'.png'));jobs.push(loadImg('mask_'+who+'_'+p,'assets/mask_'+who+'_'+p+'.png'));}
+  for(const who of BASES)for(const p of POSES){jobs.push(loadImg(who+'_'+p,'assets/'+who+'_'+p+'.png'));jobs.push(loadImg('mask_'+who+'_'+p,'assets/mask_'+who+'_'+p+'.png'));jobs.push(loadImg('gmask_'+who+'_'+p,'assets/gmask_'+who+'_'+p+'.png'));}
   for(const id in RINGS)jobs.push(loadImg('ring_'+id,'assets/ring_'+id+'.jpg'));
   for(const g of GLOVES)jobs.push(loadImg('glove_'+g.id,'assets/glove_'+g.id+'.png'));
   let done=0;const bar=document.querySelector('#loadBar i');
@@ -485,8 +488,9 @@ function drawPattern(c,of,bx,by,bw,bh){
 }
 // final sprite for (species, pose, outfit): tinted base + recoloured shorts. Cached.
 const spriteCache={};
-function spriteFor(spId,pose,outfitId){
-  const key=spId+'|'+pose+'|'+outfitId;if(spriteCache[key])return spriteCache[key];
+function spriteFor(spId,pose,outfitId,gloveId){
+  gloveId=gloveId||'leather';
+  const key=spId+'|'+pose+'|'+outfitId+'|'+gloveId;if(spriteCache[key])return spriteCache[key];
   const sp=SPECIES[spId],who=sp.base,m=SPR[who+'_'+pose],img=IMG[who+'_'+pose];if(!img)return null;
   const o=offscreen(m.w,m.h),c=o.getContext('2d');
   if(sp.tint){try{c.filter=sp.tint;}catch(e){}}
@@ -500,7 +504,28 @@ function spriteFor(spId,pose,outfitId){
       if(L<.3){c.globalCompositeOperation='multiply';c.globalAlpha=.75;c.drawImage(t,0,0);c.globalAlpha=1;}
       else if(L>.8){c.globalCompositeOperation='screen';c.globalAlpha=.55;c.drawImage(t,0,0);c.globalAlpha=1;}
       c.globalCompositeOperation='source-over';}}
+  if(gloveId!=='leather')gloveSkin(c,who+'_'+pose,m,gloveId);
   return spriteCache[key]=o;
+}
+// v49: paint the equipped glove's material over the painted red gloves (exact outline from gmask),
+// shaded with the original glove's light and dark so it keeps the 3D look in every pose.
+function gloveSkin(c,key,m,gloveId){
+  const gm=IMG['gmask_'+key],gi=IMG['glove_'+gloveId],bl=GBLOB[key];if(!gm||!gi||!bl||!bl.length)return;
+  const t=offscreen(m.w,m.h),tc=t.getContext('2d');
+  const sx=gi.width*.42,sy=gi.height*.08,sw=gi.width*.55,sh=gi.height*.84; // fist part of the glove art
+  for(const b of bl)tc.drawImage(gi,sx,sy,sw,sh,b[0]-3,b[1]-3,b[2]+6,b[3]+6);
+  try{ // shade layer: painted glove brightness, centred on mid grey
+    const sh2=offscreen(m.w,m.h),sc2=sh2.getContext('2d');sc2.drawImage(c.canvas,0,0);sc2.globalCompositeOperation='destination-in';sc2.drawImage(gm,0,0);
+    const d=sc2.getImageData(0,0,m.w,m.h),px=d.data;let sum=0,n=0;
+    for(let i=0;i<px.length;i+=4)if(px[i+3]>128){sum+=px[i]*.6+px[i+1]*.3+px[i+2]*.1;n++;}
+    const mean=n?sum/n:100;
+    for(let i=0;i<px.length;i+=4){const L=px[i]*.6+px[i+1]*.3+px[i+2]*.1;const v=Math.max(0,Math.min(255,128+(L-mean)*1.5));px[i]=px[i+1]=px[i+2]=v;}
+    sc2.putImageData(d,0,0);
+    tc.globalCompositeOperation='hard-light';tc.globalAlpha=gloveId==='fire'?.4:.75;tc.drawImage(sh2,0,0);tc.globalAlpha=1;
+    if(gloveId==='fire'){tc.globalCompositeOperation='screen';tc.globalAlpha=.35;for(const b of bl)tc.drawImage(gi,sx,sy,sw,sh,b[0]-3,b[1]-3,b[2]+6,b[3]+6);tc.globalAlpha=1;}
+  }catch(e){}
+  tc.globalCompositeOperation='destination-in';tc.drawImage(gm,0,0);
+  c.drawImage(t,0,0);
 }
 
 // ========================= FIGHTER =========================
@@ -535,7 +560,7 @@ function drawFighter(c,f,gy,time,scale,shadowOnly){
   const sx=(f.x-240)*.08;
   const sg=c.createRadialGradient(sx,6,4,sx,6,60);sg.addColorStop(0,'rgba(0,0,0,.6)');sg.addColorStop(.6,'rgba(0,0,0,.3)');sg.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=sg;ell(c,sx,6,P.pose==='ko'?110:62+Math.abs(sx)*.6,13);c.fill();
   if(shadowOnly||!m){c.restore();return;}
-  const spr=spriteFor(f.sp.id,P.pose,f.outfit.id);if(!spr){c.restore();return;}
+  const spr=spriteFor(f.sp.id,P.pose,f.outfit.id,f.glove.id);if(!spr){c.restore();return;}
   const damp=f.round>=2;
   c.scale(d*(SIZE[who]||1),SIZE[who]||1);
   const draw=(dx,dy,alpha)=>{
@@ -551,19 +576,18 @@ function drawFighter(c,f,gy,time,scale,shadowOnly){
   const hx=P.pose==='ko'?(m.hx-m.w*.55)*SC+P.dx:(m.hx-m.ax)*SC+P.dx,hy=P.pose==='ko'?-m.h*SC*.6:-(m.h-26)*SC+P.dy;
   if(hpR<.6){c.save();c.globalAlpha=(.6-hpR)*.9;const g=c.createRadialGradient(hx+6,hy+4,2,hx+6,hy+4,22);g.addColorStop(0,'rgba(140,30,120,.8)');g.addColorStop(1,'rgba(140,30,120,0)');c.fillStyle=g;ell(c,hx+6,hy+4,22,18);c.fill();c.restore();}
   if(damp&&P.pose!=='ko'){c.save();c.globalAlpha=.35;c.fillStyle='#fff';ell(c,hx-8,hy-12,6,3);c.fill();c.restore();}
-  // upgrade gloves drawn over the painted leather ones
-  if(f.glove.id!=='leather'&&IMG['glove_'+f.glove.id]&&P.pose!=='ko'){
-    const gi=IMG['glove_'+f.glove.id];
-    const boxes=[m.rear,m.lead];
-    for(let i=0;i<boxes.length;i++){const b=boxes[i];if(i===1&&boxes[0]===boxes[1])break;
-      const bw=Math.min(Math.max(b[2],b[3])*1.45,m.h*.3)*SC,bh=bw*gi.height/gi.width;
-      const gx=(b[0]-m.ax)*SC+P.dx,gy2=-(m.h-b[1])*SC+P.dy+bob;
-      c.save();c.rotate(P.rot);
-      if(f.glove.id==='fire'||f.glove.id==='volt'||f.glove.id==='ice'){c.shadowColor=f.glove.c;c.shadowBlur=14+Math.sin(time*14+i)*6;}
-      c.drawImage(gi,gx-bw*.5,gy2-bh*.5,bw,bh);c.restore();
-      if(f.glove.id==='fire'){for(let k=0;k<4;k++){const a=time*9+k*1.3+i;c.fillStyle=k%2?'rgba(255,200,40,.8)':'rgba(255,90,20,.75)';ell(c,gx+Math.sin(a)*8,gy2-bh*.5-((time*5+k*.4+i)%1.2)*26,4,8);c.fill();}}
-      if(f.glove.id==='volt'&&Math.random()<.5){c.strokeStyle='#fffbd0';c.lineWidth=2;c.beginPath();c.moveTo(gx+bw*.4,gy2-6);c.lineTo(gx+bw*.7,gy2-2);c.lineTo(gx+bw*.5,gy2+2);c.lineTo(gx+bw*.85,gy2+8);c.stroke();}
-    }
+  // upgrade glove effects (the glove itself is painted into the sprite by gloveSkin), placed on the real glove outlines
+  const gb=GBLOB[who+'_'+P.pose],gid=f.glove.id;
+  if(gb&&(gid==='fire'||gid==='volt'||gid==='ice')){
+    c.save();c.translate(P.dx,P.dy+bob);c.rotate(P.rot);c.scale(SC,SC*P.sy);
+    const ox=P.pose==='ko'?-m.w*.55:-m.ax,oy=P.pose==='ko'?-m.h-2:-m.h+2;
+    gb.forEach((b,i)=>{const gx=ox+b[0]+b[2]/2,gy2=oy+b[1]+b[3]/2,r=Math.max(b[2],b[3])*.5;
+      c.save();c.globalCompositeOperation='lighter';const gg=c.createRadialGradient(gx,gy2,r*.4,gx,gy2,r*1.7);
+      gg.addColorStop(0,f.glove.c+'00');gg.addColorStop(.45,f.glove.c+(Math.sin(time*14+i)>0?'66':'44'));gg.addColorStop(1,f.glove.c+'00');c.fillStyle=gg;ell(c,gx,gy2,r*1.7,r*1.7);c.fill();c.restore();
+      if(gid==='fire'){for(let k=0;k<4;k++){const a=time*9+k*1.3+i;c.fillStyle=k%2?'rgba(255,200,40,.8)':'rgba(255,90,20,.75)';ell(c,gx+Math.sin(a)*r*.5,gy2-r*.6-((time*5+k*.4+i)%1.2)*26,4,8);c.fill();}}
+      if(gid==='volt'&&Math.random()<.5){c.strokeStyle='#fffbd0';c.lineWidth=2;c.beginPath();c.moveTo(gx-r*.4,gy2-r*.5);c.lineTo(gx,gy2-r*.2);c.lineTo(gx-r*.2,gy2+r*.1);c.lineTo(gx+r*.5,gy2+r*.5);c.stroke();}
+    });
+    c.restore();
   }
   // status effects
   const cx0=(m.hx-m.ax)*SC*.4+P.dx,cy0=-m.h*SC*.55;
@@ -721,7 +745,7 @@ function startOnline(f1,f2,ringId,host,g1,o1){
   G={li:-1,lvl,vs:true,net:true,host,ring:RINGS[ringId],ringId,p:mkFighter(f1,g1||'leather',o1||'red',false,lvl,0),o:mkFighter(f2,'leather','red',false,lvl,0),
     round:1,time:ROUND_TIME,phase:'intro',pt:0,t:0,parts:[],shake:0,freeze:0,slow:0,zoom:1,zoomX:240,excite:0,flash:0,log:{jabs:0,hooks:0,blocks:0,ko:false},flashes:[]};
   G.o.x=330;G.o.facing=-1;G.o.ai=false;
-  for(const f of[G.p,G.o])for(const p of POSES)spriteFor(f.sp.id,p,f.outfit.id);
+  for(const f of[G.p,G.o])for(const p of POSES)spriteFor(f.sp.id,p,f.outfit.id,f.glove.id);
   document.getElementById('controls1').hidden=false;document.getElementById('controls2').hidden=true;
   document.getElementById('fightName').textContent=(host?'YOU: '+G.p.name:'YOU: '+G.o.name)+' • ONLINE';
   show('sFight');banner('ROUND 1',RINGS[ringId].name+' • '+G.p.name+' vs '+G.o.name,2);sfx('bell');
@@ -765,7 +789,7 @@ function startVs(f1,f2){
   G={li:-1,lvl,vs:true,ring:RINGS[ringId],ringId,p:mkFighter(f1,S.glove,S.outfit,false,lvl,0),o:mkFighter(f2,S.glove,'red',false,lvl,0),
     round:1,time:ROUND_TIME,phase:'intro',pt:0,t:0,parts:[],shake:0,freeze:0,slow:0,zoom:1,zoomX:240,excite:0,flash:0,log:{jabs:0,hooks:0,blocks:0,ko:false},flashes:[]};
   G.o.x=330;G.o.facing=-1;G.o.ai=false;
-  for(const f of[G.p,G.o])for(const p of POSES)spriteFor(f.sp.id,p,f.outfit.id);
+  for(const f of[G.p,G.o])for(const p of POSES)spriteFor(f.sp.id,p,f.outfit.id,f.glove.id);
   document.getElementById('controls1').hidden=true;document.getElementById('controls2').hidden=false;
   document.getElementById('p1lbl').textContent='P1 • '+G.p.name.toUpperCase();document.getElementById('p2lbl').textContent='P2 • '+G.o.name.toUpperCase();
   document.getElementById('fightName').textContent=G.p.name+' vs '+G.o.name;
@@ -780,7 +804,7 @@ function startFight(li){
   G={li,lvl,ring:RINGS[lvl.ring],ringId:lvl.ring,p:mkFighter(S.fighter,S.glove,S.outfit,false,lvl,li),o:mkFighter(lvl.opp,lvl.glove||'leather',oppOutfit,true,lvl,li),
     round:1,time:ROUND_TIME,phase:'intro',pt:0,t:0,parts:[],shake:0,freeze:0,slow:0,zoom:1,zoomX:240,excite:0,flash:0,log:{jabs:0,hooks:0,blocks:0,ko:false},flashes:[]};
   // pre-build sprites so the first punch doesn't hitch
-  for(const f of[G.p,G.o])for(const p of POSES)spriteFor(f.sp.id,p,f.outfit.id);
+  for(const f of[G.p,G.o])for(const p of POSES)spriteFor(f.sp.id,p,f.outfit.id,f.glove.id);
   document.getElementById('fightName').textContent='FIGHT '+(li+1)+' • '+G.o.name;
   show('sFight');banner('ROUND 1',RINGS[lvl.ring].name+' vs '+G.o.name,2);sfx('bell');
   lastT=performance.now();if(raf)cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);
@@ -998,9 +1022,9 @@ function portrait(canvas,spId,gloveId,outfitId,act){
   const f=fakeFighter(spId,gloveId,outfitId,act,0);
   const sc=canvas.height/270;
   c.save();c.translate(canvas.width/2-(act?22:12)*sc,canvas.height-10);c.scale(sc,sc);
-  const P=poseOf(f),m=SPR[f.sp.base+'_'+P.pose],spr=spriteFor(spId,P.pose,outfitId);
+  const P=poseOf(f),m=SPR[f.sp.base+'_'+P.pose],spr=spriteFor(spId,P.pose,outfitId,gloveId);
   if(spr){c.save();c.translate(P.dx,0);c.scale(SC,SC);c.drawImage(spr,-m.ax,-m.h);c.restore();
-    if(f.glove.id!=='leather'&&IMG['glove_'+f.glove.id]){const gi=IMG['glove_'+f.glove.id];for(const b of[m.rear,m.lead]){const bw=Math.min(Math.max(b[2],b[3])*1.45,m.h*.3)*SC,bh=bw*gi.height/gi.width;c.drawImage(gi,(b[0]-m.ax)*SC+P.dx-bw/2,-(m.h-b[1])*SC-bh/2,bw,bh);}}}
+}
   c.restore();
 }
 let pendingFighter=S.fighter,vsPick=0,vsP1=null;
