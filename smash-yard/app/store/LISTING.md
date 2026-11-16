@@ -12,7 +12,7 @@ Support: https://smash-yard-production-b96422af.up.railway.app/support
 | Apple subtitle (30 max) | Brawl Friends and Bots |
 | Name under the icon | Smash Yard |
 | Category | Games > Action (Apple secondary: Games > Arcade) |
-| Short description (Play, 80 max) | Pick a brawler, smash the yard, and beat bots or a friend online. No ads. |
+| Short description (Play, 80 max) | Brawl bots or a friend online. 10 free fights, then unlock the Full Game. |
 | Apple keywords | brawler,arena,brawl,fighting,arcade,friends,multiplayer,battle,kids,action |
 
 Full description:
@@ -25,14 +25,17 @@ Full description:
 > - Online 1v1 with a friend: one makes a room, the other types the 4-letter code
 > - Win matches to earn coins, open crates and level up your brawlers
 > - Lots of brawlers to unlock, rainbow skins and seasonal arenas
-> - Full Game: one purchase unlocks Duo, Trio and Squad team battles
+> - Solo, Duo, Trio and Squad battles
+>
+> Free trial: your first 10 fights are free in every mode. After that, one $2.99 Full Game purchase unlocks unlimited fights. Brawlers and coins you earn in the trial are kept.
 >
 > No ads. No chat. No accounts. Nothing about you is collected.
 
 ## Money (no ads, ever)
 
-Solo fights, online 1v1 and every brawler you earn are free. One purchase, the Full Game, unlocks Duo, Trio and Squad.
-Coins and crates are earned by playing only; they are never sold for real money. The buy button sits behind a
+Free download with a 10-fight free trial in every mode (Solo, Duo, Trio, Squad, online 1v1); the number is `trialFights` in
+shared/birco-games.json. After the trial, FIGHT, REMATCH and online rooms show "FREE TRIAL OVER" (BUY $2.99, RESTORE PURCHASE,
+NOT NOW). The Full Game unlocks unlimited fights. Brawlers and coins are kept. Coins and crates are earned by playing only; they are never sold for real money. The buy button sits behind a
 grown-up check, and Restore Purchase is on the same screen.
 
 | Field | Value |
@@ -40,7 +43,7 @@ grown-up check, and Restore Purchase is on the same screen.
 | Product id | `smashyard_full_game` (must match exactly) |
 | Type | Play: one-time product, non-consumable. Apple: Non-Consumable |
 | Name | Full Game |
-| Description | Unlock Duo, Trio and Squad team battles. |
+| Description | Unlock unlimited fights in every mode. |
 | Price | $2.99 USD |
 
 Ads decision (kids' game, standard item 13): NO ads and no AdMob SDK. One-time Full Game purchase only. Cross-promo tiles are
