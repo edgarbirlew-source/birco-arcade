@@ -1,14 +1,14 @@
 {
-  "_note": "Every store and ad ID for this game. Swap the AdMob test IDs for the real ones here (one line each), then rebuild.",
+  "_note": "Every store and ad ID for this game. Real BIRCO AdMob IDs (Blast Buggies apps, rewarded unit 'Double cash'), set 2026-11-16.",
   "productId": "arcade_drive_full_game",
   "admob": {
     "android": {
-      "appId": "ca-app-pub-3940256099942544~3347511713",
-      "rewarded": "ca-app-pub-3940256099942544/5224354917"
+      "appId": "ca-app-pub-5250558350593664~3126094770",
+      "rewarded": "ca-app-pub-5250558350593664/7401040845"
     },
     "ios": {
-      "appId": "ca-app-pub-3940256099942544~1458002511",
-      "rewarded": "ca-app-pub-3940256099942544/1712485313"
+      "appId": "ca-app-pub-5250558350593664~2340285850",
+      "rewarded": "ca-app-pub-5250558350593664/4687247596"
     }
   },
   "childDirected": false,
