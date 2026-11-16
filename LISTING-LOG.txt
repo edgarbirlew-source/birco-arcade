@@ -1,0 +1,11 @@
+App 6835434236 Smash Yard: Backyard Brawl
+Categories set
+Subtitle set
+Version 1.0 PREPARE_FOR_SUBMISSION
+Text set: description, keywords, promotionalText, supportUrl
+Uploaded 1-menu.png
+Uploaded 2-squad.png
+Uploaded 3-solo.png
+Uploaded 4-online.png
+Done
+run 43867769887 result success
