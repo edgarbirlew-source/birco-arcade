@@ -1,0 +1,28 @@
+# Uploads the signed Smash Yard bundle in this branch to Google Play internal testing (draft release).
+# The bundle is signed with the upload key outside GitHub; this only sends it to Play.
+# The result goes to STATUS.txt on the sy-play-status branch.
+name: Smash Yard to Play internal testing
+on:
+  push:
+    branches: ['sy-play-release']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm i --no-save googleapis@144
+      - run: node upload.mjs
+        env:
+          SA: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+      - name: Publish status
+        if: always()
+        run: |
+          echo "commit $GITHUB_SHA" >> /tmp/STATUS.txt; echo "run $GITHUB_RUN_ID" >> /tmp/STATUS.txt
+          mkdir /tmp/s && cd /tmp/s && git init -q && git checkout -q -b sy-play-status
+          cp /tmp/STATUS.txt . && git add . && git -c user.name=ci -c user.email=ci@birco -c commit.gpgsign=false commit -qm "Play upload status"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" sy-play-status
