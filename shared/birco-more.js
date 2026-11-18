@@ -147,7 +147,7 @@
     // optional: title (e.g. 'FREE TRIAL OVER') and lead (one line above the unlock list), for games with a trial paywall
     o.innerHTML = '<div class="bm-box"><h2>' + esc(f.title || 'FULL GAME') + '</h2>' + (f.lead ? '<p style="text-align:center"><b>' + esc(f.lead) + '</b></p>' : '') +
       '<p style="text-align:center">Unlock ' + esc(f.unlocks) + '.</p>' +
-      '<p style="text-align:center">One purchase. No ads, ever.</p><p class="bm-msg" style="text-align:center;min-height:1.3em"></p>' +
+      '<p style="text-align:center">One purchase. Removes all ads.</p><p class="bm-msg" style="text-align:center;min-height:1.3em"></p>' +
       '<div class="bm-row"><button type="button" class="bm-btn" data-buy>BUY ' + esc(f.price || '') + '</button>' +
       '<button type="button" class="bm-btn alt" data-restore>RESTORE PURCHASE</button><button type="button" class="bm-btn alt" data-no>NOT NOW</button></div></div>';
     var msg = o.querySelector('.bm-msg');

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Road Rampage</title>
-<meta name="description" content="Kid-friendly cartoon driving and blasting game. Free, no ads.">
+<meta name="description" content="Kid-friendly cartoon driving and blasting game. Free to play.">
 <meta name="theme-color" content="#140f0c">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
@@ -1212,7 +1212,7 @@ $('joinCode').addEventListener('input',e=>{const v=e.target.value.toUpperCase().
 $('joinCode').addEventListener('keydown',e=>{if(e.key==='Enter')$('joinBtn').click();});
 
 /* ---------- store apps: Full Game, rewarded bonus, More from BIRCO ----------
-   BIRCO Game Monetization and Growth Standard (2026-11-15). The web game stays free with no ads.
+   BIRCO Game Monetization and Growth Standard (2026-11-15). The web game is free to play and has no ad SDK.
    In the Google Play / App Store apps (window.BircoStore, from app/src/native.js):
    - Full Game: one purchase unlocks street levels 9+ and the Derby and Harbor arenas, and removes all ads and promos.
    - Rewarded ads only: after a run the player may tap to watch one and double that run's cash. Never during play.
@@ -1228,7 +1228,7 @@ const FG=(()=>{
   function grant(){SAVE.full=true;save();renderMenus();refresh();}
   function offer(head){const S2=BircoStore.store;
     if(full()){sh('<h2>FULL GAME</h2><p>Everything is unlocked and there are no ads. Thanks for supporting BIRCO!</p><p class="note">New phone? Sign in to the same '+S2+' account and tap Restore purchase.</p><button class="go" data-x>BACK</button>');return;}
-    sh('<h2>'+(head||'GET THE FULL GAME')+'</h2><ul><li>Every street level, highway and open water</li><li>Demolition Derby and Harbor arenas</li><li>No ads, ever. Cash bonuses without watching ads</li><li>One payment of <b>'+price+'</b>. No subscription</li></ul>'
+    sh('<h2>'+(head||'GET THE FULL GAME')+'</h2><ul><li>Every street level, highway and open water</li><li>Demolition Derby and Harbor arenas</li><li>Removes all ads. Cash bonuses without watching ads</li><li>One payment of <b>'+price+'</b>. No subscription</li></ul>'
       +'<button class="go" data-ask>ASK A GROWN-UP</button><button class="link" data-restore>Restore purchase</button><button class="link" data-x>Keep playing free</button>');}
   function ask(){const a=6+(Math.random()*4|0),b=6+(Math.random()*4|0);
     sh('<h2>GROWN-UPS ONLY</h2><p>What is '+a+' × '+b+'?</p><div class="math"><input id="fgAns" inputmode="numeric" maxlength="3" autocomplete="off"></div><button class="go" id="fgOk">CONTINUE</button><button class="link" data-x>Cancel</button>');
