@@ -1,0 +1,54 @@
+name: PR check
+
+# Runs on every pull request into main so PRs get a green or red check before merge.
+# Read-only: no secrets, no builds, no store uploads. Upload workflows stay push-only.
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-check-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Syntax check shared and native scripts
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(birco/*.js birco/native/*.js shared/*.js sw.js)
+          for f in "${files[@]}"; do
+            echo "node --check $f"
+            node --check "$f"
+          done
+      - name: JSON files parse
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          for f in birco/*.json shared/*.json manifest.webmanifest; do
+            echo "parse $f"
+            node -e "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'))" "$f"
+          done
+      - name: Monetize tests (Full Game removes ads)
+        run: |
+          set -euo pipefail
+          if [ -f birco/native/test-monetize.mjs ]; then
+            node birco/native/test-monetize.mjs
+          else
+            echo "birco/native/test-monetize.mjs not on this branch yet; skipped"
+          fi
