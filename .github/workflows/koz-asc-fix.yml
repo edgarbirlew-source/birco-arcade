@@ -1,0 +1,30 @@
+name: Knockout Zoo age rating fix and resubmit
+
+# One-off, owner-approved: sets Knockout Zoo's age rating Advertising = Yes, resubmits iOS 1.0.4 for review,
+# and reads StewardOne's latest iOS build icon status. Uses the App Store Connect key secrets; never prints them.
+on:
+  workflow_dispatch:
+  push:
+    branches: ['ops/koz-asc-fix']
+    paths: ['ops/koz-asc-fix.mjs', .github/workflows/koz-asc-fix.yml]
+
+concurrency:
+  group: koz-asc-fix
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Fix age rating and resubmit
+        run: node ops/koz-asc-fix.mjs
