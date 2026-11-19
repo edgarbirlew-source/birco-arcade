@@ -1,0 +1,26 @@
+name: Smash Yard ASC status check
+# Read-only App Store Connect status for Smash Yard (TestFlight beta review, testers, App Review). Runs on push to sy-asc-check.
+on:
+  push:
+    branches: [sy-asc-check]
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: node store/asc-sy-status.mjs > /tmp/status.json 2>&1 || true
+      - if: always()
+        run: |
+          mkdir -p /tmp/st && cp /tmp/status.json /tmp/st/STATUS.json; date -u > /tmp/st/RUN.txt
+          cd /tmp/st && git init -q && git checkout -q -b sy-asc-status
+          git -c user.name=bot -c user.email=bot@users.noreply.github.com add . && git -c user.name=bot -c user.email=bot@users.noreply.github.com commit -qm status
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" sy-asc-status
