@@ -6,7 +6,7 @@ name: Smash Yard Android
 on:
   workflow_dispatch:
   push:
-    branches: [main, 'claude/smash-yard-**']
+    branches: [main]
     paths: ['smash-yard/**', 'shared/**', .github/workflows/smash-yard-android.yml]
 
 permissions:
