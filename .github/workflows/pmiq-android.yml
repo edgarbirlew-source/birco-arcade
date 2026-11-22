@@ -7,7 +7,7 @@ name: PM Assistant IQ Android
 on:
   workflow_dispatch:
   push:
-    branches: [main, 'claude/pmiq-**']
+    branches: [main]
     paths: ['pontimax-assistant/app/**', .github/workflows/pmiq-android.yml]
 
 permissions:

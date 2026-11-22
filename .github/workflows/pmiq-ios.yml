@@ -8,7 +8,7 @@ name: PM Assistant IQ iPhone
 on:
   workflow_dispatch:
   push:
-    branches: [main, 'claude/pmiq-**']
+    branches: [main]
     paths: ['pontimax-assistant/app/**', .github/workflows/pmiq-ios.yml]
 
 permissions:

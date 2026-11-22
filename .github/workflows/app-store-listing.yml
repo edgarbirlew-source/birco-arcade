@@ -5,7 +5,7 @@ name: App Store listing
 on:
   workflow_dispatch:
   push:
-    branches: [main, 'claude/**']
+    branches: [main]
     paths: ['store/**', .github/workflows/app-store-listing.yml]
 
 concurrency:
