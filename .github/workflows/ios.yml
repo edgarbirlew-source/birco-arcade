@@ -7,7 +7,7 @@ name: iPhone app
 on:
   workflow_dispatch:
   push:
-    branches: [main, 'claude/**']
+    branches: [main]
     paths: [index.html, sw.js, 'birco/**', manifest.webmanifest, 'fonts/**', 'icons/**', 'lib/**', 'app/**', .github/workflows/ios.yml]
 
 concurrency:
