@@ -1,0 +1,40 @@
+name: Smash Yard in-app price
+
+# Sets the App Store price of the Smash Yard Full Game (smashyard_full_game) with store/asc-iap-price.mjs.
+# Run it from the Actions tab with the US price (Edgar set $3.99 on 2026-11-23). Google Play's price is set in Play Console.
+on:
+  workflow_dispatch:
+    inputs:
+      price:
+        description: US price, like 3.99
+        required: true
+        default: '3.99'
+
+concurrency:
+  group: smash-yard-iap-price
+  cancel-in-progress: false
+
+jobs:
+  price:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      PRICE: ${{ inputs.price }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Set the App Store price
+        run: node store/asc-iap-price.mjs com.birco.smashyard smashyard_full_game "$PRICE" 2>&1 | tee /tmp/price.log; exit ${PIPESTATUS[0]}
+      - name: Write status branch
+        if: always()
+        run: |
+          mkdir -p /tmp/st && cp /tmp/price.log /tmp/st/PRICE-LOG.txt 2>/dev/null || echo "no log" > /tmp/st/PRICE-LOG.txt
+          echo "run ${{ github.run_id }} result ${{ job.status }}" >> /tmp/st/PRICE-LOG.txt
+          cd /tmp/st && git init -q && git checkout -q -b sy-iap-price-status
+          git -c user.name=bot -c user.email=bot@users.noreply.github.com add . && git -c user.name=bot -c user.email=bot@users.noreply.github.com commit -qm status
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" sy-iap-price-status

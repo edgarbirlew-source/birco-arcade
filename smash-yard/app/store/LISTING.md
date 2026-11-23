@@ -27,14 +27,14 @@ Full description:
 > - Lots of brawlers to unlock, rainbow skins and seasonal arenas
 > - Solo, Duo, Trio and Squad battles
 >
-> Free trial: your first 10 fights are free in every mode. After that, one $2.99 Full Game purchase unlocks unlimited fights. Brawlers and coins you earn in the trial are kept.
+> Free trial: your first 10 fights are free in every mode. After that, one $3.99 Full Game purchase unlocks unlimited fights. Brawlers and coins you earn in the trial are kept.
 >
 > No ads. No chat. No accounts. Nothing about you is collected.
 
 ## Money (no ads, ever)
 
 Free download with a 10-fight free trial in every mode (Solo, Duo, Trio, Squad, online 1v1); the number is `trialFights` in
-shared/birco-games.json. After the trial, FIGHT, REMATCH and online rooms show "FREE TRIAL OVER" (BUY $2.99, RESTORE PURCHASE,
+shared/birco-games.json. After the trial, FIGHT, REMATCH and online rooms show "FREE TRIAL OVER" (BUY $3.99, RESTORE PURCHASE,
 NOT NOW). The Full Game unlocks unlimited fights. Brawlers and coins are kept. Coins and crates are earned by playing only; they are never sold for real money. The buy button sits behind a
 grown-up check, and Restore Purchase is on the same screen.
 
@@ -44,7 +44,7 @@ grown-up check, and Restore Purchase is on the same screen.
 | Type | Play: one-time product, non-consumable. Apple: Non-Consumable |
 | Name | Full Game |
 | Description | Unlock unlimited fights in every mode. |
-| Price | $2.99 USD |
+| Price | $3.99 USD |
 
 Ads decision (kids' game, standard item 13): NO ads and no AdMob SDK. One-time Full Game purchase only. Cross-promo tiles are
 kids-safe and have no external links.
