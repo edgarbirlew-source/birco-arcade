@@ -1,0 +1,37 @@
+{
+  "stage": "probe",
+  "at": "2026-11-26T13:18:45.896Z",
+  "version": {
+    "id": "cfed013f-84f8-4cf7-836a-85fe19f14e12",
+    "state": "WAITING_FOR_REVIEW"
+  },
+  "reviewDetailId": "8cd57955-9edf-44cc-a4f4-7d2292abbba7",
+  "notesBefore": "1. SCREEN RECORDING (physical iPhone, latest iOS, starts at app launch): https://drive.google.com/file/d/1baWS9aQwx-54gpPZqR_DANZ5LgmxXB0m/view (also attached to this review as SmashYard_iPhone_screen_recording.mp4)\n\n2. PURPOSE AND AUDIENCE: Smash Yard is a short-session cartoon arcade brawler for kids and families (rated 9+). Players pick a brawler and fight bots, or one friend online, in quick backyard matches. It gives kids a fun, safe game with no ads, no chat, no accounts and no data collection.\n\n3. HOW TO USE: No login, credentials or sample files are needed. Open the app, tap SKIP on the welcome card if shown, pick Solo, Duo, Trio or Squad, pick a brawler, and tap FIGHT. Move with the left stick, aim and shoot with the right, SUPER fills as you hit. Paid content: the first 10 fights in every mode are a free trial. After that a FREE TRIAL OVER sheet offers the one-time Full Game in-app purchase (smashyard_full_game, non-consumable, $2.99). Tap BUY, answer the grown-up math question, and fights become unlimited. RESTORE PURCHASE is on the same sheet. Online 1v1 (optional): device A taps PLAY ONLINE then MAKE ROOM and gets a 4-letter code; device B taps PLAY ONLINE, types the code, taps JOIN. There is no chat or text exchange between players.\n\n4. EXTERNAL SERVICES: (a) Apple In-App Purchase (StoreKit) for the Full Game purchase. (b) Our own game server (hosted on Railway) relays the moves of an online 1v1 room by room code. It stores no personal data and has no chat. No analytics, ads, AI, authentication or other third-party SDKs.\n\n5. REGIONS: The app works the same in every region. No regional differences in features or content.\n\n6. REGULATED CONTENT: None. The game is an original work by BIRCO, Inc. and uses no licensed third-party characters or protected material.",
+  "attachments": [
+    {
+      "id": "14bfc73f-a5ff-4ab7-9aa2-d7f7ba59c26f",
+      "fileSize": 29105295,
+      "fileName": "SmashYard_iPhone_screen_recording.mp4",
+      "sourceFileChecksum": "ff017954f045495d66756a40f9974d68",
+      "uploadOperations": null,
+      "assetDeliveryState": {
+        "errors": [],
+        "warnings": null,
+        "state": "COMPLETE"
+      }
+    }
+  ],
+  "submission": {
+    "state": "WAITING_FOR_REVIEW",
+    "items": [
+      {
+        "id": "YjI2N2NkZjYtZGQ0YS00MTFiLWJkYjAtNTJmM2QxNTliMmVlfDE3fGZhNTUyODdiLWFiNTMtNDdjNC1iNjI3LWEzOWM2MThmMGZjZg",
+        "state": "READY_FOR_REVIEW"
+      },
+      {
+        "id": "YjI2N2NkZjYtZGQ0YS00MTFiLWJkYjAtNTJmM2QxNTliMmVlfDZ8ODk1NDA1NTg3",
+        "state": "READY_FOR_REVIEW"
+      }
+    ]
+  }
+}
