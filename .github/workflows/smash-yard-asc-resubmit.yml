@@ -1,0 +1,36 @@
+name: Smash Yard ASC resubmit
+# Attaches the iPhone screen recording to the 1.0 review, updates notes, resubmits. Stage set in store/STAGE.txt.
+on:
+  push:
+    branches: [sy-asc-resubmit]
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Download video
+        run: |
+          curl -sSL -o /tmp/video.mp4 "https://drive.usercontent.google.com/download?id=1baWS9aQwx-54gpPZqR_DANZ5LgmxXB0m&export=download&confirm=t"
+          ls -l /tmp/video.mp4; file /tmp/video.mp4
+      - name: Probe and frames
+        run: |
+          sudo apt-get install -y -qq ffmpeg >/dev/null
+          mkdir -p /tmp/st
+          ffprobe -v error -show_format -show_streams -of json /tmp/video.mp4 > /tmp/st/probe.json || true
+          D=$(ffprobe -v error -show_entries format=duration -of csv=p=0 /tmp/video.mp4 || echo 60)
+          for i in 1 2 3 4 5 6 7 8; do T=$(echo "$D*$i/9" | bc -l); ffmpeg -v error -ss $T -i /tmp/video.mp4 -frames:v 1 -vf scale=360:-2 /tmp/st/f$i.jpg || true; done
+      - run: node store/asc-sy-resubmit.mjs > /tmp/st/RESULT.json 2>&1 || true
+      - if: always()
+        run: |
+          date -u > /tmp/st/RUN.txt
+          cd /tmp/st && git init -q && git checkout -q -b sy-asc-resubmit-out
+          git -c user.name=bot -c user.email=bot@users.noreply.github.com add . && git -c user.name=bot -c user.email=bot@users.noreply.github.com commit -qm out
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" sy-asc-resubmit-out
